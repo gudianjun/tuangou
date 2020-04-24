@@ -1,26 +1,75 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route, Redirect, withRouter} from 'react-router-dom'
+import { useCookies, withCookies, Cookies  } from 'react-cookie';
+import LoginForm from './component/LoginForm'
+import MainForm from './component/MainForm'
+import {MainContext} from './component/ChilentPage/ObjContext'
+import Common from './common/common'
+import LoaderExampleInline from './component/Loading'
+class App extends React.Component{
+  
+  constructor(props){
+    super(props)
+    console.log(this.props)
+    const { cookies } = this.props;
+    cookies.set('name', "dean", { path: '/' });
+    Common._setStorage('value', "bbbbb");
+    
+    console.log("App props")
+    console.log(this.props)
+    // 读取存储库中的数据判断是否登陆中
+    const token = Common._getSendToken();
+    console.log(token)
+    if(token.length !== 0){
+      // 进入主画面
+      this.props.history.push("/loading")
+    }
+    else{
+      // 进入login画面
+      this.props.history.push("/login")
+    }
+    
+  }
+  // 系统总上下文
+  mainContext = {
+    setMainContext:(obj)=>{this.setMainContext(obj)}
+  }
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  setMainContext(obj){
+    console.log("setMainContext")
+    console.log(obj)
+    this.mainContext = {...this.mainContext, ...obj}
+    console.log(this.mainContext)
+    this.setState({})
+  }
+
+
+  /*componentDidMount(){
+    //const { cookies } = this.props;
+    //this.setState = {
+    //  name: cookies.get('name') || 'Ben'
+    //};
+
+    
+  }*/
+  render(){
+    return (
+      <div className="pace  pace-inactive">
+        <MainContext.Provider value = {this.mainContext}>
+          <Switch>
+            <Route exact path='/' component={LoginForm}></Route>
+            <Route path='/loading' component={LoaderExampleInline}></Route>
+            <Route path='/login' component={LoginForm}></Route>
+            <Route path='/main' component={MainForm}></Route>
+            {/*<Redirect from="*" to="/login"></Redirect>*/}
+          </Switch>
+        </MainContext.Provider>
+      </div>
+    )
+  }
+
+  y
 }
 
-export default App;
+export default withCookies(withRouter(App));
