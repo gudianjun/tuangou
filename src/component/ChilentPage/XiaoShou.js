@@ -60,6 +60,17 @@ export default class XiaoShou extends Component{
         }
       }
     
+    componentWillUnmount(){
+        console.log("componentWillUnmount---------------------------------")
+        console.log(this.context)
+        const {shoppingItems} = this.context;
+        const {setMainContext} = this.context;
+        if(typeof(shoppingItems)!="undefined"&&shoppingItems!=null)
+            shoppingItems.splice(0, shoppingItems.length);
+        setMainContext({
+            shoppingItems : shoppingItems
+        })
+    }
     
            
     shouldComponentUpdate(nextProps, nextState){
@@ -95,17 +106,13 @@ export default class XiaoShou extends Component{
         <div  >
             
                 <Grid columns='equal'>
-                    <Grid.Column width={5}> {/*this.state.items*/}
+                    <Grid.Column width={"6"}> {/*this.state.items*/}
                         <ItemSelect items={this.state.items} onAddshopping={this.addShopping}></ItemSelect>
                     </Grid.Column>
-                    <Grid.Column width={6}>
+                    <Grid.Column>
                         <ItemOrder></ItemOrder>
                     </Grid.Column>
-                    <Grid.Column>
-                    <Segment>3</Segment>
-                    </Grid.Column>
                 </Grid>
-      
         </div>
         )
     }

@@ -33,8 +33,26 @@ class App extends React.Component{
   }
   // 系统总上下文
   mainContext = {
-    setMainContext:(obj)=>{this.setMainContext(obj)}
-  }
+    setMainContext:(obj)=>{this.setMainContext(obj)},
+    logout:()=>{
+      // 登出操作，
+      console.log("mainContext->logout")
+      Common._setStorage("token", "");
+      this.props.history.push("/login")
+    },
+    confirmInfo: {
+            open:false,
+            content:'你确定要这么做吗',
+            callback:(isCon)=>{}, // 回调方法
+            onCancel:()=>{this.open=false;},
+            onConfirm:()=>{this.open=false;},
+            Show:(cont)=>{
+                this.context = cont;
+                this.open=true;
+            }
+        }
+    }
+ 
 
   setMainContext(obj){
     console.log("setMainContext")

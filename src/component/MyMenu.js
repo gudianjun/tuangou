@@ -28,22 +28,22 @@ export default class MenuExampleInvertedVertical extends Component {
           name='xiaoshou'
           active={activeItem === 'xiaoshou'}
           onClick={this.handleItemClick}
-        >销售</Menu.Item>
+        >销    售</Menu.Item>
         <Menu.Item
           name='baofei'
           active={activeItem === 'baofei'}
           onClick={this.handleItemClick}
-          >报废</Menu.Item>
+          >报    废</Menu.Item>
         <Menu.Item
           name='dangrixiaoshoujilu'
           active={activeItem === 'dangrixiaoshoujilu'}
           onClick={this.handleItemClick}
-          >当日销售记录</Menu.Item>
+          >当日销售</Menu.Item>
           <Menu.Item
           name='tuihuo'
           active={activeItem === 'tuihuo'}
           onClick={this.handleItemClick}
-          >退货</Menu.Item>
+          >退    货</Menu.Item>
           <Menu.Item
           name='cangkuguanli'
           active={activeItem === 'cangkuguanli'}
@@ -58,7 +58,7 @@ export default class MenuExampleInvertedVertical extends Component {
           name='huiyuancunhuoguanli'
           active={activeItem === 'huiyuancunhuoguanli'}
           onClick={this.handleItemClick}
-          >会员存货管理</Menu.Item>
+          >会员存货</Menu.Item>
           <Menu.Item
           name='dianpuguanli'
           active={activeItem === 'dianpuguanli'}

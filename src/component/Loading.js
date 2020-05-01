@@ -2,13 +2,15 @@ import React, {Component} from 'react'
 import { Loader } from 'semantic-ui-react'
 import {MainContext} from "./ChilentPage/ObjContext"
 import Common from '../common/common'
+ 
 class LoaderExampleInline extends Component{
     
-    constructor(props){
+    constructor(props, context){
         super(props)
         var arrayObj = [];
         this.state={}
         console.log('LoaderExampleInline')
+        console.log(context)
         Common.sendMessage(Common.baseUrl + "/xiaoshou/getitems"
             , "POST"
             , null
@@ -24,7 +26,8 @@ class LoaderExampleInline extends Component{
                 Common._setStorage("itemsList", JSON.stringify(arrayObj))
                 // 跳转到
                 this.props.history.push("/main")
-            })
+            },null,
+            context)
 
     }
     static contextType = MainContext;
@@ -34,9 +37,13 @@ class LoaderExampleInline extends Component{
       }
     render(){
         return(
-            <div style={{ width:'100%', height: '100%',position: 'absolute'}}>
-                <Loader style={{ left:'50%', top: '50%', size:"100px"}} big active inline />
-            </div>
+            <MainContext.Consumer>{
+                ()=>(
+                    <div style={{ width:'100%', height: '100%',position: 'absolute'}}>
+                        <Loader style={{ left:'50%', top: '50%', size:"100px"}} big active inline />
+                    </div>
+                 )}
+            </MainContext.Consumer>
         )
     }
     

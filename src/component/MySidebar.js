@@ -16,7 +16,7 @@ export default class MainForm extends Component{
     render(){
         return(
             <div>
-            <div className="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey" data-color="grey">
+            <div className="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey"  style={{width:"150px"}} data-color="grey">
                 <div className="something-else-semantic">
                     <div style={{width:"100%", height:"50px", background:"#A00"}}>
                         <div style={{top:"10px", position:"absolute", width:"100%"}}>
@@ -27,7 +27,7 @@ export default class MainForm extends Component{
                                     </Grid.Column>
                                     
                                     <Grid.Column width={8}  style={{top:"10px" }}>
-                                        <h3 style={{color:"#FFF"}}>团购系统</h3>
+                                        <h3 style={{color:"#FFF"}}>{/*写文字*/}</h3>
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>

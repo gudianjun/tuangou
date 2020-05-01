@@ -1,8 +1,8 @@
 import React,{Component} from "react"
 import {MainContext} from "../ObjContext"
 import { Icon, Label, Menu, Select, Table,Button, Dropdown , Input} from 'semantic-ui-react'
-import PropTypes, { element, array } from 'prop-types';
-
+import PropTypes, { element, array, checkPropTypes } from 'prop-types';
+import Common from '../../../common/common'
 // 定制一个删除按钮
 class DelButton extends Component{
     constructor(props){
@@ -35,6 +35,8 @@ class DelButton extends Component{
         console.log(index);
         sp.splice(index, 1)
         this.context.setMainContext({shoppingItems:sp})
+        console.log('this.context.shoppingItems');
+        console.log(this.context.shoppingItems);
     }
     render(){
         return (
@@ -108,9 +110,9 @@ class NumberButton extends Component{
         return (
             <div>
             <Button as='div' labelPosition='right'>
-                <Button  icon onClick={()=>this.minusClick()}><Icon name='minus' /></Button>
+                <Button  icon onClick={()=>this.minusClick()}><Icon name='minus' style={{width:"20px" }}/></Button>
                 
-                <Input value={this.props.itemvalue} onChange={(e,f)=>this.numberChange(e,f)}  as='a'  size="mini" basic="true" pointing='left' style={{width:"50px" }} inverted  placeholder="数量"/>
+                <Input value={this.props.itemvalue} onChange={(e,f)=>this.numberChange(e,f)}  as='a'  size="mini" basic="true" pointing='left' style={{width:"45px" }} inverted  placeholder="数量"/>
                 
                 <Button icon onClick={()=>this.plusClick()} ><Icon mini="true" name='plus'/></Button>
             </Button></div>
@@ -147,25 +149,25 @@ class SelectPrice extends Component{
         var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
         var priceTypes = [
             {key: "0",
-            text: "单价",
-            value: shoppingItems[index].PRICE_ARR[0]},
+            text: "零",
+            value: shoppingItems[index].PRICE_ARR[0].toLocaleString('zh')},
             {key: "1",
-            text: "会员",
-            value: shoppingItems[index].PRICE_ARR[1]},
+            text: "会",
+            value: shoppingItems[index].PRICE_ARR[1].toLocaleString('zh')},
             {key: "2",
-            text: "团购",
-            value: shoppingItems[index].PRICE_ARR[2]},
+            text: "团",
+            value: shoppingItems[index].PRICE_ARR[2].toLocaleString('zh')},
             {key: "3",
-            text: "处理",
-            value: shoppingItems[index].PRICE_ARR[3]}
+            text: "处",
+            value: shoppingItems[index].PRICE_ARR[3].toLocaleString('zh')}
         ]
         
         // onChange={(e, f)=>{this.setState({selectShop:this.state.shopList.find(element=>element.value === f.value)})}}
         return (
-            <Input type='text' placeholder='价格' action>
-                    <Select onChange={(e,f)=>{this.priceSelect(e,f)}} style={{width:"80px" }} compact options={priceTypes} defaultValue={priceTypes[shoppingItems[index].PRICE_SELECT].value} />
+            <Input type='text' placeholder='P' action>
+                    <Select onChange={(e,f)=>{this.priceSelect(e,f)}} style={{width:"50px" }} compact options={priceTypes} defaultValue={priceTypes[shoppingItems[index].PRICE_SELECT].value} />
                         <Label as='a' style={{fontSize:"16px" }} >
-                        {priceTypes[shoppingItems[index].PRICE_SELECT].value}
+                        {priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')}
                                             </Label>
             </Input>
         )
@@ -192,7 +194,7 @@ class LablePriceSubTotal extends Component{
         console.log(index)
         return (
             <Label color='red' style={{fontSize:"16px" }}>
-                {shoppingItems[index].PRICE_SUBTOTAL}
+                {shoppingItems[index].PRICE_SUBTOTAL.toLocaleString('zh')}
             </Label>
         )
     }
@@ -217,8 +219,6 @@ export default class ItemOrder extends Component{
       } 
 
     shouldComponentUpdate(nexProps, prevState)    {
-        console.log("this.context")
-        console.log(this.context)
       return true
     }
     static propTypes = {
@@ -226,22 +226,102 @@ export default class ItemOrder extends Component{
     }
     static contextType = MainContext;
     sumTotelPrice
+
+    jiezhangClick(){
+         // 检查数据，如果订单为空，则不允许提交
+         var {shoppingItems} = this.context;
+         if(shoppingItems!==null && shoppingItems !== undefined && shoppingItems.length > 0){        
+            var {confirmInfo} = this.context;
+            const {setMainContext} = this.context;
+            confirmInfo.open=true
+            confirmInfo.content = '点击【确定】后，提交订单！'
+
+            this.OrderInfo=[];
+            console.log('jiezhangClick')
+            console.log(shoppingItems)
+            shoppingItems.forEach(element=>{
+                this.OrderInfo.push(
+                    {
+                        ITEM_ID:element.ITEM_ID,
+                        COM_TYPE_ID:element.COM_TYPE_ID,
+                        PRICE_SELECT:element.PRICE_SELECT,
+                        ITEM_NUMBER:element.ITEM_NUMBER
+                    }
+                )
+            })
+            console.log('点击【确定】后，提交订单！')
+            console.log(this.OrderInfo)
+
+            // this.OrderInfo.push(
+            //     {
+            //         itemid:element.ITEM_ID,
+            //         comtypeid:element.COM_TYPE_ID,
+            //         priceselect:element.PRICE_SELECT,
+            //         itemnumber:element.ITEM_NUMBER
+            //     }
+            // )
+            confirmInfo.onConfirm = ()=>{
+                console.log('confirmInfo.onConfirm')
+                confirmInfo.open = false
+                setMainContext({
+                    confirmInfo:confirmInfo
+                })
+                var sendobj = {
+                    ordertype:0,
+                    orderinfo:this.OrderInfo
+                 }
+                 console.log('sendobj')
+                 console.log(sendobj)
+                // 在这里提交数据
+                Common.sendMessage(Common.baseUrl + "/xiaoshou/orderdisp",
+                 'POST', 
+                 null, 
+                 sendobj, 
+                 null, 
+                (e)=>{
+                    // 成功    
+                }
+                ,(e)=>{
+                    console.log("login 报错了")
+                }, 
+                 this.content)
+            }
+            confirmInfo.onCancel = ()=>{
+                console.log('confirmInfo.onCancel')
+                confirmInfo.open = false
+                setMainContext({
+                    confirmInfo:confirmInfo
+                })
+            }
+            setMainContext({
+                confirmInfo:confirmInfo
+            })
+        }
+    }
+
     render(){
         var rows = [];
+        var yuanjia = 0
+        var shoujia = 0
+        var jianshu = 0
+        var youhui = yuanjia-shoujia
+        
         if (this.context.shoppingItems !=null ) {
             this.context.shoppingItems.forEach(element=>{
-               
+                yuanjia += element.ITEM_NUMBER * element.PRICE_ARR[0]
+                shoujia += element.ITEM_NUMBER * element.PRICE_ARR[element.PRICE_SELECT]
+                jianshu += element.ITEM_NUMBER
                 rows.push(
                     <Table.Row itemkey={element.key}>
-                                <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                                <Table.Cell collapsing >{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                 <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                                <Table.Cell>
+                                <Table.Cell collapsing >
                                     <SelectPrice itemkey={element.key}></SelectPrice>
                                 </Table.Cell>
-                                <Table.Cell>
+                                <Table.Cell collapsing >
                                     <NumberButton itemkey={element.key} itemvalue={element.ITEM_NUMBER}></NumberButton>
                                 </Table.Cell>
-                                <Table.Cell>
+                                <Table.Cell collapsing >
                                     <LablePriceSubTotal itemkey={element.key}></LablePriceSubTotal>
                                     </Table.Cell>
                                 <Table.Cell><DelButton itemkey={element.key} iconN={'trash alternate outline'}></DelButton></Table.Cell>
@@ -249,17 +329,20 @@ export default class ItemOrder extends Component{
                 )
                 }
             )
+            youhui = yuanjia-shoujia
+            console.log('----------------youhui-------shoujia-------jianshu-------render')
         }
- 
+        
+        
         return(
             
             <div>
                     <Table celled selectable>
                         
-                        <Table.Header>
+                        <Table.Header fullWidth>
                             <Table.Row>
-                                <Table.HeaderCell>商品编号</Table.HeaderCell>
-                                <Table.HeaderCell>商品名称</Table.HeaderCell>
+                                <Table.HeaderCell>编号</Table.HeaderCell>
+                                <Table.HeaderCell>名称</Table.HeaderCell>
                                 <Table.HeaderCell>单价</Table.HeaderCell>
                                 <Table.HeaderCell>数量</Table.HeaderCell>
                                 <Table.HeaderCell>小计</Table.HeaderCell>
@@ -270,6 +353,28 @@ export default class ItemOrder extends Component{
                         <Table.Body>
                             {rows}
                         </Table.Body>
+                        <Table.Footer fullWidth>
+                            <Table.Row>
+                                <Table.HeaderCell />
+                                <Table.HeaderCell colSpan='6'>
+                                <Button onClick={this.jiezhangClick.bind(this)}
+                                    floated='right'
+                                    icon
+                                    labelPosition='left'
+                                    
+                                    size='massive'
+                                    color='red'
+                                >
+                                    <Icon name='yen sign' />合计【{shoujia.toLocaleString('zh')}】元
+                                </Button>
+                                <Label.Group tag size='large'>
+                                    <Label as='a'>原价:￥{yuanjia.toLocaleString('zh')}</Label>
+                                    <Label as='a' color='red'>优惠:￥{youhui.toLocaleString('zh')}</Label>
+                                    <Label as='a'>件数:{jianshu}</Label>
+                                </Label.Group>
+                                </Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>
                     </Table>
                    
             </div>

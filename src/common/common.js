@@ -29,11 +29,11 @@ export default class Common{
     发送网络请求
     sendType:请求类型， POST GET ....
     */
-    static sendMessage(url, sendType, urlPram, bodyObj, newHeader, callbackobj=null, callbackErr=null){
+    static sendMessage(url, sendType, urlPram, bodyObj, newHeader, callbackobj=null, callbackErr=null, cot=null){
         console.log(url)
         const auth = Common._getSendToken()
         var headers = {
-            'content-type': 'application/json;charset=utf-8','Access-Control-Allow-Origin': '*', ...newHeader
+            'content-type': 'application/json','charset':'utf-8' , ...newHeader
         }
         if(auth.length !== 0){
             headers = {...headers, 'AUTHORIZATION': auth}
@@ -69,9 +69,9 @@ export default class Common{
             return res.json(); //请求成功，获请求元数据
         })
         .then((result)=>{
-            console.log("拿到数据进行页面渲染"); 
+           
             if(this.res.status < 300) // 成功的请求
-            {
+            { console.log("拿到数据进行页面渲染"); 
                 if(callbackobj!=null)
                 {
                     callbackobj(result);
@@ -79,11 +79,16 @@ export default class Common{
             }
             else{
                 // 抛出错误
-                console.log(result); // 拿到数据进行页面渲染
-                if(callbackobj!=null)
-                {
-                    callbackobj(result);
+                console.log("拿到了错误的数据"); // 拿到数据进行页面渲染
+                const {logout} = cot
+                console.log(logout); // 拿到数据进行页面渲染
+                if (result.error_code === 4011){
+                    logout()
                 }
+                // if(callbackobj!=null)
+                // {
+                //     callbackobj(result);
+                // }
             }
         })
         .catch((err)=>{
