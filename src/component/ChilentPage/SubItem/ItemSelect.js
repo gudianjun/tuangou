@@ -1,7 +1,8 @@
 import React,{Component} from "react"
 import { Icon, Label, Menu, Table,Button } from 'semantic-ui-react'
 import PropTypes, { element } from 'prop-types';
-
+import {ShoppingItem, MainContext} from '../ObjContext'
+import Common from "../../../common/common"
 // 定制一个添加按钮
 class AddButton extends Component{
     constructor(props){
@@ -17,14 +18,26 @@ class AddButton extends Component{
     static propTypes = {
         itemkey:PropTypes.string,
         iconN:PropTypes.string,
-        onAddshopping:PropTypes.func
     }
     static defaultProps = {
         iconN:'shopping cart'
     }
+    static contextType = MainContext;
     onClickHandler(){
-        console.log(this)
-        this.props.onAddshopping(this.props.itemKey)
+        //this.props.onAddshopping(this.props.itemKey)
+        const {items} = this.context;
+        const {shoppingItems} = this.context;
+        const {setMainContext} = this.context;
+        var sii = new ShoppingItem()
+        var fi = items.find(element=>element.key === this.props.itemKey)
+        
+        sii.InitShoppingItem(fi, shoppingItems.length)
+        shoppingItems.push(sii)
+        console.log(this.context)
+        setMainContext({shoppingItems:shoppingItems})
+        this.setState({
+            shoppingItems:shoppingItems
+        })
     }
     render(){
         return (
@@ -35,30 +48,34 @@ class AddButton extends Component{
 
 
 export default class ItemSelect extends Component{
-    constructor(props){
+    static contextType = MainContext;
+
+    constructor(props, context){
         super(props)
-        this.state = {
-            items : props.items,
+
+        var itemstring = Common._loadStorage("itemsList")
+        if(itemstring === null) // 没有数据，跳转加载
+        {
+            this.props.history.push("/loading")
         }
-        console.log("ItemSelect")
-        console.log(props)
+        else{
+            const {setMainContext} = context;
+            setMainContext({items:JSON.parse(itemstring)})
+        }
     }
     static getDerivedStateFromProps(nexProps, prevState){
+        var itemstring = Common._loadStorage("itemsList")
         return {
-            items:nexProps.items
+            items : JSON.parse(itemstring),
         }
       } 
 
     shouldComponentUpdate(nexProps, prevState)    {
-        if(nexProps.items == null)
-            {return false}
-            else{return true}
+        return true;
     }
     static propTypes = {
-        items:PropTypes.array,
-        onAddshopping:PropTypes.func
     }
-
+    
     render(){
         var rows = [];
         if ( this.state.items !=null ) {
@@ -70,7 +87,7 @@ export default class ItemSelect extends Component{
                         <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                         <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
                         <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                        onAddshopping={this.props.onAddshopping} ></AddButton></Table.Cell>
+                        ></AddButton></Table.Cell>
                     </Table.Row>
                 )
             }
@@ -79,7 +96,7 @@ export default class ItemSelect extends Component{
         return(
             
             <div>
-                <Table celled selectable   >
+                <Table celled selectable>
                     <Table.Header  >
                     <Table.Row>
                         <Table.HeaderCell >商品编号</Table.HeaderCell>

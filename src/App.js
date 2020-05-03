@@ -33,6 +33,8 @@ class App extends React.Component{
   }
   // 系统总上下文
   mainContext = {
+    items:[], // 商品信息
+    shoppingItems:[],
     setMainContext:(obj)=>{this.setMainContext(obj)},
     logout:()=>{
       // 登出操作，
@@ -62,6 +64,13 @@ class App extends React.Component{
     this.setState({})
   }
 
+  resetMainContext(obj){
+    console.log("setMainContext")
+    console.log(obj)
+    this.mainContext = {...this.mainContext, ...obj}
+    console.log(this.mainContext)
+    this.setState({})
+  }
 
   /*componentDidMount(){
     //const { cookies } = this.props;

@@ -1,6 +1,6 @@
 export default class Common{
     static get baseUrl(){
-        return  "http://127.0.0.1:5000/v1";
+        return  "http://192.168.3.72:5000/v1";
     }
 
     static _setStorage(key, value){
@@ -74,7 +74,7 @@ export default class Common{
             { console.log("拿到数据进行页面渲染"); 
                 if(callbackobj!=null)
                 {
-                    callbackobj(result);
+                    callbackobj(result, cot);
                 }
             }
             else{

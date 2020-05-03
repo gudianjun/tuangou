@@ -67,14 +67,34 @@ class MainForm extends Component{
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
   childrenRoute = (name)=>{
-      console.log("childrenRoute " + name)
-        this.props.history.push("/main/" + name)
+    console.log("childrenRoute " + name)
+    this.props.history.push("/main/" + name)
+    // 显示标题
+  }
+
+  getTitle(){
+    console.log(this.props.location.pathname)
+    var mainPath = this.props.location.pathname.replace("/main/", "")
+    console.log(mainPath)
+    var title = '默认'
+    switch(mainPath)
+    {
+        case 'xiaoshou':
+            title='销售'
+                break;
+            case 'baofei':
+                title='报废'
+                break;
+            default:
+                title='默认'
+                break;
+    }
+    return title
   }
   render(){
-     
     return ( 
         <MainContext.Consumer>{
-            ({confirmInfo})=>(
+            ({confirmInfo, items})=>(
         <div>
            
                 <MySidebar childrenRoute={this.childrenRoute}></MySidebar>
@@ -82,12 +102,11 @@ class MainForm extends Component{
                     <div className="ui pusher" >
                         <div className="navslide navwrap" >{/* 上边条 */}
                             <div className="ui menu icon borderless grid">
-                                <Message style={{ marginLeft:"150px"}} attached='bottom' warning hidden>
+                                <Message style={{ marginLeft:"150px"}} attached='bottom' warning >
                                     <Icon name='help' />
-                                    Already signed up?&nbsp;<a href='#'>Login here</a>&nbsp;instead.
+                                    {this.getTitle()}
                                     </Message>
                                 <div className="right menu">
-                                
                                     <Form.Button color='teal' fluid='true' large='true'>
                                         退出
                                     </Form.Button>

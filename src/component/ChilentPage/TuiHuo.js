@@ -1,54 +1,56 @@
 import React,{Component} from "react"
-import { Menu } from "semantic-ui-react"
+import { Menu, Grid ,Segment, Button, Dropdown} from "semantic-ui-react"
+import ItemSelect from "./SubItem/ItemSelect"
+import ItemOrder from "./SubItem/ItemOrder"
+import Common from "../../common/common"
+import { string, element } from "prop-types"
+import PropTypes from 'prop-types';
+import {ShoppingItem, MainContext} from './ObjContext'
 
 export default class TuiHuo extends Component{
     constructor(props){
         super(props)
-        this.state={}
+        this.state = {
+        }
     }
-
+    static contextType = MainContext;
+    static getDerivedStateFromProps(nexProps, prevState){
+        return null
+      }
+    
+    componentWillUnmount(){
+        console.log(this.context)
+        const {setMainContext} = this.context;
+        setMainContext({
+            shoppingItems : []
+        })
+    }
+    
+           
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextState === null || nextState.items === null)
+        {
+            console.log("shouldComponentUpdate 不允许更新")
+            return false
+        }
+        else{
+            console.log("shouldComponentUpdate 允许更新")
+            return true
+        }
+    }
     render(){
         return(
-            <div className="ui equal width left aligned padded grid stackable">
-                <div className="row">
-                    <div className="column">
-                        <div className="ui segments no-padding">
-                            <div className="ui segment basic no-padding-bottom" >
-                                <h5>
-                                TuiHuo
-                                报废
-                                    <h1>TuiHuo</h1>
-                                    <h1>TuiHuo</h1>
-                                    <h1>TuiHuo</h1>
-                                    <h1>TuiHuo</h1>
-                                    <h1>TuiHuo</h1>
-                                    <h1>TuiHuo</h1>
-                                    <h1>TuiHuo</h1>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="column">
-                        <div className="ui segments no-padding">
-                            <div className="ui segment basic no-padding-bottom">
-                                <h5>
-                                    销售统计dddddddddddddddddddddddddddddddddddddddddddddd
-                                    dddddddddddddddddd
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div  >
+                <Grid columns='equal'>
+                    <Grid.Column width={"6"}> {/*this.state.items*/}
+                        <ItemSelect></ItemSelect>
+                    </Grid.Column>
+                    <Grid.Column>
+                        <ItemOrder opetype={1}></ItemOrder>
+                    </Grid.Column>
+                </Grid>
+        </div>
         )
     }
 }
+
