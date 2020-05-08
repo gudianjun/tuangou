@@ -14,7 +14,7 @@ class LoaderExampleInline extends Component{
         Common.sendMessage(Common.baseUrl + "/xiaoshou/getitems"
             , "POST"
             , null
-            , null
+            , {seltype:0}
             , null
             , (e)=>{
                 e.data.forEach(element => {

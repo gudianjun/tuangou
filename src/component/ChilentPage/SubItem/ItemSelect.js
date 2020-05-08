@@ -52,16 +52,18 @@ export default class ItemSelect extends Component{
 
     constructor(props, context){
         super(props)
-
+        this.state = {
+            
+        }
+        this.onClick()
         var itemstring = Common._loadStorage("itemsList")
-        if(itemstring === null) // 没有数据，跳转加载
-        {
-            this.props.history.push("/loading")
+        
+        this.state = {
+            items : JSON.parse(itemstring)
         }
-        else{
-            const {setMainContext} = context;
-            setMainContext({items:JSON.parse(itemstring)})
-        }
+        const {setMainContext} = context;
+        setMainContext({items:JSON.parse(itemstring)})
+        
     }
     static getDerivedStateFromProps(nexProps, prevState){
         var itemstring = Common._loadStorage("itemsList")
@@ -74,22 +76,67 @@ export default class ItemSelect extends Component{
         return true;
     }
     static propTypes = {
+        seltype:PropTypes.number
     }
-    
+    static defaultProps = {
+        seltype:0
+    }
+
+    getDelFlg(item){
+        if (item.ITEM_TYPE === 1)
+            return (<Label color='red' ribbon>SET</Label>)
+    }
+
+    onClick(){
+        Common.sendMessage(Common.baseUrl + "/xiaoshou/getitems"
+            , "POST"
+            , null
+            , {seltype:0}
+            , null
+            , (e)=>{
+                var arrayObj = []
+                e.data.forEach(element => {
+                    arrayObj.push({...element, key:element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()})
+                });
+                // const {setMainContext} = this.context;
+                // setMainContext({itemsList:arrayObj}) // 设定商品列表
+                // 写入缓存
+                Common._setStorage("itemsList", JSON.stringify(arrayObj))
+                this.setState({})
+            },null,
+            this.context)
+    }
     render(){
         var rows = [];
         if ( this.state.items !=null ) {
             this.state.items.forEach(element=>{
+                if(this.props.seltype === 0){
+                    rows.push(
+                        <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                            <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                            <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                            <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
+                            <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                            ></AddButton></Table.Cell>
+                        </Table.Row>
+                    )
+                }
+                else{
+                    if(element.ITEM_TYPE === 0){
+                        rows.push(
+                            <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                                <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                                <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                                <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
+                                <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                                ></AddButton></Table.Cell>
+                            </Table.Row>
+                        )
+                    }
+                    else{
 
-                rows.push(
-                    <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                        <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                        <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
-                        <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                        ></AddButton></Table.Cell>
-                    </Table.Row>
-                )
+                    }
+                }
             }
             )
         }
@@ -102,7 +149,7 @@ export default class ItemSelect extends Component{
                         <Table.HeaderCell >商品编号</Table.HeaderCell>
                         <Table.HeaderCell>商品名称</Table.HeaderCell>
                         <Table.HeaderCell>单价</Table.HeaderCell>
-                        <Table.HeaderCell>操作</Table.HeaderCell>
+                        <Table.HeaderCell><Button icon onClick={()=>{this.onClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 

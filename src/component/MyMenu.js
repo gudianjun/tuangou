@@ -26,22 +26,22 @@ export default class MenuExampleInvertedVertical extends Component {
     const { activeItem } = this.state
 
     return (
-      <Menu inverted vertical  style={{width:"100%", borderRadius: "0px", fontSize:"25px" }}  icon='labeled'>
+      <Menu inverted vertical  style={{width:"100%", borderRadius: "0px", fontSize:"15px" }}  icon='labeled'>
         <Menu.Item
           name='xiaoshou'
           active={activeItem === 'xiaoshou'}
           onClick={this.handleItemClick}
-        > <Icon name='cart' />销    售</Menu.Item>
+        > <Icon name='cart' />销售</Menu.Item>
           <Menu.Item
           name='tuihuo'
           active={activeItem === 'tuihuo'}
           onClick={this.handleItemClick}
-          ><Icon name='undo' />退    货</Menu.Item>
+          ><Icon name='undo' />退货</Menu.Item>
         <Menu.Item
           name='baofei'
           active={activeItem === 'baofei'}
           onClick={this.handleItemClick}
-          ><Icon name='delete' />报    废</Menu.Item>
+          ><Icon name='delete' />报废</Menu.Item>
         <Menu.Item
           name='dangrixiaoshoujilu'
           active={activeItem === 'dangrixiaoshoujilu'}

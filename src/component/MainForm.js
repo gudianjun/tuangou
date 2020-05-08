@@ -28,11 +28,13 @@ import { MainContext} from './ChilentPage/ObjContext'
 class MainForm extends Component{
   constructor(props, context){
       super(props)
-      this.state={activeItem: 'bio',
-      ConfirmTitle:context.confirmInfo.content,
-      open:context.confirmInfo.open
+      this.state={
+        activeItem: 'bio',
+        ConfirmTitle:context.confirmInfo.content,
+        open:context.confirmInfo.open,
+        showMsg:true
     }
-       // 请求登录检查，如果失败了，则跳转到login画面
+        // 请求登录检查，如果失败了，则跳转到login画面
         Common.sendMessage(Common.baseUrl + "/login/checklogin"
         , "POST"
         , null
@@ -73,23 +75,21 @@ class MainForm extends Component{
   }
 
   getTitle(){
-    console.log(this.props.location.pathname)
-    var mainPath = this.props.location.pathname.replace("/main/", "")
-    console.log(mainPath)
-    var title = '默认'
-    switch(mainPath)
-    {
-        case 'xiaoshou':
-            title='销售'
-                break;
-            case 'baofei':
-                title='报废'
-                break;
-            default:
-                title='默认'
-                break;
+    const {errorMessage} = this.context
+    if(errorMessage.length > 0){
+        setTimeout(()=>{
+            this.context.errorMessage=''
+            this.setState({
+                showMsg:false
+            })
+        }, 3000)
     }
-    return title
+    return (
+        <Message style={{ marginLeft:"100px" , visibility: errorMessage.length > 0 ? 'visible' : 'hidden '}} attached='bottom' warning>
+                                        <Icon name='help' />
+                                        {errorMessage}
+                                        </Message>
+        )
   }
   render(){
     return ( 
@@ -102,18 +102,15 @@ class MainForm extends Component{
                     <div className="ui pusher" >
                         <div className="navslide navwrap" >{/* 上边条 */}
                             <div className="ui menu icon borderless grid">
-                                <Message style={{ marginLeft:"150px"}} attached='bottom' warning >
-                                    <Icon name='help' />
-                                    {this.getTitle()}
-                                    </Message>
+                                {this.getTitle()}
                                 <div className="right menu">
-                                    <Form.Button color='teal' fluid='true' large='true'>
+                                    <Form.Button color='teal' fluid large='true'>
                                         退出
                                     </Form.Button>
                                 </div>
                             </div>
                         </div>
-                        <div className="mainWrap navslide"  style={{ marginLeft:"150px", minWidth:"400px", overflow:"inherit"}}>
+                        <div className="mainWrap navslide"  style={{ marginLeft:"100px", minWidth:"400px", overflow:"inherit"}}>
                         {/* 设定消息对话框 */}
                         <Confirm
                             open={confirmInfo.open}

@@ -19,12 +19,12 @@ class ShoppingItem{
     PRICE_SUBTOTAL = 0
     
 
-    InitShoppingItem(iteminfo, itemCount){
+    InitShoppingItem(iteminfo, itemCount, count = 1){
         this.key = iteminfo.key + '_' + itemCount.toString()
         this.COM_TYPE_ID = iteminfo.COM_TYPE_ID
         this.ITEM_ID = iteminfo.ITEM_ID
         this.ITEM_NAME = iteminfo.ITEM_NAME
-        this.ITEM_NUMBER = 1
+        this.ITEM_NUMBER = count
         this.PRICE_SELECT = 1
         
         this.PRICE_ARR = [

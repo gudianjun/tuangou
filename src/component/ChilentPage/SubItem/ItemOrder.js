@@ -165,7 +165,8 @@ class SelectPrice extends Component{
         // onChange={(e, f)=>{this.setState({selectShop:this.state.shopList.find(element=>element.value === f.value)})}}value
         return (
             <Input type='text' placeholder='P' action>
-                    <Select onChange={(e,f)=>{this.priceSelect(e,f)}} style={{width:"50px" }} compact options={priceTypes} defaultValue={priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')} value={priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')} />
+                    <Select onChange={(e,f)=>{this.priceSelect(e,f)}} style={{width:"50px" }} compact options={priceTypes} 
+                    value={priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')} />
                         <Label as='a' style={{fontSize:"16px" }} >
                         {priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')}
                                             </Label>
@@ -217,25 +218,117 @@ export default class ItemOrder extends Component{
             items:nexProps.items
         }
       } 
-
+    componentWillUnmount(){
+        console.log(this.context)
+        const {setMainContext} = this.context;
+        setMainContext({
+            shoppingItems : []
+        })
+    }
     shouldComponentUpdate(nexProps, prevState)    {
       return true
     }
+    
     static propTypes = {
-        opetype:PropTypes.number
+        opetype:PropTypes.number,
+        ordertype:PropTypes.number
+    }
+    static defaultProps ={
+        ordertype:-1
     }
     static contextType = MainContext;
     sumTotelPrice
 
+    onShopChange(shopid){
+        // 请求商品数据
+        const {setMainContext} = this.context;
+        //shopItems:[], // 仓库商品信息
+        //selectedShopid:0 // 当前选择
+        // f.value
+        // 请求登录检查，如果失败了，则跳转到login画面
+        Common.sendMessage(Common.baseUrl + "/cangku/getishoptems"
+        , "POST"
+        , null
+        , {shopid:shopid}
+        , null
+        , (e)=>{
+        if(e.error_code === 0){
+            const {cangkuInfo} = this.context
+            
+            cangkuInfo.shopItems = e.data
+
+            setMainContext({
+                cangkuInfo:cangkuInfo
+            })
+        }
+        else{
+            this.props.history.push("/login")
+        }
+        // 跳转到主画面
+        }
+        ,(e)=>{
+            console.log("login 报错了")
+        },
+        this.context)
+    }
+
     jiezhangClick(){
          // 检查数据，如果订单为空，则不允许提交
-         var {shoppingItems} = this.context;
-         if(shoppingItems.length > 0){        
-            var {confirmInfo} = this.context;
-            const {setMainContext} = this.context;
-            confirmInfo.open=true
-            confirmInfo.content = '点击【确定】后，提交订单！'
+        var {shoppingItems} = this.context;
+        const {setMainContext} = this.context;
+        const {cangkuInfo} = this.context;
 
+        if(shoppingItems.length > 0){    
+            if(this.props.opetype === 3 || this.props.opetype === 4 || this.props.opetype === 5 || this.props.opetype === 6){
+                // 判断仓库是否选择了
+                if(cangkuInfo.selectedShopid === -1){
+                    // 显示消息
+                    setMainContext({errorMessage:"需要选择一个仓库！"})
+                    return
+                }
+                if(this.props.opetype === 4 && cangkuInfo.selectedShopid2 === -1){
+                    // 显示消息
+                    setMainContext({errorMessage:"需要选择一个目标仓库！"})
+                    return
+                }
+            }
+            
+            var {confirmInfo} = this.context;
+            
+            confirmInfo.open=true
+            if(this.props.opetype === 0){
+                confirmInfo.content = '点击确定后，提交销售订单！'
+            } else if(this.props.opetype === 1){
+                confirmInfo.content = '退货处理，确定后提交！'
+            }
+            else if(this.props.opetype === 2){
+                confirmInfo.content = '你确定要销毁这些商品吗？'
+            }
+            else if(this.props.opetype === 3){
+                if(this.props.ordertype === 0){// 入库
+                    confirmInfo.content = '确定要入库吗？'
+                }
+                else if(this.props.ordertype === 1){
+                    confirmInfo.content = '确定要出库吗？'
+                }
+            }
+            else if(this.props.opetype === 4){
+                confirmInfo.content = '确定要移库吗？'
+            }
+            else if(this.props.opetype === 5){
+                if(this.props.ordertype === 0){// 入库
+                    confirmInfo.content = '确定要存货吗？'
+                }
+                else if(this.props.ordertype === 1){
+                    confirmInfo.content = '确定要取货吗？'
+                }
+            }
+            else if(this.props.opetype === 6){
+                confirmInfo.content = '点击确定后，进货物品会自动进入仓库？'
+            }
+            else if(this.props.opetype === 7){
+                confirmInfo.content = '确定要修改该套装吗？'
+            }
             this.OrderInfo=[];
             console.log('jiezhangClick')
             console.log(shoppingItems)
@@ -249,8 +342,6 @@ export default class ItemOrder extends Component{
                     }
                 )
             })
-            console.log('点击【确定】后，提交订单！')
-            console.log(this.OrderInfo)
 
             confirmInfo.onConfirm = ()=>{
                 console.log('confirmInfo.onConfirm')
@@ -259,8 +350,11 @@ export default class ItemOrder extends Component{
                     confirmInfo:confirmInfo
                 })
                 var sendobj = {
-                    ordertype:this.props.opetype,
-                    orderinfo:this.OrderInfo
+                    ordertype:this.props.ordertype,
+                    orderinfo:this.OrderInfo,
+                    opetype:this.props.opetype,
+                    shopidto:cangkuInfo.selectedShopid2,
+                    shopidfrom:cangkuInfo.selectedShopid
                  }
                  console.log('sendobj')
                  console.log(sendobj)
@@ -274,9 +368,14 @@ export default class ItemOrder extends Component{
                     // 成功  
                     const {setMainContext} = con;
                     setMainContext({shoppingItems:[]})
+                    // 如果是仓库操作，则需要刷一下当前选中的仓库
+                    if(this.props.opetype === 3 || this.props.opetype === 4){
+                        this.onShopChange(cangkuInfo.selectedShopid)
+                    }
                 }
                 ,(e)=>{
                     console.log("login 报错了")
+                    setMainContext({errorMessage:e})
                 }, 
                 this.context)
             }
@@ -287,12 +386,42 @@ export default class ItemOrder extends Component{
                     confirmInfo:confirmInfo
                 })
             }
+
+
+
             setMainContext({
                 confirmInfo:confirmInfo
             })
         }
+        else{
+            setMainContext({errorMessage:"没有选择任何商品，无法提交！"})
+        }
     }
 
+    getDanJia(){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+            return <Table.HeaderCell>单价</Table.HeaderCell>
+        }
+    }
+    getXiaoJi(){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+            return <Table.HeaderCell>小计</Table.HeaderCell>
+        }
+    }
+    getDanJiaRow(element){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+            return <Table.Cell collapsing >
+                    <SelectPrice itemkey={element.key}></SelectPrice>
+                    </Table.Cell>
+        }
+    }
+    getXiaoJiRow(element){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+            return <Table.Cell collapsing >
+                <LablePriceSubTotal itemkey={element.key}></LablePriceSubTotal>
+                </Table.Cell>
+        }
+    }
     render(){
         var rows = [];
         var yuanjia = 0
@@ -306,18 +435,14 @@ export default class ItemOrder extends Component{
                 shoujia += element.ITEM_NUMBER * element.PRICE_ARR[element.PRICE_SELECT]
                 jianshu += element.ITEM_NUMBER
                 rows.push(
-                    <Table.Row itemkey={element.key}>
+                    <Table.Row key={element.key} itemkey={element.key}>
                                 <Table.Cell collapsing >{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                 <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                                <Table.Cell collapsing >
-                                    <SelectPrice itemkey={element.key}></SelectPrice>
-                                </Table.Cell>
+                                {this.getDanJiaRow(element)}
                                 <Table.Cell collapsing >
                                     <NumberButton itemkey={element.key} itemvalue={element.ITEM_NUMBER}></NumberButton>
                                 </Table.Cell>
-                                <Table.Cell collapsing >
-                                    <LablePriceSubTotal itemkey={element.key}></LablePriceSubTotal>
-                                    </Table.Cell>
+                                {this.getXiaoJiRow(element)}
                                 <Table.Cell><DelButton itemkey={element.key} iconN={'trash alternate outline'}></DelButton></Table.Cell>
                             </Table.Row>
                 )
@@ -325,20 +450,65 @@ export default class ItemOrder extends Component{
             )
             youhui = yuanjia-shoujia
         }
+        var buttonTitle = '销售'
         var jiesuancolor = "red"    // 结算按钮颜色
         var jiesuanicon = 'cart'
         if(this.props.opetype === 0){
             jiesuancolor = "red" 
             jiesuanicon = 'cart'
+            buttonTitle = '合计【' + shoujia.toLocaleString('zh') + '】元'
         } else if(this.props.opetype === 1){
             jiesuancolor = "blue" 
             jiesuanicon = 'undo'
+            buttonTitle = '退还【' + shoujia.toLocaleString('zh') + '】元'
         }
         else if(this.props.opetype === 2){
             jiesuancolor = "orange" 
             jiesuanicon = 'delete'
+            buttonTitle = '销毁'
         }
-
+        else if(this.props.opetype === 3){  // 直接仓库操作
+            if(this.props.ordertype === 0) // 入库
+            {
+                jiesuancolor = "yellow" 
+                jiesuanicon = 'dolly flatbed'
+                buttonTitle = '直接入库'
+            }
+            else if(this.props.ordertype === 1){   // 出库
+                jiesuancolor = "olive" 
+                jiesuanicon = 'dolly'
+                buttonTitle = '直接出库'
+            }   
+        }
+        else if(this.props.opetype === 4){  // 流转
+            jiesuancolor = "green" 
+            jiesuanicon = 'boxes'
+            buttonTitle = '移库'
+        }
+        else if(this.props.opetype === 5){  // 会员存取
+            if(this.props.ordertype === 0) // 入库
+            {
+                jiesuancolor = "teal" 
+                jiesuanicon = 'cart arrow down'
+                buttonTitle = '存货'
+            }
+            else if(this.props.ordertype === 1){   // 出库
+                jiesuancolor = "violet" 
+                jiesuanicon = 'shopping basket'
+                buttonTitle = '提货'
+            }   
+        }
+        else if(this.props.opetype === 6){  // 采购到货
+            jiesuancolor = "brown" 
+            jiesuanicon = 'shipping fast'
+            buttonTitle = '到货'
+        }
+        else if(this.props.opetype === 7){  // 套装编辑
+            jiesuancolor = "grey" 
+            jiesuanicon = 'settings'
+            buttonTitle = '设定套装'
+        }
+        console.log("jianshu" + jianshu)
         
         return(
             
@@ -349,9 +519,9 @@ export default class ItemOrder extends Component{
                             <Table.Row>
                                 <Table.HeaderCell>编号</Table.HeaderCell>
                                 <Table.HeaderCell>名称</Table.HeaderCell>
-                                <Table.HeaderCell>单价</Table.HeaderCell>
+                                {this.getDanJia()}
                                 <Table.HeaderCell>数量</Table.HeaderCell>
-                                <Table.HeaderCell>小计</Table.HeaderCell>
+                                {this.getXiaoJi()}
                                 <Table.HeaderCell>操作</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
@@ -371,11 +541,12 @@ export default class ItemOrder extends Component{
                                     size='massive'
                                     color={jiesuancolor}
                                 >
-                                    <Icon name={jiesuanicon} />合计【{shoujia.toLocaleString('zh')}】元
+                                    <Icon name={jiesuanicon} />
+                                    {buttonTitle}
                                 </Button>
                                 <Label.Group tag size='large'>
-                                    <Label as='a'>原价:￥{yuanjia.toLocaleString('zh')}</Label>
-                                    <Label as='a' color='red'>优惠:￥{youhui.toLocaleString('zh')}</Label>
+                                {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7 ? <Label as='a'>原价:￥{yuanjia.toLocaleString('zh')}</Label>:<div></div>}
+                                {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7 ? <Label as='a' color='red'>优惠:￥{youhui.toLocaleString('zh')}</Label>:<div></div>}
                                     <Label as='a'>件数:{jianshu}</Label>
                                 </Label.Group>
                                 </Table.HeaderCell>

@@ -33,7 +33,14 @@ class App extends React.Component{
   }
   // 系统总上下文
   mainContext = {
+    errorMessage:'',  // 错误消息
     items:[], // 商品信息
+    cangkuInfo:{  // 仓库操作信息
+      shopItems:[], // 仓库商品信息
+      selectedShopid:-1, // 当前选择
+      shopList:[],  // 移库仓库清单
+      selectedShopid2:-1  // 移库目标仓库选择id
+    },
     shoppingItems:[],
     setMainContext:(obj)=>{this.setMainContext(obj)},
     logout:()=>{

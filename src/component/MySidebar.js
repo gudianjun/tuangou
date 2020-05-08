@@ -16,7 +16,7 @@ export default class MainForm extends Component{
     render(){
         return(
             <div>
-            <div className="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey"  style={{width:"150px"}} data-color="grey">
+            <div className="ui sidebar vertical left menu overlay  borderless visible sidemenu inverted  grey"  style={{width:"100px"}} data-color="grey">
                 <div className="something-else-semantic">
                     <div style={{width:"100%", height:"50px", background:"#A00"}}>
                         <div style={{top:"10px", position:"absolute", width:"100%"}}>

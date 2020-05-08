@@ -1,6 +1,6 @@
 export default class Common{
     static get baseUrl(){
-        return  "http://192.168.3.72:5000/v1";
+        return  "http://192.168.3.11:5000/v1";
     }
 
     static _setStorage(key, value){
@@ -17,7 +17,7 @@ export default class Common{
         if(token === null){
             return ""
         }
-        var arr=new Array();
+        var arr= []
         arr.push(token);
         arr.push(":");
         arr.push("");
