@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route, Redirect, withRouter} from 'react-router-dom'
+import {Divider, Button, Form, Confirm, Grid, Header, Image, Message, Segment, Dropdown, Popup, Sidebar, Menu, Icon, Container } from 'semantic-ui-react'
 import { useCookies, withCookies, Cookies  } from 'react-cookie';
 import LoginForm from './component/LoginForm'
 import MainForm from './component/MainForm'
@@ -88,8 +89,13 @@ class App extends React.Component{
     
   }*/
   render(){
+    
     return (
       <div className="pace  pace-inactive">
+         
+         
+
+
         <MainContext.Provider value = {this.mainContext}>
           <Switch>
             <Route exact path='/' component={LoginForm}></Route>

@@ -102,7 +102,8 @@ export default class ItemSelect extends Component{
                 // setMainContext({itemsList:arrayObj}) // 设定商品列表
                 // 写入缓存
                 Common._setStorage("itemsList", JSON.stringify(arrayObj))
-                this.setState({})
+                const {setMainContext} = this.context;
+                setMainContext({items:arrayObj})
             },null,
             this.context)
     }

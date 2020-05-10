@@ -1,6 +1,6 @@
 import React,{Component} from "react"
 import {MainContext} from "../ObjContext"
-import { Icon, Label, Menu, Select, Table,Button, Dropdown , Input} from 'semantic-ui-react'
+import { Icon, Label, Menu, Select, Table,Button, Dropdown , Input, Visibility} from 'semantic-ui-react'
 import PropTypes, { element, array, checkPropTypes } from 'prop-types';
 import Common from '../../../common/common'
 // 定制一个删除按钮
@@ -52,7 +52,13 @@ class NumberButton extends Component{
         this.state={itemkey:this.props.itemkey}
     }
     static propTypes = {
-        itemkey:PropTypes.string
+        itemkey:PropTypes.string,
+        ITEMS:PropTypes.array,
+        opetype:PropTypes.number
+    }
+    static defaultProps={
+        ITEMS:[],
+        opetype:0
     }
     handleInput(e){
         console.log(e.target.value)
@@ -62,17 +68,27 @@ class NumberButton extends Component{
 
     numberChange = (e,f) => {
         
-        const { value } = f;
+        var { value } = f;
         const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
         if ((reg.test(value) && value.length < 4) || value === '') {
-
+          value = parseInt(value)
           const {shoppingItems} = this.context;
           var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
           if(value===''){
             shoppingItems[index].ITEM_NUMBER = 1
           }
           else{
-            shoppingItems[index].ITEM_NUMBER = value
+            if(this.props.opetype === 9)    // 会员提货
+            {
+                
+                var oldindex = this.props.ITEMS.findIndex(element=>{return element.ITEM_ID === shoppingItems[index].ITEM_ID &&  element.COM_TYPE_ID === shoppingItems[index].COM_TYPE_ID })
+                if(oldindex >=0 && this.props.ITEMS[oldindex].ITEM_NUMBER - value >= 0){
+                    shoppingItems[index].ITEM_NUMBER = value
+                }
+            }
+            else{
+                shoppingItems[index].ITEM_NUMBER = parseInt(value)
+            }
           }
           const {setMainContext} = this.context;
           shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
@@ -85,12 +101,29 @@ class NumberButton extends Component{
         const {shoppingItems} = this.context;
         const {setMainContext} = this.context;
         var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
-        if(shoppingItems[index].ITEM_NUMBER < 999){
-            shoppingItems[index].ITEM_NUMBER++;
-            shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
-            setMainContext({
-                shoppingItems:shoppingItems
-              })
+
+        if(this.props.opetype === 9)    // 会员提货
+        {
+            var oldindex = this.props.ITEMS.findIndex(element=>{return element.ITEM_ID === shoppingItems[index].ITEM_ID &&  element.COM_TYPE_ID === shoppingItems[index].COM_TYPE_ID })
+            if(oldindex >=0 && this.props.ITEMS[oldindex].ITEM_NUMBER - shoppingItems[index].ITEM_NUMBER > 0){
+                if(shoppingItems[index].ITEM_NUMBER < 999){
+                    shoppingItems[index].ITEM_NUMBER++;
+                    shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
+                    setMainContext({
+                        shoppingItems:shoppingItems
+                    })
+                }
+            }
+        }
+        else
+        {
+            if(shoppingItems[index].ITEM_NUMBER < 999){
+                shoppingItems[index].ITEM_NUMBER++;
+                shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
+                setMainContext({
+                    shoppingItems:shoppingItems
+                })
+            }
         }
       }
       minusClick(){
@@ -399,24 +432,24 @@ export default class ItemOrder extends Component{
     }
 
     getDanJia(){
-        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7  && this.props.opetype!== 8 && this.props.opetype!== 9){
             return <Table.HeaderCell>单价</Table.HeaderCell>
         }
     }
     getXiaoJi(){
-        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7 && this.props.opetype!== 8 && this.props.opetype!== 9){
             return <Table.HeaderCell>小计</Table.HeaderCell>
         }
     }
     getDanJiaRow(element){
-        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7 && this.props.opetype!== 8 && this.props.opetype!== 9){
             return <Table.Cell collapsing >
                     <SelectPrice itemkey={element.key}></SelectPrice>
                     </Table.Cell>
         }
     }
     getXiaoJiRow(element){
-        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7){
+        if (this.props.opetype!==2 && this.props.opetype!==3  && this.props.opetype!==4  && this.props.opetype!== 7 && this.props.opetype!== 8 && this.props.opetype!== 9){
             return <Table.Cell collapsing >
                 <LablePriceSubTotal itemkey={element.key}></LablePriceSubTotal>
                 </Table.Cell>
@@ -440,7 +473,7 @@ export default class ItemOrder extends Component{
                                 <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                                 {this.getDanJiaRow(element)}
                                 <Table.Cell collapsing >
-                                    <NumberButton itemkey={element.key} itemvalue={element.ITEM_NUMBER}></NumberButton>
+                                    <NumberButton ITEMS={this.props.ITEMS} opetype={this.props.opetype} itemkey={element.key} itemvalue={element.ITEM_NUMBER}></NumberButton>
                                 </Table.Cell>
                                 {this.getXiaoJiRow(element)}
                                 <Table.Cell><DelButton itemkey={element.key} iconN={'trash alternate outline'}></DelButton></Table.Cell>
@@ -537,7 +570,7 @@ export default class ItemOrder extends Component{
                                     floated='right'
                                     icon
                                     labelPosition='left'
-                                    
+                                    style={{display:this.props.opetype===7  || this.props.opetype=== 8 || this.props.opetype=== 9?'none':''}}
                                     size='massive'
                                     color={jiesuancolor}
                                 >
@@ -545,8 +578,8 @@ export default class ItemOrder extends Component{
                                     {buttonTitle}
                                 </Button>
                                 <Label.Group tag size='large'>
-                                {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7 ? <Label as='a'>原价:￥{yuanjia.toLocaleString('zh')}</Label>:<div></div>}
-                                {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7 ? <Label as='a' color='red'>优惠:￥{youhui.toLocaleString('zh')}</Label>:<div></div>}
+                                {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7  && this.props.opetype!== 8 && this.props.opetype!== 9? <Label as='a'>原价:￥{yuanjia.toLocaleString('zh')}</Label>:<div></div>}
+                                {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7  && this.props.opetype!== 8 && this.props.opetype!== 9? <Label as='a' color='red'>优惠:￥{youhui.toLocaleString('zh')}</Label>:<div></div>}
                                     <Label as='a'>件数:{jianshu}</Label>
                                 </Label.Group>
                                 </Table.HeaderCell>

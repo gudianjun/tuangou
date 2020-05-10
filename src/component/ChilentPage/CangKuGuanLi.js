@@ -15,7 +15,7 @@ export default class CangKuGuanLi extends Component{
         super(props)
         this.state={shopList:[]}
 
-        // 请求登录列表
+        // 请求商店列表
         Common.sendMessage(Common.baseUrl + "/login/getshops", "POST", null
         , {shoptype:1}, null
         , (e)=>{

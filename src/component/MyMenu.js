@@ -58,11 +58,6 @@ export default class MenuExampleInvertedVertical extends Component {
           onClick={this.handleItemClick}
           ><Icon name='users' />会员管理</Menu.Item>
           <Menu.Item
-          name='huiyuancunhuoguanli'
-          active={activeItem === 'huiyuancunhuoguanli'}
-          onClick={this.handleItemClick}
-          ><Icon name='recycle' />会员存货</Menu.Item>
-          <Menu.Item
           name='dianpuguanli'
           active={activeItem === 'dianpuguanli'}
           onClick={this.handleItemClick}
@@ -87,11 +82,6 @@ export default class MenuExampleInvertedVertical extends Component {
           active={activeItem === 'kucunzonglan'}
           onClick={this.handleItemClick}
           ><Icon name='recycle' />库存总览</Menu.Item>
-          <Menu.Item
-          name='zhuankuguanli'
-          active={activeItem === 'zhuankuguanli'}
-          onClick={this.handleItemClick}
-          ><Icon name='recycle' />转库管理</Menu.Item>
           <Menu.Item
           name='shangpinguanli'
           active={activeItem === 'shangpinguanli'}

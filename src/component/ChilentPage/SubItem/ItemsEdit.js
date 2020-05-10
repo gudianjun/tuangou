@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Segment } from 'semantic-ui-react'
+import { Icon, Label, Menu, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Segment, Dropdown } from 'semantic-ui-react'
 import PropTypes, { element } from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from "../../../common/common"
@@ -16,7 +16,8 @@ export default class ItemsEdit extends Component{
             items:[],
             baseitems:[],
             showset:false,   // 是否显示套装编辑画面
-            editobject:{}   //进行编辑的对象
+            editobject:{},   //进行编辑的对象
+            comtypes:[] // 商品类别列表
         }
         this.getItems() // 获得编辑列表
     }
@@ -40,6 +41,25 @@ export default class ItemsEdit extends Component{
                 this.setState({baseitems:arrayObj})
             },null,
             this.context)
+
+        var comtypes = []
+        Common.sendMessage(Common.baseUrl + "/item/getcomtypes"
+            , "POST"
+            , null
+            , null
+            , null
+            , (e)=>{
+                e.data.forEach(element => {
+                    comtypes.push({
+                        key: element.COM_TYPE_ID,
+                        text: element.COM_TYPE_ID,
+                        value: element.COM_TYPE_ID
+                    })
+                });
+                // 写入缓存
+                this.setState({comtypes:comtypes})
+            },null,
+            this.context)
     }
     static getDerivedStateFromProps(nexProps, prevState){
         var items = []
@@ -51,6 +71,11 @@ export default class ItemsEdit extends Component{
                         && prevState.editobject.COM_TYPE_ID === element.COM_TYPE_ID){
                         items.push({...element, DISP_FLG: 1})
                     }
+                    else if(prevState.editstate === 2
+                        && prevState.editobject.ITEM_ID === element.ITEM_ID 
+                        && prevState.editobject.COM_TYPE_ID === element.COM_TYPE_ID){
+                        items.push({...element, DISP_FLG: 2})
+                    }
                     else{
                         items.push({...element, DISP_FLG: 0})
                     }
@@ -59,6 +84,11 @@ export default class ItemsEdit extends Component{
                     if(element.DEL_FLG === 0){
                         // 0：普通，1：追加；2：编辑
                         if(prevState.editstate === 1 
+                            && prevState.editobject.ITEM_ID === element.ITEM_ID 
+                            && prevState.editobject.COM_TYPE_ID === element.COM_TYPE_ID){
+                            items.push({...element, DISP_FLG: 2})
+                        }
+                        else if(prevState.editstate === 2
                             && prevState.editobject.ITEM_ID === element.ITEM_ID 
                             && prevState.editobject.COM_TYPE_ID === element.COM_TYPE_ID){
                             items.push({...element, DISP_FLG: 1})
@@ -116,6 +146,14 @@ export default class ItemsEdit extends Component{
         if (item.DEL_FLG === 1)
             return (<Label ribbon><Icon name='delete' /> </Label>)
     }
+    getAddFlg(item){
+        if (item.DISP_FLG === 2)
+            return (<Label color='red' ribbon><Icon name='add circle' /> </Label>)
+    }
+    getSetFlg(item){
+        if (item.ITEM_TYPE === 1)
+            return (<Label color='red' ribbon>SET</Label>)
+    }
 
     // 恢复选中的商品
     onHuiFuClick(e, id, tid){
@@ -154,15 +192,59 @@ export default class ItemsEdit extends Component{
                 this.setState({
                     baseitems:baseitems
                 })
-            },null,
+            },(e)=>{
+                const {setMainContext} = this.context
+                setMainContext({
+                    errorMessage: e
+                })
+            },
             this.context)
     }
     // 取消编辑操作的商品
     onCancelClick(e, id, tid){
+        // 添加状态下，取消操作，删除最后一个商品
+        var {baseitems} = this.state
+        if(this.state.editstate === 2){
+            baseitems.pop()
+        }
         this.setState({
             editstate:0,
-            editobject:[]
+            editobject:[],
+            baseitems:baseitems
         })
+    }
+    // 添加一个新的商品
+    onAddNewClick(e, id, tid){
+        Common.sendMessage(Common.baseUrl + "/item/getitemid"
+            , "POST"
+            , null
+            , {COM_TYPE_ID:this.state.comtypes[0].value}
+            , null
+            , (e)=>{
+                // 取得
+                // 修改基础列表，结尾追加一条
+                var {baseitems} = this.state
+                var addobj = {
+                    ITEM_ID:e.data,
+                    COM_TYPE_ID:this.state.comtypes[0].value,
+                    ITEM_NAME:'',
+                    ITEM_COST:0.0,
+                    ITEM_PRICE:0.0,
+                    ITEM_MEM_PRICE:0.0,
+                    ITEM_GROUP_PRICE:0.0,
+                    ITEM_DEPOSIT_PRICE:0.0,
+                    ITEM_TYPE:0,
+                    DEL_FLG:0,
+                    ITEM_UNIT_INFO:''
+                }
+                baseitems.push(addobj)
+
+                this.setState({
+                    editstate:2,    // 添加新商品
+                    editobject:addobj,
+                })
+            },null,
+            this.context)        
     }
     // 编辑选中的商品
     onEditClick(e, id, tid){
@@ -177,23 +259,30 @@ export default class ItemsEdit extends Component{
             editobject:editobject   
         })
     }
-    onSubmitEditClick(item){
+    onSubmitEditClick(item, ope=1){
         // 编辑下面的提交按钮
         // 如果是套餐，则，子清单不能为空。
+        const {setMainContext} = this.context
         if (item.ITEM_TYPE === 1){
             if(item.ITEM_UNIT_INFO.length <= 0){
-                const {setMainContext} = this.context
                 setMainContext({
                     errorMessage:'套装必须设定包含商品，请点击【套装】按钮进行编辑。'
                 })
                 return
             }
         }
+        if (item.ITEM_NAME === ''){
+            setMainContext({
+                errorMessage:'必须填写商品名称。'
+            })
+            return
+        }
         // 提交编辑
         Common.sendMessage(Common.baseUrl + "/item/edititem"
         , "POST"
         , null
         , {
+            'edittype':ope,
             'ITEM_ID': parseInt(item.ITEM_ID),
             'COM_TYPE_ID': item.COM_TYPE_ID,
             'ITEM_NAME' : item.ITEM_NAME,
@@ -204,7 +293,7 @@ export default class ItemsEdit extends Component{
             'ITEM_DEPOSIT_PRICE' : parseFloat(item.ITEM_DEPOSIT_PRICE),
             'ITEM_TYPE' : parseInt(item.ITEM_TYPE),
             'ITEM_UNIT_INFO' : item.ITEM_UNIT_INFO,
-            'DEL_FLG' : 1
+            'DEL_FLG' : 0
             }
         , null
         , (e)=>{
@@ -214,7 +303,12 @@ export default class ItemsEdit extends Component{
                 editstate:0,
                 editobject:[]
             })
-        },null,
+        },(e)=>{
+            const {setMainContext} = this.context
+            setMainContext({
+                errorMessage: e
+            })
+        },
         this.context)
     }
     getButtonGroup(item){
@@ -239,21 +333,25 @@ export default class ItemsEdit extends Component{
             return (
        
                 <ButtonGroup>
-                    <Button primary onClick={(e)=>this.onSubmitEditClick(item)}>提交</Button>
+                    <Button primary onClick={(e)=>this.onSubmitEditClick(item, 1)}>提交</Button>
                     <Button secondary onClick={(e)=>this.onCancelClick(e, item.ITEM_ID, item.COM_TYPE_ID)}>取消</Button>
                     <Button onClick={()=>this.onSetEditClick(item)}
                         style={{display: item.ITEM_TYPE === 0 ? 'none' : 'block'}}>套装
                 </Button>
                 </ButtonGroup>
-                
             )
         }
-    }
-    // 添加一个商品
-    addClick(){
-        this.setState({
-            showset:true
-        })
+        else if (item.DISP_FLG === 2){  // 添加
+            return (
+                <ButtonGroup>
+                    <Button primary onClick={(e)=>this.onSubmitEditClick(item, 2)}>提交</Button>
+                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.ITEM_ID, item.COM_TYPE_ID)}>放弃</Button>
+                    <Button onClick={()=>this.onSetEditClick(item)}
+                        style={{display: item.ITEM_TYPE === 0 ? 'none' : 'block'}}>套装
+                </Button>
+                </ButtonGroup>
+            )
+        }
     }
 
     onSetEditClick(item){
@@ -275,7 +373,8 @@ export default class ItemsEdit extends Component{
         else{
             setMainContext({
                 shoppingItems:[]
-            })
+            }
+            )
         }
        
         this.setState({
@@ -285,7 +384,7 @@ export default class ItemsEdit extends Component{
     addNormolRow(element){
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                            <Table.Cell collapsing>{this.getDelFlg(element)} {element.ITEM_ID}</Table.Cell>
+                            <Table.Cell collapsing>{this.getDelFlg(element)} {this.getSetFlg(element)} {element.ITEM_ID}</Table.Cell>
                             <Table.Cell collapsing>{element.COM_TYPE_ID}</Table.Cell>
                             <Table.Cell collapsing>{element.ITEM_NAME}</Table.Cell>
                             <Table.Cell collapsing>{element.ITEM_COST}</Table.Cell>
@@ -338,12 +437,85 @@ export default class ItemsEdit extends Component{
         }
         
     }
+    // 套装设定画面保存按钮
+    onSetSave(){
+        const {shoppingItems} = this.context
+        const {setMainContext} = this.context
+        // 发送恢复删除请求
+
+        var {editobject} = this.state
+
+        var subitem = []
+        shoppingItems.forEach(element => {
+            subitem.push({
+                SUB_ITEM_ID:element.ITEM_ID,
+                SUB_COM_TYPE_ID:element.COM_TYPE_ID,
+                ITEM_NUMBER:element.ITEM_NUMBER
+            })
+        });
+        editobject.ITEM_UNIT_INFO=JSON.stringify(subitem)
+        this.setState({
+            editobject:editobject,
+            showset:false
+        })
+    }
     addEditRow(element){
         element = {...element, DISP_FLG:1} // 补充一个编辑标记
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                             <Table.Cell>{element.ITEM_ID}</Table.Cell>
                             <Table.Cell>{element.COM_TYPE_ID}</Table.Cell>
+                            <Table.Cell><Input fluid value={element.ITEM_NAME} onChange={(e, f)=>this.onEditItem('ITEM_NAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input fluid value={element.ITEM_COST} onChange={(e, f)=>this.onEditItem('ITEM_COST', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input fluid value={element.ITEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input fluid value={element.ITEM_MEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_MEM_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input fluid value={element.ITEM_GROUP_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_GROUP_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input fluid value={element.ITEM_DEPOSIT_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_DEPOSIT_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell>
+                             <ButtonGroup fluid>
+                                <Radio toggle label={element.ITEM_TYPE === 0 ? '单品' : '套装' } 
+                                    checked={element.ITEM_TYPE === 0 ? false : true} onChange={()=>this.onEditSetChange(element)}>
+                                </Radio>
+                            </ButtonGroup>
+                            </Table.Cell>
+                            <Table.Cell>
+                                {this.getButtonGroup(element)}
+                            </Table.Cell>
+                        </Table.Row>
+        )
+    }
+    // 更改添加商品的类型选择
+    handleAddItemComChange(e,f){
+        Common.sendMessage(Common.baseUrl + "/item/getitemid"
+        , "POST"
+        , null
+        , {COM_TYPE_ID: f.value}
+        , null
+        , (e)=>{
+            // 取得
+            // 修改基础列表，结尾追加一条
+            var {editobject} = this.state
+            editobject.ITEM_ID = e.data
+            editobject.COM_TYPE_ID = f.value
+
+            this.setState({
+                editobject:editobject,
+            })
+        },null,
+        this.context)     
+    }
+    addAddRow(element){
+        element = {...element, DISP_FLG:2} // 补充一个添加标记
+        return (
+            <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                            <Table.Cell>{this.getAddFlg(element)}{element.ITEM_ID}</Table.Cell>
+                            <Table.Cell><Dropdown
+                                onChange={(e,f)=>this.handleAddItemComChange(e,f)}
+                                options={this.state.comtypes}
+                                placeholder='选择商品类别'
+                                selection
+                                value={element.COM_TYPE_ID}/>
+                            </Table.Cell>
                             <Table.Cell><Input fluid value={element.ITEM_NAME} onChange={(e, f)=>this.onEditItem('ITEM_NAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.ITEM_COST} onChange={(e, f)=>this.onEditItem('ITEM_COST', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.ITEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_PRICE', element, f.value)}></Input></Table.Cell>
@@ -378,24 +550,34 @@ export default class ItemsEdit extends Component{
                         rows.push(this.addNormolRow(element))
                     }
                 }
+                if(this.state.editstate === 2){ // 编辑模式
+                    if(element.ITEM_ID === this.state.editobject.ITEM_ID && element.COM_TYPE_ID === this.state.editobject.COM_TYPE_ID){
+                        rows.push(this.addAddRow(this.state.editobject))
+                    }
+                    else{
+                        rows.push(this.addNormolRow(element))
+                    }
+                }
             }
             )
         }
+        if(this.state.editstate === 0){
         // 添加空行
-        rows.push(<Table.Row key={'new'}>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell></Table.Cell>
-                        <Table.Cell>
-                            <Button onClick={()=>this.addClick()}>添加</Button>
-                        </Table.Cell>
-                    </Table.Row>)
+            rows.push(<Table.Row key={'new'}>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
+                            <Table.Cell>
+                                <Button onClick={()=>this.onAddNewClick()}>添加</Button>
+                            </Table.Cell>
+                        </Table.Row>)
+        }
         return(
             
             <div>
@@ -420,7 +602,17 @@ export default class ItemsEdit extends Component{
                     </Table.Body>
                 </Table>
                 <Modal open={this.state.showset}>   
-                    <Modal.Header>编辑套装包含商品 <Button icon style={{position:'absolute',right:20}} onClick={()=>this.setState({showset:false})} ><Icon name='cancel'></Icon></Button></Modal.Header>
+                    <Modal.Header>编辑套装包含商品【{this.state.editobject.key}】
+                      <ButtonGroup style={{position:'absolute',right:60}}>
+                        <Button  onClick={()=>this.onSetSave()} primary >
+                             保存
+                        </Button>
+                        <Button.Or />
+                        <Button onClick={()=>this.setState({showset:false})} >
+                            取消
+                        </Button>
+                        </ButtonGroup>
+                    </Modal.Header>
                     <Modal.Content>
                         <Grid columns='equal'>
                             <Grid.Column width={"6"}> {/*this.state.items*/}

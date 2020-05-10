@@ -82,7 +82,7 @@ class MainForm extends Component{
             this.setState({
                 showMsg:false
             })
-        }, 3000)
+        }, 5000)
     }
     return (
         <Message style={{ marginLeft:"100px" , visibility: errorMessage.length > 0 ? 'visible' : 'hidden '}} attached='bottom' warning>
@@ -92,24 +92,41 @@ class MainForm extends Component{
         )
   }
   render(){
+    var fixed = true
     return ( 
         <MainContext.Consumer>{
             ({confirmInfo, items})=>(
         <div>
            
                 <MySidebar childrenRoute={this.childrenRoute}></MySidebar>
+               
+                <Segment
+                    inverted
+                    textAlign='center'
+                    style={{ minHeight: 65, padding: '1em 0em' }}
+                    vertical
+                >
+                    <Menu 
+                        fixed={fixed ? 'top' : null}
+                        inverted={!fixed}
+                        pointing={!fixed}
+                        secondary={!fixed}
+                        size='large'
+                        >
+                    
+                        {this.getTitle()}
+                        <Menu.Item position='right'>
+                            <Button size='mini' as='a' >
+                                退出
+                            </Button>
+                        </Menu.Item>
+                    
+                    </Menu>
+
+                </Segment>
+
                 <div className="pusher pushable">
                     <div className="ui pusher" >
-                        <div className="navslide navwrap" >{/* 上边条 */}
-                            <div className="ui menu icon borderless grid">
-                                {this.getTitle()}
-                                <div className="right menu">
-                                    <Form.Button color='teal' fluid large='true'>
-                                        退出
-                                    </Form.Button>
-                                </div>
-                            </div>
-                        </div>
                         <div className="mainWrap navslide"  style={{ marginLeft:"100px", minWidth:"400px", overflow:"inherit"}}>
                         {/* 设定消息对话框 */}
                         <Confirm

@@ -44,7 +44,7 @@ export default class Common{
             body = JSON.stringify(bodyObj)
         }
         var pram=""
-        for (var key in urlPram) {
+        for (var key in urlPram) { 
             if (urlPram.hasOwnProperty(key)) {
                 pram+= key + "=" + urlPram[key]+"&"
             }
@@ -84,6 +84,9 @@ export default class Common{
                 console.log(logout); // 拿到数据进行页面渲染
                 if (result.error_code === 4011){
                     logout()
+                }
+                else{
+                    callbackErr(result.msg);
                 }
                 // if(callbackobj!=null)
                 // {
