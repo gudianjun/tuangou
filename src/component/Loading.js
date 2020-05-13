@@ -28,7 +28,29 @@ class LoaderExampleInline extends Component{
         //         this.props.history.push("/main")
         //     },null,
         //     context)
-        this.props.history.push("/main")
+         // 初始化店铺清单
+         Common.sendMessage(Common.baseUrl + "/shop/getshops"
+         , "POST"
+         , null
+         , {SHOP_TYPE:0}
+         , null
+         , (e)=>{
+             var shops = []
+             e.data.forEach(element => {
+                 shops.push({
+                     key:element.SHOP_ID,
+                     text:element.SHOP_NAME,
+                     value:element.SHOP_ID
+                 })
+             });
+             const {setMainContext} = this.context;
+             setMainContext({shops:shops})
+             this.props.history.push("/main")
+         },(e)=>{
+             console.log(e)
+         },
+         this.context)
+        
     }
     static contextType = MainContext;
     // 开始加载初始化数据

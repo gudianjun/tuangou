@@ -335,7 +335,7 @@ export default class MemberEdit extends Component{
                             <Table.Cell collapsing>{element.MEM_LASTNAME}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_FIRSTNAME}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_BIRTHDAY}</Table.Cell>
-                            <Table.Cell collapsing>{element.MEM_SEX}</Table.Cell>
+                            <Table.Cell collapsing>{element.MEM_SEX === 0 ? '女' : '男'}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_CODE}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_PHONE}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_ZIP}</Table.Cell>
@@ -591,7 +591,7 @@ export default class MemberEdit extends Component{
                         <Table.HeaderCell >身份证号码</Table.HeaderCell>
                         <Table.HeaderCell >电话号码</Table.HeaderCell>
                         <Table.HeaderCell >邮编</Table.HeaderCell>
-                        <Table.HeaderCell width={5} >住址</Table.HeaderCell>
+                        <Table.HeaderCell width={4} >住址</Table.HeaderCell>
                         <Table.HeaderCell width={3} ><Radio toggle label='显示全部' checked={this.state.showall} onChange={()=>this.onShowChange()}></Radio></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>

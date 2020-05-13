@@ -20,7 +20,6 @@ import XiTongSheDing from "./ChilentPage/XiTongSheDing"
 import CaiGouGuanLi from "./ChilentPage/CaiGouGuanLi"
 import KuCunZongLan from "./ChilentPage/KuCunZongLan"
 
-import ZhuanKuGuanLi from "./ChilentPage/ZhuanKuGuanLi"
 import ShangPinGuanLi from "./ChilentPage/ShangPinGuanLi"
 import TongJiBaoBiao from "./ChilentPage/TongJiBaoBiao"
 import { MainContext} from './ChilentPage/ObjContext'
@@ -93,6 +92,7 @@ class MainForm extends Component{
   }
   render(){
     var fixed = true
+    document.title = 'GL团购系统—' + Common._loadStorage('shopname')
     return ( 
         <MainContext.Consumer>{
             ({confirmInfo, items})=>(
@@ -103,7 +103,7 @@ class MainForm extends Component{
                 <Segment
                     inverted
                     textAlign='center'
-                    style={{ minHeight: 65, padding: '1em 0em' }}
+                    style={{ minHeight: 66, padding: '1em 0em' }}
                     vertical
                 >
                     <Menu 
@@ -127,7 +127,7 @@ class MainForm extends Component{
 
                 <div className="pusher pushable">
                     <div className="ui pusher" >
-                        <div className="mainWrap navslide"  style={{ marginLeft:"100px", minWidth:"400px", overflow:"inherit"}}>
+                        <div className="mainWrap navslide"  style={{ marginLeft:"110px", minWidth:"400px", overflow:"inherit"}}>
                         {/* 设定消息对话框 */}
                         <Confirm
                             open={confirmInfo.open}
@@ -154,7 +154,6 @@ class MainForm extends Component{
                             <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
                             <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
 
-                            <Route path='/main/zhuankuguanli' component={ZhuanKuGuanLi}></Route>
                             <Route path='/main/shangpinguanli' component={ShangPinGuanLi}></Route>
                             <Route path='/main/tongjibaobiao' component={TongJiBaoBiao}></Route>
                             {/*<Redirect from="*" to="/login"></Redirect>*/}

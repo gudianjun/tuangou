@@ -81,13 +81,15 @@ export default class ShopItemSelect extends Component{
     //         items : cangkuInfo.shopItems
     //     })
     // }
-
+    onRefClick(){
+        
+    }
     render(){
         const {cangkuInfo} = this.context
         var rows = [];
        
         cangkuInfo.shopItems.forEach(element=>{
-
+            console.log('cangkuInfo.shopItems : ' ,element)
             rows.push(
                 <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                     <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
@@ -109,7 +111,7 @@ export default class ShopItemSelect extends Component{
                         <Table.HeaderCell >商品编号</Table.HeaderCell>
                         <Table.HeaderCell>商品名称</Table.HeaderCell>
                         <Table.HeaderCell>数量</Table.HeaderCell>
-                        <Table.HeaderCell>操作</Table.HeaderCell>
+                        <Table.HeaderCell><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 

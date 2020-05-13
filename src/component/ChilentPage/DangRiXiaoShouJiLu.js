@@ -1,53 +1,192 @@
 import React,{Component} from "react"
-import { Menu } from "semantic-ui-react"
-
-export default class DangRiXiaoShouJiLu extends Component{
-    constructor(props){
+import { Menu, Grid, Header, Button, Segment, Table, Tab, Icon, Divider, Dropdown, CommentGroupm, ButtonGroup } from "semantic-ui-react"
+import SSxiangxi from './statistics/SSxiangxi'
+import {ShoppingItem, MainContext} from './ObjContext'
+import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import PropTypes, { element, array, checkPropTypes } from 'prop-types';
+import "react-datepicker/dist/react-datepicker.css";
+import KCHuiZong from './statistics/KCHuiZong'
+import DDHuiZong from './statistics/DDHuiZong'
+import Common from "../../common/common"
+// 当日销售合计
+class XiaoShouJiLuTab extends Component{
+    constructor(props, context){
         super(props)
-        this.state={}
+        this.state = {
+            
+        }
+    }
+    static propTypes = {
+        selectdate:PropTypes.string,
+        SHOP_ID:PropTypes.number,
+        onTabChange:PropTypes.func,
+        datas:PropTypes.array,
+        page_index:PropTypes.number,
+        allpage:PropTypes.number,
+        onPageChange:PropTypes.func
+    }
+    static defaultProps = {
+        selectdate:(new Date()).toISOString().substring(0, 10),
+        SHOP_ID:-1
     }
 
+    static contextType = MainContext;
+
+    panes = [
+        {
+          menuItem: { key: 'huizong', icon: 'users', content: '当日销售汇总' },
+          render: () => <Tab.Pane><SSxiangxi datas={this.props.datas}></SSxiangxi></Tab.Pane>,
+        },
+        {
+            menuItem: { key: 'kucun', icon: 'users', content: '当日库存汇总' },
+            render: () => <Tab.Pane><KCHuiZong datas={this.props.datas}></KCHuiZong></Tab.Pane>,
+        },
+        {
+            menuItem: { key: 'orderlist', icon: 'users', content: '当日订单总览' },
+            render: () => <Tab.Pane><DDHuiZong 
+            onPageChange={(e)=>{this.props.onPageChange(e)}}
+            page_index={this.props.page_index} allpage={this.props.allpage} datas={this.props.datas} ></DDHuiZong></Tab.Pane>,
+        },
+    ]
+     
+    onTabChange(e, f){
+        console.log(f)
+        this.props.onTabChange(f.activeIndex)
+    }
     render(){
         return(
-            <div className="ui equal width left aligned padded grid stackable">
-                <div className="row">
-                    <div className="column">
-                        <div className="ui segments no-padding">
-                            <div className="ui segment basic no-padding-bottom" >
-                                <h5>
-                                DangRiXiaoShouJiLu
-                                DangRiXiaoShouJiLu
-                                    <h1>DangRiXiaoShouJiLu</h1>
-                                    <h1>dangrixiaoshoujilu</h1>
-                                    <h1>dangrixiaoshoujilu</h1>
-                                    <h1>dangrixiaoshoujilu</h1>
-                                    <h1>dangrixiaoshoujilu</h1>
-                                    <h1>dangrixiaoshoujilu</h1>
-                                    <h1>dangrixiaoshoujilu</h1>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="column">
-                        <div className="ui segments no-padding">
-                            <div className="ui segment basic no-padding-bottom">
-                                <h5>
-                                DangRiXiaoShouJiLu
-                                DangRiXiaoShouJiLu
-                                    <h1>DangRiXiaoShouJiLu</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <Tab onTabChange={(e, f)=>this.onTabChange(e, f)} panes={this.panes} />
+            </div>
+        )
+    }
+}
+
+export default class DangRiXiaoShouJiLu extends Component{
+
+    static contextType = MainContext;
+
+    constructor(props, context){
+        super(props)
+        this.state={
+            selectdate:(new Date()).toISOString().substring(0, 10),
+            Shops:context.shops,
+            selectType:0,    // 0: 订单合计，1：仓库概况：2：订单汇总
+            datas:[],    // 查询结果
+            page_index:1,
+            page_size:8,
+            allpage:0
+        }
+        console.log('DangRiXiaoShouJiLu-------------', context.shops)
+    }
+    getitemsDDHuiZong(){
+        Common.sendMessage(Common.baseUrl + "/statistics/ddhuizong"
+            , "POST"
+            , null
+            , {	page_index:this.state.page_index,
+                page_size:this.state.page_size,
+                SHOP_ID:this.SHOP_ID,
+                ORDER_TIME: this.state.selectdate
+                }
+            , null
+            , (e)=>{
+                this.setState({
+                    datas:e.data.msg,
+                    page_index:e.data.page_index,
+                    allpage:e.data.allpage
+                })
+                console.log(e)
+            },null,
+            this.context)
+    }
+    dateChange( date){
+        this.setState({
+            selectdate:date.toISOString().substring(0, 10),
+            page_index:1
+        }, ()=>{
+            this.selectTable()
+        });
+      };
+    tabChange(e){
+        // 查询标签页面变更
+        this.setState({
+            selectType:e,
+            page_index:1
+        }, ()=>{
+            this.selectTable()
+        })
+        
+    }
+    pageChange(e){
+        // 页面变更
+        console.log(e)
+        this.setState({
+            page_index:e
+        }, ()=>{
+            this.selectTable()
+        })
+    }
+    // 查询表数据
+    selectTable(){
+        if(this.state.selectType === 0){}
+        else if(this.state.selectType === 1){}
+        else if(this.state.selectType === 2){
+            this.getitemsDDHuiZong()
+        }
+    }
+    shopSelectChange(e, f){
+        this.SHOP_ID = f.value
+        this.setState({
+             page_index:1
+        }, ()=>{
+            this.selectTable()
+        })
+        
+    }
+    render(){
+        return(
+            <div style={{ minHeight:1024}}>             
+                <Grid columns='equal' >
+                    <Grid.Row>
+                        <Grid.Column width={8}><Header as='h3'>每日统计</Header></Grid.Column>
+                        
+                        <Grid.Column width={8} textAlign='right' >
+                        <Menu>
+                            <Menu.Item>
+                            <DatePicker dateFormat="yyyy-MM-dd"
+                                        value={new Date(this.state.selectdate)}
+                                        selected={new Date(this.state.selectdate)}
+                                        onChange={(e)=>{this.dateChange(e)}}
+                                        placeholder='Enter date'   showYearDropdown
+                                /> 
+                                </Menu.Item><Menu.Item>
+                            <Dropdown options={this.state.Shops}   onChange={(e, f)=>this.shopSelectChange(e, f)}    placeholder='请选择一个店铺'></Dropdown> 
+                            </Menu.Item>
+                        </Menu>
+                        </Grid.Column>
+                    </Grid.Row>
+                     <Grid.Row>
+                        <Grid.Column  width={2}><Segment inverted color='red'>销售金额</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='orange'>销售单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='yellow'>退货单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='olive'>销毁单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='green'>入库单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='teal'>出库单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='blue'>提货单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='violet'>存货单数</Segment></Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Divider horizontal>
+                <Header as='h4'>
+                    <Icon name='bar chart' />
+                    Specifications
+                </Header>
+                </Divider>
+                <XiaoShouJiLuTab page_index={this.state.page_index} allpage={this.state.allpage}
+                    datas={this.state.datas} 
+                    onTabChange={(e)=>{this.tabChange(e)}} 
+                    onPageChange={(e)=>{this.pageChange(e)}}
+                    ></XiaoShouJiLuTab>
             </div>
         )
     }

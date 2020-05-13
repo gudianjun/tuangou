@@ -36,6 +36,7 @@ class App extends React.Component{
   mainContext = {
     errorMessage:'',  // 错误消息
     items:[], // 商品信息
+    shops:[], // 只有商店的清单。排除仓库和管理者
     cangkuInfo:{  // 仓库操作信息
       shopItems:[], // 仓库商品信息
       selectedShopid:-1, // 当前选择

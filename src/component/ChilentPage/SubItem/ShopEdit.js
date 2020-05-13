@@ -6,8 +6,8 @@ import Common from "../../../common/common"
 import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 setDefaultLocale('zhCN');
-// 员工管理
-export default class EmpEdit extends Component{
+// 店铺管理
+export default class ShopEdit extends Component{
     static contextType = MainContext;
 
     constructor(props, context){
@@ -19,8 +19,20 @@ export default class EmpEdit extends Component{
             baseitems:[],
             showset:false,   // 是否显示套装编辑画面
             editobject:{},   //进行编辑的对象
-            jobs:[], // 工作列表
-            shops:[]    // 商店列表，可以为-1，表示不隶属于任何店铺
+            shoptype:[{
+                key:99,
+                text:'管理员',
+                value:99
+            },{
+                key:0,
+                text:'店铺',
+                value:0
+            },{
+                key:1,
+                text:'仓库',
+                value:1
+            }] // 商店类型
+          
         }
         this.getItems() // 获得编辑列表
     }
@@ -30,10 +42,10 @@ export default class EmpEdit extends Component{
 
     getItems()
     {
+    
         var arrayObj = []
-        var shopArr = []
-        var jobArr = []
-        Common.sendMessage(Common.baseUrl + "/staff/getstaffs"
+
+        Common.sendMessage(Common.baseUrl + "/shop/getshops"
             , "POST"
             , null
             , null
@@ -41,38 +53,14 @@ export default class EmpEdit extends Component{
             , (e)=>{
                 // 读取员工清单
                 
-                e.data.items.forEach(element => {
-                    arrayObj.push({...element, key:element.EMP_ID })
-                });
-                // 读取店铺清单
-                shopArr.push({
-                    key:-1,
-                    text:'没有店铺',
-                    value:-1
-                })
-                e.data.shops.forEach(element => {
-                    shopArr.push({
-                        key:element.SHOP_ID,
-                        text:element.SHOP_NAME,
-                        value:element.SHOP_ID,
-                        type:element.SHOP_TYPE
-                    })
-                });
-                // 读取岗位清单
-                e.data.jobs.forEach(element => {
-                    jobArr.push({
-                        key:element.JOB_ID,
-                        text:element.JOB_NAME,
-                        value:element.JOB_ID
-                    })
+                e.data.forEach(element => {
+                    arrayObj.push({...element, key:element.SHOP_ID})
                 });
 
                 this.setState({
                     editstate:0,
                     editobject:[],
-                    baseitems:arrayObj,
-                    shops:shopArr,
-                    jobs:jobArr
+                    baseitems:arrayObj
                 })
             },null,
             this.context)
@@ -83,11 +71,11 @@ export default class EmpEdit extends Component{
             (element)=>{
                 if(prevState.showall){
                     if(prevState.editstate === 1 
-                        && prevState.editobject.EMP_ID === element.EMP_ID){
+                        && prevState.editobject.SHOP_ID === element.SHOP_ID){
                         items.push({...element, DISP_FLG: 1})
                     }
                     else if(prevState.editstate === 2
-                        && prevState.editobject.EMP_ID === element.EMP_ID){
+                        && prevState.editobject.SHOP_ID === element.SHOP_ID){
                         items.push({...element, DISP_FLG: 2})
                     }
                     else{
@@ -98,11 +86,11 @@ export default class EmpEdit extends Component{
                     if(element.DEL_FLG === 0){
                         // 0：普通，1：追加；2：编辑
                         if(prevState.editstate === 1 
-                            && prevState.editobject.EMP_ID === element.EMP_ID){
+                            && prevState.editobject.SHOP_ID === element.SHOP_ID){
                             items.push({...element, DISP_FLG: 2})
                         }
                         else if(prevState.editstate === 2
-                            && prevState.editobject.EMP_ID === element.EMP_ID){
+                            && prevState.editobject.SHOP_ID === element.SHOP_ID){
                             items.push({...element, DISP_FLG: 1})
                         }
                         else{
@@ -128,17 +116,7 @@ export default class EmpEdit extends Component{
             showall: !this.state.showall 
         })
     }
-    sexoption = [
-        {
-            key:0,
-            text:'女',
-            value:0
-        },
-        {
-            key:1,
-            text:'男',
-            value:1}
-    ]
+
     getDelFlg(item){
         if (item.DEL_FLG === 1)
             return (<Label ribbon><Icon name='delete' /> </Label>)
@@ -152,15 +130,15 @@ export default class EmpEdit extends Component{
     onHuiFuClick(e, id){
         console.log(e, id)
         // 发送恢复删除请求
-        Common.sendMessage(Common.baseUrl + "/staff/huifu"
+        Common.sendMessage(Common.baseUrl + "/shop/huifu"
             , "POST"
             , null
-            , {EMP_ID:id}
+            , {SHOP_ID:id}
             , null
             , (e)=>{
                 // 更新状态,找到那个状态并且更新
                 const {baseitems} = this.state
-                var index = baseitems.findIndex((e)=>{return e.EMP_ID===id})
+                var index = baseitems.findIndex((e)=>{return e.SHOP_ID===id})
                 baseitems[index].DEL_FLG = 0
                 this.setState({
                     baseitems:baseitems
@@ -172,15 +150,15 @@ export default class EmpEdit extends Component{
     onDelClick(e, id){
         console.log(e, id)
         // 发送恢复删除请求
-        Common.sendMessage(Common.baseUrl + "/staff/delitem"
+        Common.sendMessage(Common.baseUrl + "/shop/delitem"
             , "POST"
             , null
-            , {EMP_ID:id}
+            , {SHOP_ID:id}
             , null
             , (e)=>{
                 // 更新状态,找到那个状态并且更新
                 const {baseitems} = this.state
-                var index = baseitems.findIndex((e)=>{return e.EMP_ID===id})
+                var index = baseitems.findIndex((e)=>{return e.SHOP_ID===id})
                 baseitems[index].DEL_FLG = 1
                 this.setState({
                     baseitems:baseitems
@@ -213,17 +191,10 @@ export default class EmpEdit extends Component{
         var {baseitems} = this.state
         var addobj = {
             key:999999,
-            EMP_ID:999999,
-            EMP_NAME:'',
-            EMP_PHONE:'', 
-            EMP_SEX:0, 
-            EMP_BIRTHDAY: new Date('2000-01-01'), 
-            EMP_CODE:'', 
-            SHOP_ID: -1, 
-            //EMP_STATE: 0, 
-            //EMP_START:new Date('2000-01-01'), 
-            //EMP_END:new Date('2000-01-01'), 
-            EMP_JOB_ID:-1,
+            SHOP_ID:999999,
+            SHOP_NAME:'',
+            SHOP_TYPE:0, 
+            SHOP_PWD:Common.createPassword(8, 8),
             DEL_FLG:0
         }
         baseitems.push(addobj)
@@ -238,7 +209,7 @@ export default class EmpEdit extends Component{
         console.log(e, id)
         // 发送恢复删除请求
         const {baseitems} = this.state
-        var index = baseitems.findIndex((element)=>{return element.EMP_ID===id})
+        var index = baseitems.findIndex((element)=>{return element.SHOP_ID===id})
         var editobject = {}
         editobject = {...baseitems[index]}
         this.setState({
@@ -251,44 +222,34 @@ export default class EmpEdit extends Component{
         // 如果是套餐，则，子清单不能为空。
         const {setMainContext} = this.context
 
-        if(item.EMP_NAME === null || item.EMP_NAME.length <= 0){
+        if(item.SHOP_NAME === null || item.SHOP_NAME.length <= 0){
             setMainContext({
                 errorMessage:'姓名必须填写。'
             })
             return
         }
-        if(item.EMP_PHONE === null || item.EMP_PHONE.length <= 0){
+        if(item.SHOP_TYPE === null || (item.SHOP_TYPE !== 0 && item.SHOP_TYPE !== 1 && item.SHOP_TYPE !== 99)){
             setMainContext({
-                errorMessage:'电话必须填写。'
+                errorMessage:'必须选择一个种类'
             })
             return
         }
-        if(item.EMP_SEX === null || (item.EMP_SEX !== 0 && item.EMP_SEX !== 1)){
+        if(item.SHOP_PWD === null || item.SHOP_PWD.length <= 0){
             setMainContext({
-                errorMessage:'必须选择性别。'
-            })
-            return
-        }
-        if(this.state.jobs.indexOf(element=>element.EMP_JOB_ID === item.EMP_JOB_ID) >= 0){
-            setMainContext({
-                errorMessage:'必须选择一个职位。'
+                errorMessage:'必须输入密码。'
             })
             return
         }
         // 提交编辑
-        Common.sendMessage(Common.baseUrl + "/staff/edititem"
+        Common.sendMessage(Common.baseUrl + "/shop/edititem"
         , "POST"
         , null
         , {
             'edittype':ope,
-            'EMP_ID': item.EMP_ID,// # 
-            'EMP_NAME': item.EMP_NAME,// 
-            'EMP_PHONE':item.EMP_PHONE,// 
-            'EMP_SEX': item.EMP_SEX,//  
-            'EMP_BIRTHDAY': new Date(item.EMP_BIRTHDAY),//  
-            'EMP_CODE' : item.EMP_CODE,// #
-            'SHOP_ID' : item.SHOP_ID,//  
-            'EMP_JOB_ID' : item.EMP_JOB_ID
+            'SHOP_ID': item.SHOP_ID,// # 
+            'SHOP_NAME': item.SHOP_NAME,// 
+            'SHOP_TYPE':item.SHOP_TYPE,// 
+            'SHOP_PWD': item.SHOP_PWD
             }
         , null
         , (e)=>{
@@ -308,15 +269,15 @@ export default class EmpEdit extends Component{
             if(item.DEL_FLG === 0){
                 return (
                     <ButtonGroup>
-                        <Button onClick={(e)=>this.onEditClick(e, item.EMP_ID)} >编辑</Button>
-                        <Button onClick={(e)=>this.onDelClick(e, item.EMP_ID)}>删除</Button>
+                        <Button onClick={(e)=>this.onEditClick(e, item.SHOP_ID)} >编辑</Button>
+                        <Button onClick={(e)=>this.onDelClick(e, item.SHOP_ID)}>删除</Button>
                     </ButtonGroup>
                 )
             }
             else{
                 return (
                     <ButtonGroup>
-                        <Button onClick={(e)=>this.onHuiFuClick(e, item.EMP_ID)}>恢复</Button>
+                        <Button onClick={(e)=>this.onHuiFuClick(e, item.SHOP_ID)}>恢复</Button>
                     </ButtonGroup>
                 )
             }
@@ -326,7 +287,7 @@ export default class EmpEdit extends Component{
        
                 <ButtonGroup>
                     <Button primary onClick={(e)=>this.onSubmitEditClick(item, 1)}>提交</Button>
-                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.EMP_ID)}>取消</Button>
+                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.SHOP_ID)}>取消</Button>
                 </ButtonGroup>
             )
         }
@@ -334,15 +295,15 @@ export default class EmpEdit extends Component{
             return (
                 <ButtonGroup>
                     <Button primary onClick={(e)=>this.onSubmitEditClick(item, 2)}>提交</Button>
-                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.EMP_ID)}>放弃</Button>
+                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.SHOP_ID)}>放弃</Button>
                 </ButtonGroup>
             )
         }
     }
-    getShopName(item){
-        var index = this.state.shops.findIndex(e=>e.value === item.SHOP_ID)
+    getShopType(item){
+        var index = this.state.shoptype.findIndex(e=>e.value === item.SHOP_TYPE)
         if(index >=0 ){
-            return  this.state.shops[index].text
+            return  this.state.shoptype[index].text
         } 
         return ''
     }
@@ -355,14 +316,10 @@ export default class EmpEdit extends Component{
     }
     addNormolRow(element){
         return (
-            <Table.Row key={element.EMP_ID}>
-                            <Table.Cell collapsing>{element.EMP_NAME}</Table.Cell>
-                            <Table.Cell collapsing>{element.EMP_PHONE}</Table.Cell>
-                            <Table.Cell collapsing>{element.EMP_SEX === 0 ? '女' : '男'}</Table.Cell>
-                            <Table.Cell collapsing>{element.EMP_BIRTHDAY}</Table.Cell>
-                            <Table.Cell collapsing>{element.EMP_CODE}</Table.Cell>
-                            <Table.Cell collapsing>{this.getShopName(element)}</Table.Cell>
-                            <Table.Cell collapsing>{this.getJobName(element)}</Table.Cell>
+            <Table.Row key={element.SHOP_ID}>
+                            <Table.Cell collapsing>{element.SHOP_NAME}</Table.Cell>
+                            <Table.Cell collapsing>{this.getShopType(element)}</Table.Cell>
+                            <Table.Cell collapsing>{element.SHOP_PWD}</Table.Cell>
                             <Table.Cell collapsing>
                                 {this.getButtonGroup(element)}
                             </Table.Cell>
@@ -371,9 +328,9 @@ export default class EmpEdit extends Component{
     }
     // 编辑项目
     onEditItem(itemname, item, value){
-        if(itemname === 'EMP_NAME'){
+        if(itemname === 'SHOP_NAME'){
             // 控制长度
-            if (value.length <= 10){
+            if (value.length <= 20){
                 item[itemname] = value
                 console.log('控制长度', value.length)
                 this.setState({
@@ -381,17 +338,8 @@ export default class EmpEdit extends Component{
                 })
             }
         }
-        else if(itemname === 'EMP_PHONE'){
-            if (value.length <= 13){
-                item[itemname] = value
-                console.log('控制长度', value.length)
-                this.setState({
-                    editobject:item
-                })
-            }
-        }
-        else if(itemname === 'EMP_CODE'){
-            if (value.length <= 18){
+        else if(itemname === 'SHOP_PWD'){
+            if (value.length <= 20){
                 item[itemname] = value
                 console.log('控制长度', value.length)
                 this.setState({
@@ -400,72 +348,38 @@ export default class EmpEdit extends Component{
             }
         }
     }
+    onPwdClick(item){
+        item.SHOP_PWD = Common.createPassword(8, 8)
+        this.setState({
+            editobject:item
+        })
+    }
+
     // 更改添加商品的类型选择
-    sexSelectChange(e,f){
+    shopTypeSelectChange(e,f){
         
         // 取得
         // 修改基础列表，结尾追加一条
         var {editobject} = this.state
-        editobject.EMP_SEX = f.value
+        editobject.SHOP_TYPE = f.value
 
         this.setState({
             editobject:editobject,
         })
      
     }
-    // 更改添加商品的类型选择
-    shopSelectChange(e,f){
-        
-        // 取得
-        // 修改基础列表，结尾追加一条
-        var {editobject} = this.state
-        editobject.SHOP_ID = f.value
-
-        this.setState({
-            editobject:editobject,
-        })
-     
-    }
-    // 更改添加商品的类型选择
-    jobSelectChange(e,f){
-        
-        // 取得
-        // 修改基础列表，结尾追加一条
-        var {editobject} = this.state
-        editobject.EMP_JOB_ID = f.value
-
-        this.setState({
-            editobject:editobject,
-        })
-     
-    }
-    dateChange = date => {
-        var {editobject} = this.state
-        editobject.EMP_BIRTHDAY = date
-
-        this.setState({
-            editobject:editobject
-        });
-      };
-
+  
     addEditRow(element){
         element = {...element, DISP_FLG:1} // 补充一个编辑标记
         return (
-            <Table.Row key={element.EMP_ID}>
-                            <Table.Cell><Input value={element.EMP_NAME} onChange={(e, f)=>this.onEditItem('EMP_NAME', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input value={element.EMP_PHONE} onChange={(e, f)=>this.onEditItem('EMP_PHONE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Dropdown options={this.sexoption} value={element.EMP_SEX} onChange={(e, f)=>this.sexSelectChange(e, f)}></Dropdown></Table.Cell>
-                            <Table.Cell>
-                                <DatePicker dateFormat="yyyy-MM-dd"
-                                    value={new Date(element.EMP_BIRTHDAY)}
-                                    selected={new Date(element.EMP_BIRTHDAY)}
-                                    onChange={(e)=>this.dateChange(e)}
-                                    placeholder='Enter date'   showYearDropdown
-                                /> 
+            <Table.Row key={element.SHOP_ID}>
+                            <Table.Cell><Input value={element.SHOP_NAME} onChange={(e, f)=>this.onEditItem('SHOP_NAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Dropdown options={this.state.shoptype} value={element.SHOP_TYPE} onChange={(e, f)=>this.shopTypeSelectChange(e, f)}></Dropdown></Table.Cell>
+                            <Table.Cell><Input action={{
+                                    icon: 'random', onClick: (event,data)=>{this.onPwdClick(element)}
+                                }}
+                                value={element.SHOP_PWD} onChange={(e, f)=>this.onEditItem('SHOP_PWD', element, f.value)}></Input>
                             </Table.Cell>
-                            <Table.Cell><Input value={element.EMP_CODE} onChange={(e, f)=>this.onEditItem('EMP_CODE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Dropdown options={this.state.shops} value={element.SHOP_ID} onChange={(e, f)=>this.shopSelectChange(e, f)}></Dropdown></Table.Cell>
-                            <Table.Cell><Dropdown options={this.state.jobs} value={element.EMP_JOB_ID} onChange={(e, f)=>this.jobSelectChange(e, f)}></Dropdown></Table.Cell>
                             <Table.Cell>
                                 {this.getButtonGroup(element)}
                             </Table.Cell>
@@ -476,21 +390,14 @@ export default class EmpEdit extends Component{
     addAddRow(element){
         element = {...element, DISP_FLG:2} // 补充一个添加标记
         return (
-            <Table.Row key={element.EMP_ID}>
-                            <Table.Cell><Input value={element.EMP_NAME} onChange={(e, f)=>this.onEditItem('EMP_NAME', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input value={element.EMP_PHONE} onChange={(e, f)=>this.onEditItem('EMP_PHONE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Dropdown options={this.sexoption} value={element.EMP_SEX} onChange={(e, f)=>this.sexSelectChange(e, f)}></Dropdown></Table.Cell>
-                            <Table.Cell>
-                                <DatePicker dateFormat="yyyy-MM-dd"
-                                    value={new Date(element.EMP_BIRTHDAY)}
-                                    selected={new Date(element.EMP_BIRTHDAY)}
-                                    onChange={(e)=>this.dateChange(e)}
-                                    placeholder='Enter date'   showYearDropdown
-                                /> 
+            <Table.Row key={element.SHOP_ID}>
+                            <Table.Cell><Input value={element.SHOP_NAME} onChange={(e, f)=>this.onEditItem('SHOP_NAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Dropdown options={this.state.shoptype} value={element.SHOP_TYPE} onChange={(e, f)=>this.shopTypeSelectChange(e, f)}></Dropdown></Table.Cell>
+                            <Table.Cell><Input action={{
+                                    icon: 'random', onClick: (event,data)=>{this.onPwdClick(element)}
+                                }}
+                                value={element.SHOP_PWD} onChange={(e, f)=>this.onEditItem('SHOP_PWD', element, f.value)}></Input>
                             </Table.Cell>
-                            <Table.Cell><Input value={element.EMP_CODE} onChange={(e, f)=>this.onEditItem('EMP_CODE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Dropdown options={this.state.shops} value={element.SHOP_ID} onChange={(e, f)=>this.shopSelectChange(e, f)}></Dropdown></Table.Cell>
-                            <Table.Cell><Dropdown options={this.state.jobs} value={element.EMP_JOB_ID} onChange={(e, f)=>this.jobSelectChange(e, f)}></Dropdown></Table.Cell>
                             <Table.Cell>
                                 {this.getButtonGroup(element)}
                             </Table.Cell>
@@ -505,7 +412,7 @@ export default class EmpEdit extends Component{
                     rows.push(this.addNormolRow(element))
                 }
                 if(this.state.editstate === 1){ // 编辑模式
-                    if(element.EMP_ID === this.state.editobject.EMP_ID){
+                    if(element.SHOP_ID === this.state.editobject.SHOP_ID){
                         rows.push(this.addEditRow(this.state.editobject))
                     }
                     else{
@@ -513,7 +420,7 @@ export default class EmpEdit extends Component{
                     }
                 }
                 if(this.state.editstate === 2){ // 编辑模式
-                    if(element.EMP_ID === this.state.editobject.EMP_ID){
+                    if(element.SHOP_ID === this.state.editobject.SHOP_ID){
                         rows.push(this.addAddRow(this.state.editobject))
                     }
                     else{
@@ -529,10 +436,6 @@ export default class EmpEdit extends Component{
                             <Table.Cell></Table.Cell>
                             <Table.Cell></Table.Cell>
                             <Table.Cell></Table.Cell>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell></Table.Cell>
-                            <Table.Cell></Table.Cell>
                             <Table.Cell>
                                 <Button onClick={()=>this.onAddNewClick()}>添加</Button>
                             </Table.Cell>
@@ -545,13 +448,9 @@ export default class EmpEdit extends Component{
                 <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
                     <Table.Header  >
                     <Table.Row>
-                        <Table.HeaderCell >姓名</Table.HeaderCell>
-                        <Table.HeaderCell >电话</Table.HeaderCell>
-                        <Table.HeaderCell >性别</Table.HeaderCell>
-                        <Table.HeaderCell >生日</Table.HeaderCell>
-                        <Table.HeaderCell >身份证号码</Table.HeaderCell>
-                        <Table.HeaderCell width={1}>所属店铺</Table.HeaderCell>
-                        <Table.HeaderCell width={1}>职务名称</Table.HeaderCell>
+                        <Table.HeaderCell >店铺名称</Table.HeaderCell>
+                        <Table.HeaderCell >店铺类型</Table.HeaderCell>
+                        <Table.HeaderCell >登录密码</Table.HeaderCell>
                         <Table.HeaderCell width={3} ><Radio toggle label='显示全部' checked={this.state.showall} onChange={()=>this.onShowChange()}></Radio></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
