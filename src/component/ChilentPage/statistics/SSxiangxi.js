@@ -15,10 +15,31 @@ export default class SSxiangxi extends Component{
             
         }
     }
-   
+    static propTypes = {
+        datas:PropTypes.array
+    }
+
     render(){
-        return(
+        var rows=[]
+        var heji = 0.0
+        if (this.props.datas !== undefined && this.props.datas.length > 0){
+            this.props.datas.forEach(element => {
+                rows.push(
+                <Table.Row key = {element.COM_TYPE_ID + element.ITEM_ID}>
+                    <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
+                    <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.XS_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.XS_ITEM_PRICE}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.TH_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.TH_ITEM_PRICE}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.XS_TOTLE}</Table.Cell>
+                </Table.Row>
+                    )
+                    heji+=element.XS_TOTLE
+            });
             
+        }
+        return(
             <div>
                 <Grid columns='equal'>
                     <Grid.Row>
@@ -26,43 +47,28 @@ export default class SSxiangxi extends Component{
                         <Table celled selectable>
                             <Table.Header  >
                                 <Table.Row>
-                                    <Table.HeaderCell rowSpan='2'>商品编号</Table.HeaderCell>
-                                    <Table.HeaderCell rowSpan='2'>商品名称</Table.HeaderCell>
-                                    <Table.HeaderCell colSpan='4'>销售</Table.HeaderCell>
-                                    <Table.HeaderCell colSpan='4'>退货</Table.HeaderCell>
-                                    <Table.HeaderCell rowSpan='2'>销毁</Table.HeaderCell>
-                                    <Table.HeaderCell rowSpan='2'>销售金额</Table.HeaderCell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.HeaderCell>零售价</Table.HeaderCell>
-                                    <Table.HeaderCell>会员价</Table.HeaderCell>
-                                    <Table.HeaderCell>团购价</Table.HeaderCell>
-                                    <Table.HeaderCell>处理价</Table.HeaderCell>
-                                    <Table.HeaderCell>零售价</Table.HeaderCell>
-                                    <Table.HeaderCell>会员价</Table.HeaderCell>
-                                    <Table.HeaderCell>团购价</Table.HeaderCell>
-                                    <Table.HeaderCell>处理价</Table.HeaderCell>
+                                    <Table.HeaderCell >商品编号</Table.HeaderCell>
+                                    <Table.HeaderCell >商品名称</Table.HeaderCell>
+                                    <Table.HeaderCell >销售数量</Table.HeaderCell>
+                                    <Table.HeaderCell >销售金额</Table.HeaderCell>
+                                    <Table.HeaderCell >退货数量</Table.HeaderCell>
+                                    <Table.HeaderCell >退货金额</Table.HeaderCell>
+                                    <Table.HeaderCell >收入小计</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
 
                             <Table.Body >
-                                <Table.Row>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                <Table.Cell >Beta Team</Table.Cell>
-                                </Table.Row>
+                               {rows}
                             </Table.Body>
+                            <Table.Footer fullWidth>
+                                <Table.Row>
+                                   
+                                    <Table.HeaderCell colSpan='7' textAlign='right'>
+        <Label size='huge' color='violet'>销售合计:{heji}</Label>
+                                    </Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Footer>
                         </Table>
-                    
                     </Grid.Column>
                     </Grid.Row>
                 </Grid>

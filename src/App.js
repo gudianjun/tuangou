@@ -93,10 +93,6 @@ class App extends React.Component{
     
     return (
       <div className="pace  pace-inactive">
-         
-         
-
-
         <MainContext.Provider value = {this.mainContext}>
           <Switch>
             <Route exact path='/' component={LoginForm}></Route>

@@ -79,22 +79,36 @@ export default class DangRiXiaoShouJiLu extends Component{
         }
         console.log('DangRiXiaoShouJiLu-------------', context.shops)
     }
-    getitemsDDHuiZong(){
+    getitemsDDHuiZong(selecttype){
+        if(this.SHOP_ID === -1){return}
         Common.sendMessage(Common.baseUrl + "/statistics/ddhuizong"
             , "POST"
             , null
             , {	page_index:this.state.page_index,
                 page_size:this.state.page_size,
                 SHOP_ID:this.SHOP_ID,
-                ORDER_TIME: this.state.selectdate
+                ORDER_TIME: this.state.selectdate,
+                selecttype:selecttype
                 }
             , null
             , (e)=>{
-                this.setState({
-                    datas:e.data.msg,
-                    page_index:e.data.page_index,
-                    allpage:e.data.allpage
-                })
+                if(selecttype===0){
+                    this.setState({
+                        datas:e.data
+                    })
+                }
+                else if (selecttype===1){
+                    this.setState({
+                        datas:e.data
+                    })
+                }
+                else if (selecttype===2){
+                    this.setState({
+                        datas:e.data.msg,
+                        page_index:e.data.page_index,
+                        allpage:e.data.allpage
+                    })
+                }
                 console.log(e)
             },null,
             this.context)
@@ -111,7 +125,8 @@ export default class DangRiXiaoShouJiLu extends Component{
         // 查询标签页面变更
         this.setState({
             selectType:e,
-            page_index:1
+            page_index:1,
+            datas:[]
         }, ()=>{
             this.selectTable()
         })
@@ -128,11 +143,7 @@ export default class DangRiXiaoShouJiLu extends Component{
     }
     // 查询表数据
     selectTable(){
-        if(this.state.selectType === 0){}
-        else if(this.state.selectType === 1){}
-        else if(this.state.selectType === 2){
-            this.getitemsDDHuiZong()
-        }
+        this.getitemsDDHuiZong(this.state.selectType)
     }
     shopSelectChange(e, f){
         this.SHOP_ID = f.value
@@ -166,14 +177,14 @@ export default class DangRiXiaoShouJiLu extends Component{
                         </Grid.Column>
                     </Grid.Row>
                      <Grid.Row>
-                        <Grid.Column  width={2}><Segment inverted color='red'>销售金额</Segment></Grid.Column>
+                         {/* <Grid.Column  width={2}><Segment inverted color='red'>销售金额</Segment></Grid.Column>
                         <Grid.Column  width={2}><Segment inverted color='orange'>销售单数</Segment></Grid.Column>
                         <Grid.Column  width={2}><Segment inverted color='yellow'>退货单数</Segment></Grid.Column>
                         <Grid.Column  width={2}><Segment inverted color='olive'>销毁单数</Segment></Grid.Column>
                         <Grid.Column  width={2}><Segment inverted color='green'>入库单数</Segment></Grid.Column>
                         <Grid.Column  width={2}><Segment inverted color='teal'>出库单数</Segment></Grid.Column>
                         <Grid.Column  width={2}><Segment inverted color='blue'>提货单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='violet'>存货单数</Segment></Grid.Column>
+                        <Grid.Column  width={2}><Segment inverted color='violet'>存货单数</Segment></Grid.Column>  */}
                     </Grid.Row>
                 </Grid>
                 <Divider horizontal>
@@ -186,7 +197,7 @@ export default class DangRiXiaoShouJiLu extends Component{
                     datas={this.state.datas} 
                     onTabChange={(e)=>{this.tabChange(e)}} 
                     onPageChange={(e)=>{this.pageChange(e)}}
-                    ></XiaoShouJiLuTab>
+                ></XiaoShouJiLuTab>
             </div>
         )
     }

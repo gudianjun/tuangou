@@ -1,53 +1,83 @@
 import React,{Component} from "react"
-import { Menu } from "semantic-ui-react"
+import { Icon, Label, Menu, Table,Button , Grid, Segment} from 'semantic-ui-react'
+import PropTypes, { element } from 'prop-types';
+import {ShoppingItem, MainContext} from './ObjContext'
+import Common from "../../common/common"
+// 定制一个添加按钮
 
+// 销售详细
 export default class KuCunZongLan extends Component{
-    constructor(props){
+    static contextType = MainContext;
+
+    constructor(props, context){
         super(props)
-        this.state={}
+        this.state = {
+            data:[]
+        }
+
+        Common.sendMessage(Common.baseUrl + "/statistics/cangkuzonglan"
+            , "POST"
+            , null
+            , null
+            , null
+            , (e)=>{
+                this.setState({
+                    data:e.data
+                })
+                console.log(e)
+            },null,
+            this.context)
     }
 
     render(){
+        var rows=[]
+        var shopclms=[]
+        if (this.state.data.shopname !== undefined){
+            this.state.data.shopname.forEach(shop => {
+            shopclms.push(<Table.HeaderCell >{shop.SHOP_NAME}</Table.HeaderCell>)
+            })
+
+            this.state.data.items.forEach(element => {
+                var colms = []
+                rows.push(
+                <Table.Row key = {element.COM_TYPE_ID + element.ITEM_ID}>
+                    <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
+                    <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                    {this.state.data.shopname.forEach(shop => {
+                            colms.push(<Table.Cell>{element['SHOP_NAME_' + shop.SHOP_ID]}</Table.Cell>)
+                    })}
+                    {colms}
+                    <Table.Cell>{element.TOTLE_NUMBER}</Table.Cell>
+                </Table.Row>
+                    )
+            });
+            
+        }
         return(
-            <div className="ui equal width left aligned padded grid stackable">
-                <div className="row">
-                    <div className="column">
-                        <div className="ui segments no-padding">
-                            <div className="ui segment basic no-padding-bottom" >
-                                <h5>
-                                报废
-                                报废
-                                    <h1>KuCunZongLan</h1>
-                                    <h1>KuCunZongLan</h1>
-                                    <h1>KuCunZongLan</h1>
-                                    <h1>KuCunZongLan</h1>
-                                    <h1>KuCunZongLan</h1>
-                                    <h1>KuCunZongLan</h1>
-                                    <h1>KuCunZongLan</h1>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="column">
-                        <div className="ui segments no-padding">
-                            <div className="ui segment basic no-padding-bottom">
-                                <h5>
-                                    销售统计dddddddddddddddddddddddddddddddddddddddddddddd
-                                    dddddddddddddddddd
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                    <h1>asdddddddddddddddddddddddddddddddddddddddddddddddddf</h1>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <Grid columns='equal'>
+                    <Grid.Row>
+                    <Grid.Column>
+                        <Table celled selectable>
+                            <Table.Header  >
+                                <Table.Row>
+                                    <Table.HeaderCell >商品编号</Table.HeaderCell>
+                                    <Table.HeaderCell >商品名称</Table.HeaderCell>
+                                    {shopclms}
+                                    <Table.HeaderCell >合计</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+
+                            <Table.Body >
+                               {rows}
+                            </Table.Body>
+                            <Table.Footer fullWidth>
+                             
+                            </Table.Footer>
+                        </Table>
+                    </Grid.Column>
+                    </Grid.Row>
+                </Grid>
             </div>
         )
     }

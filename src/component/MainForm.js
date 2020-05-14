@@ -22,6 +22,7 @@ import KuCunZongLan from "./ChilentPage/KuCunZongLan"
 
 import ShangPinGuanLi from "./ChilentPage/ShangPinGuanLi"
 import TongJiBaoBiao from "./ChilentPage/TongJiBaoBiao"
+
 import { MainContext} from './ChilentPage/ObjContext'
 
 class MainForm extends Component{
@@ -42,6 +43,10 @@ class MainForm extends Component{
         , (e)=>{
         if(e.error_code === 0){
             console.log("logining 状态")
+            if(context.shops.length === 0){
+                this.props.history.push("/loading")
+            }
+            //
             //this.props.history.push("/main/xiaoshou")
             this.setState({})
         }
