@@ -67,21 +67,26 @@ export default class MenuExampleInvertedVertical extends Component {
           active={activeItem === 'yuangongguanli'}
           onClick={this.handleItemClick}
           ><Icon name='user outline' />员工管理</Menu.Item>
-          <Menu.Item
+          {/* <Menu.Item
           name='xitongsheding'
           active={activeItem === 'xitongsheding'}
           onClick={this.handleItemClick}
-          ><Icon name='recycle' />系统设定</Menu.Item>
-          <Menu.Item
+          ><Icon name='recycle' />系统设定</Menu.Item> */}
+          {/* <Menu.Item
           name='caigouguanli'
           active={activeItem === 'caigouguanli'}
           onClick={this.handleItemClick}
-          ><Icon name='truck' />采购管理</Menu.Item>
+          ><Icon name='truck' />采购管理</Menu.Item> */}
           <Menu.Item
           name='kucunzonglan'
           active={activeItem === 'kucunzonglan'}
           onClick={this.handleItemClick}
           ><Icon name='recycle' />库存总览</Menu.Item>
+          <Menu.Item
+          name='memkucunzonglan'
+          active={activeItem === 'memkucunzonglan'}
+          onClick={this.handleItemClick}
+          ><Icon name='recycle' />会员存货</Menu.Item>
           <Menu.Item
           name='shangpinguanli'
           active={activeItem === 'shangpinguanli'}
@@ -92,6 +97,12 @@ export default class MenuExampleInvertedVertical extends Component {
           active={activeItem === 'tongjibaobiao'}
           onClick={this.handleItemClick}
           ><Icon name='recycle' />统计报表</Menu.Item>
+          <Menu.Item
+          name='meirishenpi'
+          active={activeItem === 'meirishenpi'}
+          onClick={this.handleItemClick}
+          ><Icon name='recycle' />每日审批</Menu.Item>
+          
       </Menu>
     )
   }

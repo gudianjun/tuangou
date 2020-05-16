@@ -93,7 +93,7 @@ export default class CangKuGuanLi extends Component{
     render(){
 
         return(
-            <div style={{ minHeight:1024}}>
+            <div style={{ minHeight:800}}>
                 <Grid columns='equal'>
                     <Grid.Column width={"6"}> {/*this.state.items*/}
                     <Segment  color='orange'>

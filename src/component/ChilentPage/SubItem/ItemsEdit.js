@@ -435,7 +435,6 @@ export default class ItemsEdit extends Component{
                 })
             }
         }
-        
     }
     // 套装设定画面保存按钮
     onSetSave(){

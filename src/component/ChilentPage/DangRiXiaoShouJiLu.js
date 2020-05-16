@@ -26,7 +26,7 @@ class XiaoShouJiLuTab extends Component{
         onPageChange:PropTypes.func
     }
     static defaultProps = {
-        selectdate:(new Date()).toISOString().substring(0, 10),
+        selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10),
         SHOP_ID:-1
     }
 
@@ -69,7 +69,7 @@ export default class DangRiXiaoShouJiLu extends Component{
     constructor(props, context){
         super(props)
         this.state={
-            selectdate:(new Date()).toISOString().substring(0, 10),
+            selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10),
             Shops:context.shops,
             selectType:0,    // 0: 订单合计，1：仓库概况：2：订单汇总
             datas:[],    // 查询结果
@@ -156,7 +156,7 @@ export default class DangRiXiaoShouJiLu extends Component{
     }
     render(){
         return(
-            <div style={{ minHeight:1024}}>             
+            <div style={{ minHeight:800}}>             
                 <Grid columns='equal' >
                     <Grid.Row>
                         <Grid.Column width={8}><Header as='h3'>每日统计</Header></Grid.Column>

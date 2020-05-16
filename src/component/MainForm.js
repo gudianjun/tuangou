@@ -19,9 +19,11 @@ import YuanGongGuanLi from "./ChilentPage/YuanGongGuanLi"
 import XiTongSheDing from "./ChilentPage/XiTongSheDing"
 import CaiGouGuanLi from "./ChilentPage/CaiGouGuanLi"
 import KuCunZongLan from "./ChilentPage/KuCunZongLan"
+import MemKuCunZongLan from "./ChilentPage/MemKuCunZongLan"
 
 import ShangPinGuanLi from "./ChilentPage/ShangPinGuanLi"
 import TongJiBaoBiao from "./ChilentPage/TongJiBaoBiao"
+import MeiRiShenPi from "./ChilentPage/MeiRiShenPi"
 
 import { MainContext} from './ChilentPage/ObjContext'
 
@@ -155,11 +157,13 @@ class MainForm extends Component{
                             <Route path='/main/dianpuguanli' component={DianPuGuanLi}></Route>
                             <Route path='/main/yuangongguanli' component={YuanGongGuanLi}></Route>
 
-                            <Route path='/main/xitongsheding' component={XiTongSheDing}></Route>
-                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
+                            {/* <Route path='/main/xitongsheding' component={XiTongSheDing}></Route> */}
+                            {/* <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route> */}
                             <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
+                            <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
 
                             <Route path='/main/shangpinguanli' component={ShangPinGuanLi}></Route>
+                            <Route path='/main/meirishenpi' component={MeiRiShenPi}></Route>
                             <Route path='/main/tongjibaobiao' component={TongJiBaoBiao}></Route>
                             {/*<Redirect from="*" to="/login"></Redirect>*/}
                         </Switch>

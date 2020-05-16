@@ -80,14 +80,20 @@ export default class Common{
             else{
                 // 抛出错误
                 console.log("拿到了错误的数据"); // 拿到数据进行页面渲染
-                const {logout} = cot
-                console.log(logout); // 拿到数据进行页面渲染
+                
+               
                 if (result.error_code === 4011){
-                    logout()
+                    if (cot!==null){
+                        const {logout} = cot
+                        console.log(logout); // 拿到数据进行页面渲染
+                        logout()
+                    }
+                    callbackErr(result.msg);
                 }
                 else{
                     callbackErr(result.msg);
                 }
+           
                 // if(callbackobj!=null)
                 // {
                 //     callbackobj(result);

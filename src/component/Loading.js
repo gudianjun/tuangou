@@ -49,7 +49,7 @@ class LoaderExampleInline extends Component{
          },(e)=>{
              console.log(e)
          },
-         this.context)
+         context)
         
     }
     static contextType = MainContext;

@@ -6,7 +6,7 @@ import Common from "../../common/common"
 // 定制一个添加按钮
 
 // 会员的库存总览
-export default class KuCunZongLan extends Component{
+export default class MemKuCunZongLan extends Component{
     static contextType = MainContext;
 
     constructor(props, context){
@@ -15,7 +15,7 @@ export default class KuCunZongLan extends Component{
             data:[]
         }
 
-        Common.sendMessage(Common.baseUrl + "/statistics/cangkuzonglan"
+        Common.sendMessage(Common.baseUrl + "/statistics/cangkumemzonglan"
             , "POST"
             , null
             , null

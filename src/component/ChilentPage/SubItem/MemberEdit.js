@@ -579,7 +579,7 @@ export default class MemberEdit extends Component{
         }
         return(
             
-            <div style={{ minHeight:1024}}> 
+            <div style={{ minHeight:800}}> 
            
                 <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
                     <Table.Header  >
