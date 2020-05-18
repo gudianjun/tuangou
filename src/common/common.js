@@ -12,6 +12,10 @@ export default class Common{
         return value;
     }
 
+    static _clear(){
+        localStorage.clear();
+    }
+
     static _getSendToken(){
         const token = Common._loadStorage("token");
         if(token === null){

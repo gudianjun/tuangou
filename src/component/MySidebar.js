@@ -5,7 +5,7 @@ import MenuExampleInvertedVertical from "./MyMenu"
 import PropTypes from 'prop-types';
 
 export default class MainForm extends Component{
-    constructor(props){
+    constructor(props, context){
         super(props)
         this.state={}
     }

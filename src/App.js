@@ -10,7 +10,7 @@ import Common from './common/common'
 import LoaderExampleInline from './component/Loading'
 class App extends React.Component{
   
-  constructor(props){
+  constructor(props, context){
     super(props)
     console.log(this.props)
     const { cookies } = this.props;
@@ -34,6 +34,7 @@ class App extends React.Component{
   }
   // 系统总上下文
   mainContext = {
+    shoptype:-1, // 默认为没有类型
     errorMessage:'',  // 错误消息
     items:[], // 商品信息
     shops:[], // 只有商店的清单。排除仓库和管理者
@@ -48,7 +49,7 @@ class App extends React.Component{
     logout:()=>{
       // 登出操作，
       console.log("mainContext->logout")
-      Common._setStorage("token", "");
+      Common._clear();
       this.props.history.push("/login")
     },
     confirmInfo: {
@@ -95,7 +96,7 @@ class App extends React.Component{
       <div className="pace  pace-inactive">
         <MainContext.Provider value = {this.mainContext}>
           <Switch>
-            <Route exact path='/' component={LoginForm}></Route>
+            <Route exact path='/' component={MainForm}></Route>
             <Route path='/loading' component={LoaderExampleInline}></Route>
             <Route path='/login' component={LoginForm}></Route>
             <Route path='/main' component={MainForm}></Route>

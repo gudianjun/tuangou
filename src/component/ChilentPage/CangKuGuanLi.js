@@ -11,7 +11,7 @@ import logo from "../logo.png"
 import ShopItemSelect from "./SubItem/ShopItemSelect"
 
 export default class CangKuGuanLi extends Component{
-    constructor(props){
+    constructor(props, context){
         super(props)
         this.state={shopList:[]}
 
@@ -23,11 +23,15 @@ export default class CangKuGuanLi extends Component{
             console.log(e)
             var arrayObj = [];
             e.data.forEach(element => {
+                var icon = ''
+                if(element.SHOP_TYPE === 0){icon='suitcase'}
+                else if(element.SHOP_TYPE === 1){icon='shipping'}
+                else{icon='settings'}
                 arrayObj.push({
                 key: element.SHOP_ID,
                 text: element.SHOP_NAME,
                 value: element.SHOP_ID,
-                image: { avatar: true, src: logo }
+                icon: icon
                 });
             });
             this.setState({

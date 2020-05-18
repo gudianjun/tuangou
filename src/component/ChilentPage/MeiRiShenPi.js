@@ -199,7 +199,7 @@ export default class MeiRiShenPi extends Component{
         if (this.state!=null && this.state.selectobject !== null){
             this.state.selectobject.forEach(element => {
                 rows.push(
-                    <Table.Row>
+                <Table.Row key={element.SHOP_ID}>
                     <Table.Cell>{this.getRefFlg(element)}{element.SHOP_NAME}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_XS : '-'}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_XS_COST : '-'}</Table.Cell>
@@ -259,9 +259,9 @@ export default class MeiRiShenPi extends Component{
                         <Table.HeaderCell >操作</Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
-                        {rows}
+                        
                     <Table.Body >
-                   
+                    {rows}
                     </Table.Body>
                 </Table>
         </div>

@@ -29,18 +29,20 @@ class AddButton extends Component{
     onClickHandler(){
         //this.props.onAddshopping(this.props.itemKey)
         const {items} = this.context;
-        const {shoppingItems} = this.context;
-        const {setMainContext} = this.context;
-        var sii = new ShoppingItem()
-        var fi = items.find(element=>element.key === this.props.itemkey)
-        
-        sii.InitShoppingItem(fi, shoppingItems.length)
-        shoppingItems.push(sii)
-        console.log(this.context)
-        setMainContext({shoppingItems:shoppingItems})
-        this.setState({
-            shoppingItems:shoppingItems
-        })
+        if(items.length > 0){
+            const {shoppingItems} = this.context;
+            const {setMainContext} = this.context;
+            var sii = new ShoppingItem()
+            var fi = items.find(element=>element.key === this.props.itemkey)
+            
+            sii.InitShoppingItem(fi, shoppingItems.length)
+            shoppingItems.push(sii)
+            console.log(this.context)
+            setMainContext({shoppingItems:shoppingItems})
+            this.setState({
+                shoppingItems:shoppingItems
+            })
+        }
     }
     render(){
         return (
@@ -55,9 +57,6 @@ export default class ShopItemSelect extends Component{
 
     constructor(props, context){
         super(props)
-        this.state = {
-            
-        }
 
         const {cangkuInfo} = context
         this.state = {

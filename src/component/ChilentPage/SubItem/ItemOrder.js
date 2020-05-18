@@ -157,6 +157,7 @@ class NumberButton extends Component{
 class SelectPrice extends Component{
     constructor(props, context){
         super(props)
+        this.state={}
     }
     static propTypes = {
         itemkey:PropTypes.string
@@ -212,6 +213,7 @@ class SelectPrice extends Component{
 class LablePriceSubTotal extends Component{
     constructor(props, context){
         super(props)
+        this.state={}
     }
     static propTypes = {
         itemkey:PropTypes.string

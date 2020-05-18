@@ -25,7 +25,7 @@ class ShoppingItem{
         this.ITEM_ID = iteminfo.ITEM_ID
         this.ITEM_NAME = iteminfo.ITEM_NAME
         this.ITEM_NUMBER = count
-        this.PRICE_SELECT = 1
+        this.PRICE_SELECT = 2   // 默认选择团购价格
         
         this.PRICE_ARR = [
             iteminfo.ITEM_PRICE,

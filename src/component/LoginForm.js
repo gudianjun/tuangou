@@ -3,25 +3,31 @@ import { Button, Form, Grid, Header, Image, Message, Segment, Dropdown, Popup } 
 import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route, NavLink} from 'react-router-dom'
 import logo from "./logo.png"
 import Common from "../common/common"
-
+import {MainContext} from "./ChilentPage/ObjContext"
 class LoginForm extends Component{
-  constructor(props){
+  static contextType = MainContext;
+
+  constructor(props, context){
     console.log("LoginForm初始化")
     super(props);
     this.state={shopList:[], pwd:"", selectShop:null, pwdShowInfo:"密码", shopShowInfo:"选择你的店铺"};
     // 请求登录列表
     Common.sendMessage(Common.baseUrl + "/login/getshops", "GET", {abc:"abcd"}
-    , {a:1,b:2,c:3}, {"auth111":"dddddddddddddddddddddddddddd"}
+    , null, null
     , (e)=>{
       console.log("回调。。。。。。。。。。。。。。。。。。。。")
       console.log(e)
-      var arrayObj = new Array();
+      var arrayObj = [];
       e.data.forEach(element => {
+        var icon = ''
+        if(element.SHOP_TYPE === 0){icon='suitcase'}
+        else if(element.SHOP_TYPE === 1){icon='shipping'}
+        else{icon='settings'}
         arrayObj.push({
           key: element.SHOP_ID,
           text: element.SHOP_NAME,
           value: element.SHOP_ID,
-          image: { avatar: true, src: logo }
+          icon:icon
         });
       });
       
@@ -63,9 +69,15 @@ class LoginForm extends Component{
       console.log(e)
       Common._setStorage("shopname", e.data.name)
       Common._setStorage("token", e.data.token)
-
+      Common._setStorage("shoptype", e.data.shoptype)
       // 跳转到主画面
-      this.props.history.push("/main")
+      this.setState({}, ()=>{
+        this.context.shoptype = e.data.shoptype
+        this.forceUpdate()
+        this.props.history.push("/main")
+        
+      })
+      
     })
 
   }

@@ -75,9 +75,11 @@ export default class DangRiXiaoShouJiLu extends Component{
             datas:[],    // 查询结果
             page_index:1,
             page_size:8,
-            allpage:0
+            allpage:0,
+            shoptype:context.shoptype
         }
-        console.log('DangRiXiaoShouJiLu-------------', context.shops)
+
+       this.SHOP_ID = -1
     }
     getitemsDDHuiZong(selecttype){
         if(this.SHOP_ID === -1){return}
@@ -113,6 +115,19 @@ export default class DangRiXiaoShouJiLu extends Component{
             },null,
             this.context)
     }
+    static getDerivedStateFromProps(nexProps, prevState){
+        if(prevState.shoptype === 0){
+           return {
+                Shops:[{
+                    key:0,
+                    text:Common._loadStorage('shopname'),
+                    value:0
+                }]
+            }
+        }
+        return null
+    }
+
     dateChange( date){
         this.setState({
             selectdate:date.toISOString().substring(0, 10),

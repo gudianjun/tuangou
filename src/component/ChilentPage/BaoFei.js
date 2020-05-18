@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from './ObjContext'
 
 export default class BaoFei extends Component{
-    constructor(props){
+    constructor(props, context){
         super(props)
         this.state = {
         }

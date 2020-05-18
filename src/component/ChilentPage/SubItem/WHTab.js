@@ -20,15 +20,15 @@ class WHTab extends Component{
     }
     panes = [
         {
-          menuItem: { key: 'ruku', icon: 'users', content: '入库' },
+          menuItem: { key: 'ruku', icon: 'pallet', content: '入库' },
           render: () => <Tab.Pane><ItemOrder opetype={3} ordertype={0}></ItemOrder></Tab.Pane>,
         },
         {
-            menuItem: { key: 'chuku', icon: 'users', content: '出库' },
+            menuItem: { key: 'chuku', icon: 'dolly', content: '出库' },
             render: () => <Tab.Pane><ItemOrder opetype={3} ordertype={1}></ItemOrder></Tab.Pane>,
         },
         {
-            menuItem: { key: 'zhuanku', icon: 'users', content: '转库' },
+            menuItem: { key: 'zhuanku', icon: 'sync alternate', content: '转库' },
             render: () => {
                 const {cangkuInfo} = this.context;
 

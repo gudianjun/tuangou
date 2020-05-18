@@ -53,24 +53,17 @@ export default class ItemSelect extends Component{
     constructor(props, context){
         super(props)
         this.state = {
-            
-        }
+            items:[]
+        }        
+
         this.onClick()
-        var itemstring = Common._loadStorage("itemsList")
-        
-        this.state = {
-            items : JSON.parse(itemstring)
-        }
-        const {setMainContext} = context;
-        setMainContext({items:JSON.parse(itemstring)})
-        
     }
-    static getDerivedStateFromProps(nexProps, prevState){
-        var itemstring = Common._loadStorage("itemsList")
-        return {
-            items : JSON.parse(itemstring),
-        }
-      } 
+    // static getDerivedStateFromProps(nexProps, prevState){
+    //     var itemstring = Common._loadStorage("itemsList")
+    //     return {
+    //         items : JSON.parse(itemstring),
+    //     }
+    //   } 
 
     shouldComponentUpdate(nexProps, prevState)    {
         return true;
@@ -86,7 +79,6 @@ export default class ItemSelect extends Component{
         if (item.ITEM_TYPE === 1)
             return (<Label color='red' ribbon>SET</Label>)
     }
-
     onClick(){
         Common.sendMessage(Common.baseUrl + "/xiaoshou/getitems"
             , "POST"
@@ -98,15 +90,12 @@ export default class ItemSelect extends Component{
                 e.data.forEach(element => {
                     arrayObj.push({...element, key:element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()})
                 });
-                // const {setMainContext} = this.context;
-                // setMainContext({itemsList:arrayObj}) // 设定商品列表
-                // 写入缓存
-                Common._setStorage("itemsList", JSON.stringify(arrayObj))
-                const {setMainContext} = this.context;
-                setMainContext({items:arrayObj})
+                this.setState({items:arrayObj})
+                this.context.items = arrayObj
             },null,
             this.context)
     }
+    
     render(){
         var rows = [];
         if ( this.state.items !=null ) {
