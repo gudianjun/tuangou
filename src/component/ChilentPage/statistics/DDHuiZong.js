@@ -42,7 +42,12 @@ export default class DDHuiZong extends Component{
         , (e)=>{
            this.setState({selectobject:e.data,
         showset:true})
-        },null,
+        },(e)=>{
+            const {setMainContext} = this.context
+            setMainContext({
+                errorMessage:e
+            })
+        },
         this.context)     
     }
     getOpeType(item){

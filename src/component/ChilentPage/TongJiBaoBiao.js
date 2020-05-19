@@ -1,27 +1,18 @@
 import React,{Component} from "react"
-import { Menu, Grid, Header, Button, Segment, Table, Tab, Icon, Divider, Dropdown, CommentGroupm, ButtonGroup } from "semantic-ui-react"
-import SSxiangxi from './statistics/SSxiangxi'
-import {ShoppingItem, MainContext} from './ObjContext'
-import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
-import PropTypes, { element, array, checkPropTypes } from 'prop-types';
+import { Grid, Header, Button, Segment, Table, Icon, Divider} from "semantic-ui-react"
+import {MainContext} from './ObjContext'
+import PropTypes from 'prop-types';
 import "react-datepicker/dist/react-datepicker.css";
 import Common from "../../common/common"
-import { G2,
+import {
     Chart,
     Geom,
     Axis,
     Tooltip,
-    Coord,
-    Label,
     Legend,
-    View,
-    Guide,
     Coordinate,
     Interval,
-    Shape,
-    Facet,
-    Interaction,
-    Util } from 'bizcharts';
+    Interaction } from 'bizcharts';
 import DataSet from "@antv/data-set";
 
 // 销售类别占比

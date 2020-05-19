@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Form, Grid, Header, Image, Message, Segment, Dropdown, Popup } from 'semantic-ui-react'
-import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route, NavLink} from 'react-router-dom'
+import { Form, Grid, Header, Image, Message, Segment, Dropdown, Popup } from 'semantic-ui-react'
 import logo from "./logo.png"
 import Common from "../common/common"
 import {MainContext} from "./ChilentPage/ObjContext"
@@ -74,7 +73,7 @@ class LoginForm extends Component{
       this.setState({}, ()=>{
         this.context.shoptype = e.data.shoptype
         this.forceUpdate()
-        this.props.history.push("/main")
+        this.props.history.push("/loading")
         
       })
       
@@ -83,10 +82,10 @@ class LoginForm extends Component{
   }
     render(){
         return (
-            <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+            <Grid textAlign='center' verticalAlign='middle'>
                 <Grid.Column style={{ maxWidth: 450 }}>
                 <Header as='h2' color='teal' textAlign='center'>
-                    <Image src={logo} /> 登陆到你的账号
+                    <Image src={logo} /> 为了我们的生活一起努力
                 </Header>
                 <Form size='large'>
                     <Segment stacked>

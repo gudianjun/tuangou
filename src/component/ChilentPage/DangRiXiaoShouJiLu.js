@@ -112,7 +112,12 @@ export default class DangRiXiaoShouJiLu extends Component{
                     })
                 }
                 console.log(e)
-            },null,
+            },(e)=>{
+                const {setMainContext} = this.context
+                setMainContext({
+                    errorMessage:e
+                })
+            },
             this.context)
     }
     static getDerivedStateFromProps(nexProps, prevState){

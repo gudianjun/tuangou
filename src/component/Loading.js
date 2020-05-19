@@ -9,30 +9,8 @@ class LoaderExampleInline extends Component{
         super(props)
         // var arrayObj = [];
         this.state={}
-        // console.log('LoaderExampleInline')
-        // console.log(context)
-        // Common.sendMessage(Common.baseUrl + "/xiaoshou/getitems"
-        //     , "POST"
-        //     , null
-        //     , {seltype:0}
-        //     , null
-        //     , (e)=>{
-        //         e.data.forEach(element => {
-        //             arrayObj.push({...element, key:element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()})
-        //         });
-        //         // const {setMainContext} = this.context;
-        //         // setMainContext({itemsList:arrayObj}) // 设定商品列表
-        //         // 写入缓存
-        //         Common._setStorage("itemsList", JSON.stringify(arrayObj))
-        //         // 跳转到
-        //         this.props.history.push("/main")
-        //     },null,
-        //     context)
-         // 初始化店铺清单
-         this.onClick()
-         
-
-         Common.sendMessage(Common.baseUrl + "/shop/getshops"
+   
+        Common.sendMessage(Common.baseUrl + "/shop/getshops"
          , "POST"
          , null
          , {SHOP_TYPE:0}
@@ -47,8 +25,9 @@ class LoaderExampleInline extends Component{
                  })
              });
              context.shops = remoteshops
-             // setMainContext({shops:remoteshops})
-             this.props.history.push("/main")
+              // 初始化店铺清单
+            this.onClick()
+            
          },(e)=>{
              const {logout} = context
              logout()
@@ -71,6 +50,8 @@ class LoaderExampleInline extends Component{
                 // 写入缓存
                 Common._setStorage("itemsList", JSON.stringify(arrayObj))
                 this.context.items = arrayObj
+                 // setMainContext({shops:remoteshops})
+             this.props.history.push("/main")
             },null,
             this.context)
     }

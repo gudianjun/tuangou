@@ -37,8 +37,6 @@ export default class CangKuGuanLi extends Component{
             this.setState({
                 shopList:arrayObj
             })
-            
-
             }
         )
     }
@@ -77,7 +75,10 @@ export default class CangKuGuanLi extends Component{
         // 跳转到主画面
         }
         ,(e)=>{
-            console.log("login 报错了")
+            const {setMainContext} = this.context
+            setMainContext({
+                errorMessage:e
+            })
         },
         this.context)
     }

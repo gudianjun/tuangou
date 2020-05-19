@@ -66,7 +66,6 @@ class MainForm extends Component{
                         this.setState({},()=>this.props.history.push("/main/tongjibaobiao"))
                     }
                 }
-                this.setState({})
             }
             else{
                 this.props.history.push("/login")
@@ -76,9 +75,6 @@ class MainForm extends Component{
             this.props.history.push("/login")
         },
         context)
-    console.log("MainForm props")
-    console.log(this.props)    
-
     // 设定消息对话框
   }
   static contextType = MainContext;
@@ -113,7 +109,6 @@ class MainForm extends Component{
         )
   }
   onLogout(){
-    const {setMainContext} = this.context
     Common.sendMessage(Common.baseUrl + "/login/logout"
     , "POST"
     , null
