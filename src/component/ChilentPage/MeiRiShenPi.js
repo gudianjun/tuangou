@@ -1,11 +1,9 @@
 import React,{Component} from "react"
-import { Menu , Grid, Dropdown,Label, Divider, Header, Icon, Table, Button, BUttonG, Input, ButtonGroup} from "semantic-ui-react"
-import ShopEdit from './SubItem/ShopEdit'
-import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
-import PropTypes, { element, array, checkPropTypes } from 'prop-types';
+import { Menu ,Input, Grid, Label, Divider, Header, Icon, Table, Button, ButtonGroup} from "semantic-ui-react"
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import {ShoppingItem, MainContext} from './ObjContext'
+import {MainContext} from './ObjContext'
 import Common from "../../common/common"
 
 export default class MeiRiShenPi extends Component{

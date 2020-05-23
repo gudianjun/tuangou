@@ -1,5 +1,4 @@
 import React,{Component} from "react"
-import { Menu } from "semantic-ui-react"
 import EmpEdit from './SubItem/EmpEdit'
 
 export default class YuanGongGuanLi extends Component{

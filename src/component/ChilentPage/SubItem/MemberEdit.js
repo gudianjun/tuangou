@@ -1,9 +1,8 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Segment, Dropdown } from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
-import {ShoppingItem, MainContext} from '../ObjContext'
+import { Icon, Label, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Dropdown } from 'semantic-ui-react'
+import {MainContext} from '../ObjContext'
 import Common from "../../../common/common"
-import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import DatePicker, { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ItemOrder from './ItemOrder'
 import MemShopItemSel from './MemShopItemSel'
@@ -251,6 +250,13 @@ export default class MemberEdit extends Component{
         // 如果是套餐，则，子清单不能为空。
         const {setMainContext} = this.context
 
+        if(item.MEM_CODE.length <= 0){
+            setMainContext({
+                errorMessage:'会员号必须填写'
+            })
+            return
+        }
+        
         if(item.MEM_FIRSTNAME.length <= 0 || item.MEM_LASTNAME.length <= 0){
             setMainContext({
                 errorMessage:'会员姓名必须填写。'
@@ -332,11 +338,12 @@ export default class MemberEdit extends Component{
     addNormolRow(element){
         return (
             <Table.Row key={element.MEM_ID}>
+                            <Table.Cell collapsing>{element.MEM_CODE}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_LASTNAME}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_FIRSTNAME}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_BIRTHDAY}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_SEX === 0 ? '女' : '男'}</Table.Cell>
-                            <Table.Cell collapsing>{element.MEM_CODE}</Table.Cell>
+                            
                             <Table.Cell collapsing>{element.MEM_PHONE}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_ZIP}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_ADDRESS}</Table.Cell>
@@ -436,6 +443,7 @@ export default class MemberEdit extends Component{
         element = {...element, DISP_FLG:1} // 补充一个编辑标记
         return (
             <Table.Row key={element.MEM_ID}>
+                            <Table.Cell><Input fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell>
@@ -447,7 +455,6 @@ export default class MemberEdit extends Component{
                                 /> 
                             </Table.Cell>
                             <Table.Cell><Dropdown options={this.sexoption} fluid value={element.MEM_SEX} onChange={(e, f)=>this.sexSelectChange(e, f)}></Dropdown></Table.Cell>
-                            <Table.Cell><Input fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_PHONE} onChange={(e, f)=>this.onEditItem('MEM_PHONE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_ZIP} onChange={(e, f)=>this.onEditItem('MEM_ZIP', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_ADDRESS} onChange={(e, f)=>this.onEditItem('MEM_ADDRESS', element, f.value)}></Input></Table.Cell>
@@ -462,6 +469,7 @@ export default class MemberEdit extends Component{
         element = {...element, DISP_FLG:2} // 补充一个添加标记
         return (
             <Table.Row key={element.MEM_ID}>
+                            <Table.Cell><Input fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
                           
@@ -475,7 +483,7 @@ export default class MemberEdit extends Component{
                             </Table.Cell>
                         
                             <Table.Cell><Dropdown options={this.sexoption}  value={element.MEM_SEX} onChange={(e, f)=>this.sexSelectChange(e, f)}></Dropdown></Table.Cell>
-                            <Table.Cell><Input fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
+                            
                             <Table.Cell><Input fluid value={element.MEM_PHONE} onChange={(e, f)=>this.onEditItem('MEM_PHONE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_ZIP} onChange={(e, f)=>this.onEditItem('MEM_ZIP', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.MEM_ADDRESS} onChange={(e, f)=>this.onEditItem('MEM_ADDRESS', element, f.value)}></Input></Table.Cell>
@@ -486,12 +494,10 @@ export default class MemberEdit extends Component{
         )
     }
 
-    // 套装设定画面保存按钮
+    // 会员存取货操作
     onSetSave(){
         const {shoppingItems} = this.context
         if(shoppingItems.length > 0){
-            
-            const {setMainContext} = this.context
             // 发送恢复删除请求
 
             var {editobject} = this.state
@@ -584,11 +590,11 @@ export default class MemberEdit extends Component{
                 <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
                     <Table.Header  >
                     <Table.Row>
+                        <Table.HeaderCell >会员号</Table.HeaderCell>
                         <Table.HeaderCell >姓氏</Table.HeaderCell>
                         <Table.HeaderCell >名字</Table.HeaderCell>
                         <Table.HeaderCell >生日</Table.HeaderCell>
                         <Table.HeaderCell >性别</Table.HeaderCell>
-                        <Table.HeaderCell >身份证号码</Table.HeaderCell>
                         <Table.HeaderCell >电话号码</Table.HeaderCell>
                         <Table.HeaderCell >邮编</Table.HeaderCell>
                         <Table.HeaderCell width={4} >住址</Table.HeaderCell>
@@ -614,11 +620,11 @@ export default class MemberEdit extends Component{
                     </Modal.Header>
                     <Modal.Content>
                         <Grid columns='equal'>
-                            <Grid.Column width={"6"}> {/*this.state.items*/}
+                            <Grid.Column width={"6"}> 
                                 <MemShopItemSel ITEMS={this.state.whitems} ORDER_TYPE={this.state.whordertype}></MemShopItemSel>
                             </Grid.Column>
                             <Grid.Column>
-                                {/*如果是存货操作，则为操作8， 否则为9（提货操作）*/}
+                               
                                 <ItemOrder ITEMS={this.state.whitems} opetype={this.state.whordertype === 0 ? 8 : 9}></ItemOrder>
                             </Grid.Column>
                         </Grid>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Grid, Header, Image, Message, Segment, Dropdown, Popup } from 'semantic-ui-react'
+import { Form, Grid, Header, Image, Message, Segment} from 'semantic-ui-react'
 import logo from "./logo.png"
 import Common from "../common/common"
 import {MainContext} from "./ChilentPage/ObjContext"
@@ -9,9 +9,12 @@ class LoginForm extends Component{
   constructor(props, context){
     console.log("LoginForm初始化")
     super(props);
-    this.state={shopList:[], pwd:"", selectShop:null, pwdShowInfo:"密码", shopShowInfo:"选择你的店铺"};
+    this.state={
+      shopList:[], pwd:"", selectShop:null, pwdShowInfo:"密码", shopShowInfo:"选择你的店铺"
+    };
+
     // 请求登录列表
-    Common.sendMessage(Common.baseUrl + "/login/getshops", "GET", {abc:"abcd"}
+    Common.sendMessage(Common.baseUrl + "/login/getshops", "GET", null
     , null, null
     , (e)=>{
       console.log("回调。。。。。。。。。。。。。。。。。。。。")
@@ -37,7 +40,6 @@ class LoginForm extends Component{
     console.log(this.state.shopList)
   }
   static getDerivedStateFromProps(props, state){
-    console.log("-----------------getDerivedStateFromProps")
     return null
   }
 

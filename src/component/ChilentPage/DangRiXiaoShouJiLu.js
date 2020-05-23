@@ -1,9 +1,9 @@
 import React,{Component} from "react"
-import { Menu, Grid, Header, Button, Segment, Table, Tab, Icon, Divider, Dropdown, CommentGroupm, ButtonGroup } from "semantic-ui-react"
+import { Menu, Grid, Header, Tab, Icon, Divider, Dropdown } from "semantic-ui-react"
 import SSxiangxi from './statistics/SSxiangxi'
-import {ShoppingItem, MainContext} from './ObjContext'
-import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
-import PropTypes, { element, array, checkPropTypes } from 'prop-types';
+import { MainContext} from './ObjContext'
+import DatePicker from "react-datepicker";
+import PropTypes from 'prop-types';
 import "react-datepicker/dist/react-datepicker.css";
 import KCHuiZong from './statistics/KCHuiZong'
 import DDHuiZong from './statistics/DDHuiZong'
@@ -196,16 +196,7 @@ export default class DangRiXiaoShouJiLu extends Component{
                         </Menu>
                         </Grid.Column>
                     </Grid.Row>
-                     <Grid.Row>
-                         {/* <Grid.Column  width={2}><Segment inverted color='red'>销售金额</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='orange'>销售单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='yellow'>退货单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='olive'>销毁单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='green'>入库单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='teal'>出库单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='blue'>提货单数</Segment></Grid.Column>
-                        <Grid.Column  width={2}><Segment inverted color='violet'>存货单数</Segment></Grid.Column>  */}
-                    </Grid.Row>
+                   
                 </Grid>
                 <Divider horizontal>
                 <Header as='h4'>

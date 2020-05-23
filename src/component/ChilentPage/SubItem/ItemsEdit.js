@@ -1,6 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Segment, Dropdown } from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
+import { Icon, Label, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Dropdown } from 'semantic-ui-react'
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import ItemOrder from './ItemOrder'
@@ -439,7 +438,6 @@ export default class ItemsEdit extends Component{
     // 套装设定画面保存按钮
     onSetSave(){
         const {shoppingItems} = this.context
-        const {setMainContext} = this.context
         // 发送恢复删除请求
 
         var {editobject} = this.state
@@ -614,7 +612,7 @@ export default class ItemsEdit extends Component{
                     </Modal.Header>
                     <Modal.Content>
                         <Grid columns='equal'>
-                            <Grid.Column width={"6"}> {/*this.state.items*/}
+                            <Grid.Column width={"6"}> 
                                 <ItemSelect seltype={1}></ItemSelect>
                             </Grid.Column>
                             <Grid.Column>

@@ -1,20 +1,16 @@
 import React,{Component} from "react"
-import { Menu, Grid ,Segment, Button, Dropdown} from "semantic-ui-react"
-import ItemSelect from "./SubItem/ItemSelect"
+import { Grid ,Segment,  Dropdown} from "semantic-ui-react"
 import WHTab from "./SubItem/WHTab"
-import ItemOrder from "./SubItem/ItemOrder"
 import Common from "../../common/common"
-import { string, element } from "prop-types"
-import PropTypes from 'prop-types';
-import {ShoppingItem, MainContext} from './ObjContext'
-import logo from "../logo.png"
+import { MainContext} from './ObjContext'
 import ShopItemSelect from "./SubItem/ShopItemSelect"
 
 export default class CangKuGuanLi extends Component{
     constructor(props, context){
         super(props)
         this.state={shopList:[]}
-
+        context.cangkuInfo.shopItems = []
+        context.cangkuInfo.selectedShopid = -1
         // 请求商店列表
         Common.sendMessage(Common.baseUrl + "/login/getshops", "POST", null
         , {shoptype:1}, null
@@ -42,6 +38,7 @@ export default class CangKuGuanLi extends Component{
     }
     static contextType = MainContext;
     onShopChange(shopid){
+        if(shopid === -1){return}
         // 请求商品数据
         const {setMainContext} = this.context;
         //shopItems:[], // 仓库商品信息
@@ -100,7 +97,7 @@ export default class CangKuGuanLi extends Component{
         return(
             <div style={{ minHeight:800}}>
                 <Grid columns='equal'>
-                    <Grid.Column width={"6"}> {/*this.state.items*/}
+                    <Grid.Column width={"6"}> 
                     <Segment  color='orange'>
                     <Dropdown
                             placeholder='选择一个仓库'
@@ -111,7 +108,7 @@ export default class CangKuGuanLi extends Component{
                         />
                     </Segment>
                     <Segment  color='orange'>
-                    <ShopItemSelect></ShopItemSelect>
+                    <ShopItemSelect onref={()=>this.onShopChange(this.context.cangkuInfo.selectedShopid)}></ShopItemSelect>
                     </Segment>
                     </Grid.Column>
                     <Grid.Column>

@@ -1,11 +1,9 @@
 import React,{Component} from "react"
-import { Menu, Grid ,Segment, Button, Dropdown} from "semantic-ui-react"
-import ItemSelect from "./SubItem/ItemSelect"
+import { Grid } from "semantic-ui-react"
+import ShopItemSelect from "./SubItem/ShopItemSelect"
 import ItemOrder from "./SubItem/ItemOrder"
+import {MainContext} from './ObjContext'
 import Common from "../../common/common"
-import { string, element } from "prop-types"
-import PropTypes from 'prop-types';
-import {ShoppingItem, MainContext} from './ObjContext'
 
 export default class TuiHuo extends Component{
     constructor(props){
@@ -42,8 +40,8 @@ export default class TuiHuo extends Component{
         return(
         <div  >
                 <Grid columns='equal'>
-                    <Grid.Column width={"6"}> {/*this.state.items*/}
-                        <ItemSelect></ItemSelect>
+                    <Grid.Column width={"6"}>
+                    <ShopItemSelect isselect={false}></ShopItemSelect>
                     </Grid.Column>
                     <Grid.Column>
                         <ItemOrder opetype={1}></ItemOrder>

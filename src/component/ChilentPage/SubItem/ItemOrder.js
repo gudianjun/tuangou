@@ -1,7 +1,7 @@
 import React,{Component} from "react"
 import {MainContext} from "../ObjContext"
-import { Icon, Label, Menu, Select, Table,Button, Dropdown , Input, Visibility} from 'semantic-ui-react'
-import PropTypes, { element, array, checkPropTypes } from 'prop-types';
+import { Icon, Label, Select, Table,Button,  Input} from 'semantic-ui-react'
+import PropTypes from 'prop-types';
 import Common from '../../../common/common'
 // 定制一个删除按钮
 class DelButton extends Component{
@@ -275,38 +275,73 @@ export default class ItemOrder extends Component{
     sumTotelPrice
 
     onShopChange(shopid){
+        if(shopid !== -1){
+            // 请求商品数据
+            const {setMainContext} = this.context;
+            //shopItems:[], // 仓库商品信息
+            //selectedShopid:0 // 当前选择
+            // f.value
+            // 请求登录检查，如果失败了，则跳转到login画面
+            Common.sendMessage(Common.baseUrl + "/cangku/getishoptems"
+            , "POST"
+            , null
+            , {shopid:shopid}
+            , null
+            , (e)=>{
+            if(e.error_code === 0){
+                const {cangkuInfo} = this.context
+                
+                cangkuInfo.shopItems = e.data
+
+                setMainContext({
+                    cangkuInfo:cangkuInfo
+                })
+            }
+            else{
+                this.props.history.push("/login")
+            }
+            // 跳转到主画面
+            }
+            ,(e)=>{
+                console.log("login 报错了")
+            },
+            this.context)
+        }
+        else{
+            this.getCangKuXiaShouItems(this.context)
+        }
+    }
+    getCangKuXiaShouItems(context){
         // 请求商品数据
-        const {setMainContext} = this.context;
-        //shopItems:[], // 仓库商品信息
-        //selectedShopid:0 // 当前选择
-        // f.value
-        // 请求登录检查，如果失败了，则跳转到login画面
-        Common.sendMessage(Common.baseUrl + "/cangku/getishoptems"
+        const {setMainContext} = context;
+        context.cangkuInfo.selectedShopid = -1
+        // 请求商店所拥有的items
+        Common.sendMessage(Common.baseUrl + "/cangku/xsshopitems"
         , "POST"
         , null
-        , {shopid:shopid}
+        , null
         , null
         , (e)=>{
         if(e.error_code === 0){
-            const {cangkuInfo} = this.context
-            
+            const {cangkuInfo} = context;
             cangkuInfo.shopItems = e.data
-
             setMainContext({
                 cangkuInfo:cangkuInfo
             })
         }
         else{
             this.props.history.push("/login")
-        }
+        } 
         // 跳转到主画面
         }
         ,(e)=>{
-            console.log("login 报错了")
+            const {setMainContext} = this.context
+            setMainContext({
+                errorMessage:e
+            })
         },
         this.context)
-    }
-
+   }
     jiezhangClick(){
          // 检查数据，如果订单为空，则不允许提交
         var {shoppingItems} = this.context;
@@ -405,6 +440,10 @@ export default class ItemOrder extends Component{
                     setMainContext({shoppingItems:[]})
                     // 如果是仓库操作，则需要刷一下当前选中的仓库
                     if(this.props.opetype === 3 || this.props.opetype === 4){
+                        this.onShopChange(cangkuInfo.selectedShopid)
+                    }
+                    // 如果时订单，则刷新一下仓库数量
+                    else if(this.props.opetype === 0 || this.props.opetype === 1 || this.props.opetype === 2){
                         this.onShopChange(cangkuInfo.selectedShopid)
                     }
                 }
@@ -547,7 +586,7 @@ export default class ItemOrder extends Component{
         
         return(
             
-            <div>
+          
                     <Table celled selectable >
                         
                         <Table.Header fullWidth>
@@ -589,7 +628,7 @@ export default class ItemOrder extends Component{
                         </Table.Footer>
                     </Table>
                    
-            </div>
+          
         )
     }
 }

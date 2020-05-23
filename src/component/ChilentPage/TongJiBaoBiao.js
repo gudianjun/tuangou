@@ -674,7 +674,6 @@ export default class TongJiBaoBiao extends Component{
     }
 
     onMonthClick(month){
-        this.state.selmonth = month
         this.setState({
             selmonth: month,
             SEL_YEAR: this.state.months[month].year,
@@ -847,24 +846,24 @@ export default class TongJiBaoBiao extends Component{
         return(
             <div style={{ minHeight:800}}>             
                 <Grid>
-                    <Grid.Row  >  {/* 近一年的数据汇总 */}
+                    <Grid.Row  >
                         <Grid.Column width={5}>
                             {this.getTubiao1()}
                             </Grid.Column>
                         <Grid.Column width={6}>{this.getTubiaoLeiji()}</Grid.Column>
                         <Grid.Column width={5}>{this.getKeDanJia()}</Grid.Column>
                     </Grid.Row>
-                        {/* width={5}当月数据 */}
+                       
                         {this.getCangKuInxi()}
                         {this.getBengYueXiaoShou()}
-                    <Grid.Row>  {/* 月份汇总图 */}
+                    <Grid.Row> 
                         
                         <Grid.Column width={5}>{this.getTop10()}</Grid.Column>
                         <Grid.Column width={6}>{this.getShopPie()}</Grid.Column>
                         <Grid.Column width={5}>{this.getComTypePie()}</Grid.Column>
                     </Grid.Row>
 
-                    <Grid.Row>  {/* 半年内的数据详细 */}
+                    <Grid.Row> 
                         <Button.Group>
                             <Button onClick={()=>this.onMonthClick(5)} color={this.state.selmonth === 5 ? 'red' : 'grey' }>{this.state.months[5].year + '年' + this.state.months[5].month + '月'}</Button>
                             <Button.Or />

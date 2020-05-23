@@ -1,8 +1,6 @@
 import React,{Component} from "react"
 import {MainContext} from "../ObjContext"
-import { Icon, Label, Menu, Select, Table,Button, Dropdown , Input, Tab, Segment} from 'semantic-ui-react'
-import PropTypes, { element, array, checkPropTypes } from 'prop-types';
-import Common from '../../../common/common'
+import { Dropdown , Tab, Segment} from 'semantic-ui-react'
 import ItemOrder from "./ItemOrder"
 
 class WHTab extends Component{

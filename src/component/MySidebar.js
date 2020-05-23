@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Menu, Image, Grid , Label} from "semantic-ui-react"
+import { Grid } from "semantic-ui-react"
 import Logo from "../Logo/index"
 import MenuExampleInvertedVertical from "./MyMenu"
 import PropTypes from 'prop-types';
@@ -25,17 +25,13 @@ export default class MainForm extends Component{
                                     <Grid.Column width={4}>
                                         <Logo ></Logo>
                                     </Grid.Column>
-                                    
-                                    <Grid.Column width={8}  style={{top:"10px" }}>
-                                        <h3 style={{color:"#FFF"}}>{/*写文字*/}</h3>
-                                    </Grid.Column>
                                 </Grid.Row>
                             </Grid>
                             
                         </div>
                     </div>
                 </div>
-                <MenuExampleInvertedVertical childrenRoute = {this.props.childrenRoute}></MenuExampleInvertedVertical>
+                <MenuExampleInvertedVertical history={this.props.history} childrenRoute = {this.props.childrenRoute}></MenuExampleInvertedVertical>
             </div>
             
             </div>

@@ -1,9 +1,8 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Segment, Dropdown } from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
-import {ShoppingItem, MainContext} from '../ObjContext'
+import { Icon, Label, Table,Button, Radio, ButtonGroup, Input, Dropdown } from 'semantic-ui-react'
+import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
-import DatePicker, { registerLocale, setDefaultLocale } from "react-datepicker";
+import DatePicker, { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 setDefaultLocale('zhCN');
 // 员工管理

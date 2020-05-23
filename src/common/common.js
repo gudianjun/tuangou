@@ -1,7 +1,7 @@
 export default class Common{
     static get baseUrl(){
-        // return  "http://47.108.133.145:5000/v1";
-        return  "http://192.168.3.11:5000/v1";
+       // return  "http://47.108.133.145:5000/v1";
+         return  "http://192.168.3.11:5000/v1";
     }
 
     static _setStorage(key, value){
@@ -30,10 +30,7 @@ export default class Common{
         var authdata = window.btoa(str);
         return 'Basic ' + authdata
     }
-    /*
-    发送网络请求
-    sendType:请求类型， POST GET ....
-    */
+  
     static sendMessage(url, sendType, urlPram, bodyObj, newHeader, callbackobj=null, callbackErr=null, cot=null){
         console.log(url)
         const auth = Common._getSendToken()

@@ -1,6 +1,6 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button } from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
+import { Icon, Label, Table,Button } from 'semantic-ui-react'
+import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 // 定制一个添加按钮
@@ -131,8 +131,7 @@ export default class ItemSelect extends Component{
             )
         }
         return(
-            
-            <div>
+            <div style={{height:'90vh', overflowY:'scroll'}}>
                 <Table celled selectable>
                     <Table.Header  >
                     <Table.Row>

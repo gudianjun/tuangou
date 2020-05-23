@@ -1,18 +1,21 @@
-import React,{Component} from "react"
-import { Menu, Grid ,Segment, Button, Dropdown} from "semantic-ui-react"
+import React,{Component, createRef } from "react"
+import {  Grid, Sticky, Ref , Visibility, Segment, Image, Divider} from "semantic-ui-react"
 import ItemSelect from "./SubItem/ItemSelect"
 import ItemOrder from "./SubItem/ItemOrder"
+import { MainContext} from './ObjContext'
 import Common from "../../common/common"
-import { string, element } from "prop-types"
-import PropTypes from 'prop-types';
-import {ShoppingItem, MainContext} from './ObjContext'
+import ShopItemSelect from "./SubItem/ShopItemSelect"
 
 export default class XiaoShou extends Component{
-    constructor(props){
+    static contextType = MainContext;
+    constructor(props, context){
         super(props)
         this.state = {
+            
         }
+       
     }
+    
     static contextType = MainContext;
     static getDerivedStateFromProps(nexProps, prevState){
         return null
@@ -38,18 +41,20 @@ export default class XiaoShou extends Component{
             return true
         }
     }
+    contextRef = createRef()
+    handleUpdate = (e, { calculations }) => this.setState({ calculations })
     render(){
         return(
-        <div>
-                <Grid columns='equal'>
-                    <Grid.Column width={"6"}> {/*this.state.items*/}
-                        <ItemSelect></ItemSelect>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <ItemOrder opetype={0}></ItemOrder>
-                    </Grid.Column>
-                </Grid>
-        </div>
+           
+            <Grid columns='equal'  height='100%'>
+                <Grid.Column width={"6"}> 
+                    <ShopItemSelect isselect={false}></ShopItemSelect>
+                </Grid.Column>
+                <Grid.Column >
+                        <ItemOrder opetype={0} ></ItemOrder>
+                </Grid.Column>
+            </Grid>
+           
         )
     }
 }

@@ -1,9 +1,8 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button } from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
+import { Icon, Table,Button, Label } from 'semantic-ui-react'
+import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
-import Common from "../../../common/common"
-
+import Common from '../../../common/common'
 // 仓库物品选择
 
 // 定制一个添加按钮
@@ -58,22 +57,66 @@ export default class ShopItemSelect extends Component{
     constructor(props, context){
         super(props)
 
-        const {cangkuInfo} = context
         this.state = {
-            items : cangkuInfo.shopItems
+            items : []
         }
 
+        if(!this.props.isselect){
+            this.getCangKuXiaShouItems(context)
+        }
+        else{
+            const {cangkuInfo} = context
+            this.state = {
+                items : cangkuInfo.shopItems
+            }
+        }
     }
     // static getDerivedStateFromProps(nexProps, prevState){
     //    return null
     // } 
+    getCangKuXiaShouItems(context){
+        // 请求商品数据
+        const {setMainContext} = context;
+        context.cangkuInfo.selectedShopid = -1
+        // 请求商店所拥有的items
+        Common.sendMessage(Common.baseUrl + "/cangku/xsshopitems"
+        , "POST"
+        , null
+        , null
+        , null
+        , (e)=>{
+        if(e.error_code === 0){
+            const {cangkuInfo} = context;
+            cangkuInfo.shopItems = e.data
+            setMainContext({
+                cangkuInfo:cangkuInfo
+            })
+        }
+        else{
+            this.props.history.push("/login")
+        } 
+        // 跳转到主画面
+        }
+        ,(e)=>{
+            const {setMainContext} = this.context
+            setMainContext({
+                errorMessage:e
+            })
+        },
+        this.context)
+   }
 
     shouldComponentUpdate(nexProps, prevState)    {
         return true;
     }
     static propTypes = {
+        onref:PropTypes.func,
+        isselect:PropTypes.bool // 是不是带有选择功能的商铺物品清单
     }
-    
+    static defaultProps = {
+        isselect:true, 
+        onref:null
+    }
     // UNSAFE_componentWillUpdate(){
     //     const {cangkuInfo} = this.context
     //     this.setState( {
@@ -81,29 +124,49 @@ export default class ShopItemSelect extends Component{
     //     })
     // }
     onRefClick(){
-        
+        if(this.props.onref!==null){
+            this.props.onref()
+        }
+        else{
+            this.getCangKuXiaShouItems(this.context)
+        }
+    }
+    getSetFlg(item){
+        if (item.ITEM_TYPE === 1)
+            return (<Label color='red' ribbon>SET</Label>)
     }
     render(){
         const {cangkuInfo} = this.context
         var rows = [];
        
         cangkuInfo.shopItems.forEach(element=>{
-            console.log('cangkuInfo.shopItems : ' ,element)
-            rows.push(
-                <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                    <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                    <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                    <Table.Cell>{element.ITEM_COUNT}</Table.Cell>
-                    <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                    ></AddButton></Table.Cell>
-                </Table.Row>
-            )
+            if(this.props.isselect){
+                rows.push(
+                    <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                        <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                        <Table.Cell>{element.ITEM_COUNT}</Table.Cell>
+                        <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                        ></AddButton></Table.Cell>
+                    </Table.Row>
+                 )
+                }
+            else{
+                rows.push(
+                    <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                        <Table.Cell>{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                        <Table.Cell>{element.ITEM_TYPE === 0?element.ITEM_COUNT:'套装'}</Table.Cell>
+                        <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                        ></AddButton></Table.Cell>
+                    </Table.Row>
+                 )
+            }
         }
         )
         
         return(
-            
-            <div>
+            <div style={{height: this.props.isselect?'75vh':'90vh', overflowY:'scroll'}}>
                 <Table celled selectable>
                     <Table.Header  >
                     <Table.Row>

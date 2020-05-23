@@ -2,13 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route} from 'react-router-dom'
-import {AppAbout, AppIndex, AppMessage} from "./App"
+import {BrowserRouter} from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
 
 ReactDOM.render(
   <BrowserRouter basename="/" >
-    
     <App></App>
   </BrowserRouter>,
   document.getElementById('root')

@@ -13,18 +13,27 @@ class LoaderExampleInline extends Component{
         Common.sendMessage(Common.baseUrl + "/shop/getshops"
          , "POST"
          , null
-         , {SHOP_TYPE:0}
+         , {SHOP_TYPE: -1}
          , null
          , (e)=>{
              var remoteshops = []
+             var remoteAll = []
              e.data.forEach(element => {
-                remoteshops.push({
-                     key:element.SHOP_ID,
-                     text:element.SHOP_NAME,
-                     value:element.SHOP_ID
-                 })
+                 if(element.SHOP_TYPE === 0){
+                    remoteshops.push({
+                        key:element.SHOP_ID,
+                        text:element.SHOP_NAME,
+                        value:element.SHOP_ID
+                    })
+                }
+                remoteAll.push({
+                    SHOP_ID:element.SHOP_ID,
+                    SHOP_NAME:element.SHOP_NAME,
+                    SHOP_TYPE:element.SHOP_TYPE
+                })
              });
              context.shops = remoteshops
+             context.allshops = remoteAll
               // 初始化店铺清单
             this.onClick()
             

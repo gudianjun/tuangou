@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Divider, Button, Form, Confirm, Grid, Header, Image, Message, Segment, Dropdown, Popup, Sidebar, Menu, Icon, Container } from 'semantic-ui-react'
-import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route, NavLink, withRouter} from 'react-router-dom'
-import logo from "./logo.png"
+import { Button, Confirm, Message, Segment, Menu, Icon, Grid } from 'semantic-ui-react'
+import {Switch, Route, withRouter} from 'react-router-dom'
 import Common from "../common/common"
 import MySidebar from "./MySidebar"
 import XiaoShou from "./ChilentPage/XiaoShou"
@@ -12,12 +11,8 @@ import TuiHuo       from "./ChilentPage/TuiHuo"
 import CangKuGuanLi from "./ChilentPage/CangKuGuanLi"
 import HuiYuanGuanLi from "./ChilentPage/HuiYuanGuanLi"
 
-import HuiYuanCunHuoGuanLi from "./ChilentPage/HuiYuanCunHuoGuanLi"
 import DianPuGuanLi from "./ChilentPage/DianPuGuanLi"
 import YuanGongGuanLi from "./ChilentPage/YuanGongGuanLi"
-
-import XiTongSheDing from "./ChilentPage/XiTongSheDing"
-import CaiGouGuanLi from "./ChilentPage/CaiGouGuanLi"
 import KuCunZongLan from "./ChilentPage/KuCunZongLan"
 import MemKuCunZongLan from "./ChilentPage/MemKuCunZongLan"
 
@@ -26,7 +21,8 @@ import TongJiBaoBiao from "./ChilentPage/TongJiBaoBiao"
 import MeiRiShenPi from "./ChilentPage/MeiRiShenPi"
 
 import { MainContext} from './ChilentPage/ObjContext'
-
+import Visi from './Visi'
+import CaiGouGuanLi from './ChilentPage/CaiGouGuanLi';
 class MainForm extends Component{
   constructor(props, context){
       super(props)
@@ -49,6 +45,21 @@ class MainForm extends Component{
                     this.props.history.push("/loading")
                 }
                 else{
+                    // 在这里启动定时器，来刷新消息
+                    context.timeinterval = setInterval(() => {
+                        Common.sendMessage(Common.baseUrl + "/confirm/getcount"
+                        , "POST"
+                        , null
+                        , null
+                        , null
+                        , (e)=>{
+                            // 读取确认信息列表
+                            
+                            context.setMainContext({messagecount:e.data})
+                            this.setState({})                         
+                        },null,
+                        this.context)
+                    }, 6000);  // 每分钟刷新一下次
                     // 跳转到主画面
                     if(e.data.shoptype === 0) // 商铺
                     {
@@ -79,7 +90,6 @@ class MainForm extends Component{
   }
   static contextType = MainContext;
   static getDerivedStateFromProps(props, state){
-    console.log("-----------------getDerivedStateFromProps")
     return {
     }
   }
@@ -109,6 +119,9 @@ class MainForm extends Component{
         )
   }
   onLogout(){
+      // 关闭定时器
+    clearInterval(this.context.timeinterval)
+
     Common.sendMessage(Common.baseUrl + "/login/logout"
     , "POST"
     , null
@@ -135,6 +148,7 @@ class MainForm extends Component{
                             <Route path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>
                             <Route path='/main/tuihuo' component={TuiHuo}></Route>
                             <Route path='/main/huiyuanguanli' component={HuiYuanGuanLi}></Route>
+                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
                     </Switch>
                 )
          }
@@ -144,6 +158,7 @@ class MainForm extends Component{
                             <Route exact path='/main/cangkuguanli' component={CangKuGuanLi}></Route>
                             <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
                             <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
+                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
                 </Switch>
                 )
          }
@@ -152,6 +167,7 @@ class MainForm extends Component{
                 <Switch>
                             <Route exact path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>
                             <Route path='/main/cangkuguanli' component={CangKuGuanLi}></Route>
+                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
                             <Route path='/main/dianpuguanli' component={DianPuGuanLi}></Route>
                             <Route path='/main/yuangongguanli' component={YuanGongGuanLi}></Route>
                             <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
@@ -164,17 +180,29 @@ class MainForm extends Component{
          }
      }
   }
+  getMessageCount(){
+      if(this.context.messagecount > 0){
+          return( <Button onClick={()=>{this.props.history.push("/main/caigouguanli")}}
+            color='red'
+            content=''
+            icon='bullhorn'
+            label={{ basic: true, color: 'red', pointing: 'left', content: this.context.messagecount.toString() }}
+            />
+            )
+      }
+  }
   render(){
     var fixed = true
     document.title = 'GL团购系统—' + Common._loadStorage('shopname')
     return ( 
         <MainContext.Consumer>{
             ({confirmInfo, items})=>(
-        <div>
-           
-                <MySidebar childrenRoute={this.childrenRoute}></MySidebar>
-               
-                <Segment
+        <div > 
+
+                <MySidebar history={this.props.history} childrenRoute={this.childrenRoute}></MySidebar>
+                <Grid>
+                    <Grid.Row>
+                    <Segment
                     inverted
                     textAlign='center'
                     style={{ minHeight: 66, padding: '1em 0em' }}
@@ -190,6 +218,8 @@ class MainForm extends Component{
                     
                         {this.getTitle()}
                         <Menu.Item position='right'>
+                       
+                            {this.getMessageCount()}
                             <Button size='mini' as='a' onClick={()=>{this.onLogout()}} >
                                 退出
                             </Button>
@@ -197,50 +227,27 @@ class MainForm extends Component{
                     
                     </Menu>
 
-                </Segment>
-
-                <div className="pusher pushable">
+                    </Segment>
+                    </Grid.Row>
+                </Grid>
+                
+                <Grid.Row >
+                {/* <div className="pusher pushable">
                     <div className="ui pusher" >
-                        <div className="mainWrap navslide"  style={{ marginLeft:"110px", minWidth:"400px", overflow:"inherit"}}>
-                        {/* 设定消息对话框 */}
-                        <Confirm
-                            open={confirmInfo.open}
-                            content={confirmInfo.content}
-                            cancelButton='取消'
-                            confirmButton="确定"
-                            onCancel={()=>confirmInfo.onCancel()}
-                            onConfirm={()=>confirmInfo.onConfirm()}
+                        <div className="mainWrap navslide"  style={{ marginLeft:"110px", minWidth:"400px", overflow:"inherit"}}> */}
+                        <div style={{ marginLeft:"110px"}}>
+                            <Confirm
+                                open={confirmInfo.open}
+                                content={confirmInfo.content}
+                                cancelButton='取消'
+                                confirmButton="确定"
+                                onCancel={()=>confirmInfo.onCancel()}
+                                onConfirm={()=>confirmInfo.onConfirm()}
                             />
                             {this.getRoute()}
-                        {/* <Switch>
-                            <Route exact path='/main/xiaoshou' component={XiaoShou}></Route>
-                            <Route path='/main/baofei' component={BaoFei}></Route>
-                            <Route path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>
-
-                            <Route path='/main/tuihuo' component={TuiHuo}></Route>
-                            <Route path='/main/cangkuguanli' component={CangKuGuanLi}></Route>
-                            <Route path='/main/huiyuanguanli' component={HuiYuanGuanLi}></Route>
-
-                            <Route path='/main/huiyuancunhuoguanli' component={HuiYuanCunHuoGuanLi}></Route>
-                            <Route path='/main/dianpuguanli' component={DianPuGuanLi}></Route>
-                            <Route path='/main/yuangongguanli' component={YuanGongGuanLi}></Route>
-
-                      
-                            <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
-                            <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
-
-                            <Route path='/main/shangpinguanli' component={ShangPinGuanLi}></Route>
-                            <Route path='/main/meirishenpi' component={MeiRiShenPi}></Route>
-                            <Route path='/main/tongjibaobiao' component={TongJiBaoBiao}></Route>
-          
-                        </Switch> */}
                         </div>
-                    </div>
+                    </Grid.Row>
                 </div>
-                
-                
-           
-        </div>
         )}
          </MainContext.Consumer>
       )

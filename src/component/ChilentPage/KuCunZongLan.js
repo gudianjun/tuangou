@@ -1,7 +1,6 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button , Grid, Segment} from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
-import {ShoppingItem, MainContext} from './ObjContext'
+import { Table, Grid} from 'semantic-ui-react'
+import {MainContext} from './ObjContext'
 import Common from "../../common/common"
 // 定制一个添加按钮
 

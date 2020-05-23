@@ -1,7 +1,7 @@
 import React,{Component} from "react"
-import { Icon, Label, Menu, Table,Button , Grid, Segment, Pagination, Modal, ButtonGroup} from 'semantic-ui-react'
-import PropTypes, { element } from 'prop-types';
-import {ShoppingItem, MainContext} from '../ObjContext'
+import {Table,Button , Grid,  Pagination, Modal, ButtonGroup} from 'semantic-ui-react'
+import PropTypes from 'prop-types';
+import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 // 定制一个添加按钮
 
@@ -149,7 +149,7 @@ export default class DDHuiZong extends Component{
                             <Table.Footer fullWidth>
                                 <Table.Row>
                                 <Table.HeaderCell colSpan='5' textAlign='center'>
-                                    {/* 分页操作 */}
+                                   
                                 <Pagination 
                                     activePage={this.props.page_index >= 1?this.props.page_index:1}
                                     boundaryRange={0}

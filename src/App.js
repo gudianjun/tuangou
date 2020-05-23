@@ -1,10 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
-import {BrowserRouter, Switch, Router, route, hashHistory, Link, Route, Redirect, withRouter} from 'react-router-dom'
-import {Divider, Button, Form, Confirm, Grid, Header, Image, Message, Segment, Dropdown, Popup, Sidebar, Menu, Icon, Container } from 'semantic-ui-react'
-import { useCookies, withCookies, Cookies  } from 'react-cookie';
+import {Switch, Route, withRouter} from 'react-router-dom'
+import { withCookies  } from 'react-cookie';
 import LoginForm from './component/LoginForm'
 import MainForm from './component/MainForm'
+
+import NewMainForm from './component/NewWebMain'
 import {MainContext} from './component/ChilentPage/ObjContext'
 import Common from './common/common'
 import LoaderExampleInline from './component/Loading'
@@ -34,9 +34,12 @@ class App extends React.Component{
   }
   // 系统总上下文
   mainContext = {
+    messagecount:0, // 转库采购消息数量
+    timeinterval:-1,  // 定时器句柄
     shoptype:-1, // 默认为没有类型
     errorMessage:'',  // 错误消息
     items:[], // 商品信息
+    allshops:[], // 所有的店铺信息
     shops:[], // 只有商店的清单。排除仓库和管理者
     cangkuInfo:{  // 仓库操作信息
       shopItems:[], // 仓库商品信息
@@ -67,10 +70,7 @@ class App extends React.Component{
  
 
   setMainContext(obj){
-    console.log("setMainContext")
-    console.log(obj)
     this.mainContext = {...this.mainContext, ...obj}
-    console.log(this.mainContext)
     this.setState({})
   }
 
@@ -81,26 +81,17 @@ class App extends React.Component{
     console.log(this.mainContext)
     this.setState({})
   }
-
-  /*componentDidMount(){
-    //const { cookies } = this.props;
-    //this.setState = {
-    //  name: cookies.get('name') || 'Ben'
-    //};
-
-    
-  }*/
+  //  className="pace  pace-inactive" 
   render(){
     
     return (
-      <div className="pace  pace-inactive">
+      <div>
         <MainContext.Provider value = {this.mainContext}>
           <Switch>
             <Route exact path='/' component={MainForm}></Route>
             <Route path='/loading' component={LoaderExampleInline}></Route>
             <Route path='/login' component={LoginForm}></Route>
             <Route path='/main' component={MainForm}></Route>
-            {/*<Redirect from="*" to="/login"></Redirect>*/}
           </Switch>
         </MainContext.Provider>
       </div>
