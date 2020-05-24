@@ -4,7 +4,6 @@ import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { element } from "prop-types";
 setDefaultLocale('zhCN');
 // 店铺管理
 export default class ConfirmEdit extends Component{
@@ -50,6 +49,11 @@ export default class ConfirmEdit extends Component{
             showset:false,  // 是否显示入库数量
             inwhorder:{},   // 入库操作的订单信息
             inwhnumber:0,   // 本次入库数量
+            timeinterval:setInterval(()=>{
+                if(this.state.editstate === 0){
+                    this.getItems(context)
+                }
+            }, 10000)
         }
         this.getItems(context) // 获得编辑列表
 
@@ -100,6 +104,10 @@ export default class ConfirmEdit extends Component{
                 })
             },null,
             this.context)
+    }
+    componentWillUnmount(){
+        // 卸载
+        clearInterval(this.state.timeinterval)
     }
     static getDerivedStateFromProps(nexProps, prevState){
         var items = []

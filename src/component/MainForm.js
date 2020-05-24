@@ -21,7 +21,6 @@ import TongJiBaoBiao from "./ChilentPage/TongJiBaoBiao"
 import MeiRiShenPi from "./ChilentPage/MeiRiShenPi"
 
 import { MainContext} from './ChilentPage/ObjContext'
-import Visi from './Visi'
 import CaiGouGuanLi from './ChilentPage/CaiGouGuanLi';
 class MainForm extends Component{
   constructor(props, context){
@@ -59,7 +58,7 @@ class MainForm extends Component{
                             this.setState({})                         
                         },null,
                         this.context)
-                    }, 6000);  // 每分钟刷新一下次
+                    }, 10000);  // 每分钟刷新一下次
                     // 跳转到主画面
                     if(e.data.shoptype === 0) // 商铺
                     {

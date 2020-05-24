@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Menu, Icon, Sidebar , Segment, Header, Image, Label} from 'semantic-ui-react'
+import { Menu, Icon} from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import { MainContext} from './ChilentPage/ObjContext'
-import { b } from 'react-router-dom';
+
 export default class MenuExampleInvertedVertical extends Component {
     static contextType = MainContext;
     constructor(props, context){

@@ -4,7 +4,6 @@ import { withCookies  } from 'react-cookie';
 import LoginForm from './component/LoginForm'
 import MainForm from './component/MainForm'
 
-import NewMainForm from './component/NewWebMain'
 import {MainContext} from './component/ChilentPage/ObjContext'
 import Common from './common/common'
 import LoaderExampleInline from './component/Loading'

@@ -3,7 +3,7 @@ import { Grid } from "semantic-ui-react"
 import ShopItemSelect from "./SubItem/ShopItemSelect"
 import ItemOrder from "./SubItem/ItemOrder"
 import {MainContext} from './ObjContext'
-import Common from "../../common/common"
+
 
 export default class TuiHuo extends Component{
     constructor(props){

@@ -1,9 +1,9 @@
 import React,{Component, createRef } from "react"
-import {  Grid, Sticky, Ref , Visibility, Segment, Image, Divider} from "semantic-ui-react"
-import ItemSelect from "./SubItem/ItemSelect"
+import {  Grid} from "semantic-ui-react"
+
 import ItemOrder from "./SubItem/ItemOrder"
 import { MainContext} from './ObjContext'
-import Common from "../../common/common"
+
 import ShopItemSelect from "./SubItem/ShopItemSelect"
 
 export default class XiaoShou extends Component{
