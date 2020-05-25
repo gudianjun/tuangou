@@ -83,6 +83,9 @@ export default class DDHuiZong extends Component{
         else if(item.OPE_TYPE===6){
             return '采购'
         }
+        else if(item.OPE_TYPE===7){
+            return '确认转库'
+        }
     }
     render(){
         var rows=[]
@@ -189,9 +192,7 @@ export default class DDHuiZong extends Component{
                                     <Table.Body >
                                         {modelrows}
                                     </Table.Body>
-
                                     <Table.Footer fullWidth>
-                                        
                                     </Table.Footer>
                                 </Table>
                             </Grid.Column>

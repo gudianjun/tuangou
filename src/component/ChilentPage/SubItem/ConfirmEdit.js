@@ -1,7 +1,8 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button, Step, ButtonGroup,Input, Dropdown, SegmentGroup, Modal, Form } from 'semantic-ui-react'
+import { Icon, Label, Table,Button, Tab, Step, ButtonGroup,Input, Dropdown, SegmentGroup, Segment, Modal, Form, Container } from 'semantic-ui-react'
 import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
+import ZYXiangXi from '../../ChilentPage/statistics/ZYXiangXi'
 import { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 setDefaultLocale('zhCN');
@@ -12,6 +13,7 @@ export default class ConfirmEdit extends Component{
     constructor(props, context){
         super(props)
         var temparr = []
+        
         context.items.forEach(element=>{
             if(element.ITEM_TYPE === 0) // 单品
             {
@@ -49,6 +51,9 @@ export default class ConfirmEdit extends Component{
             showset:false,  // 是否显示入库数量
             inwhorder:{},   // 入库操作的订单信息
             inwhnumber:0,   // 本次入库数量
+            activeIndex:0,  // 活动Tab页面
+            activePage:-1,  // 当前激活的页面
+            selectobject:{}, // 分页查询结果对象
             timeinterval:setInterval(()=>{
                 if(this.state.editstate === 0){
                     this.getItems(context)
@@ -56,14 +61,6 @@ export default class ConfirmEdit extends Component{
             }, 10000)
         }
         this.getItems(context) // 获得编辑列表
-
-        
-
-
-        // this.setState({
-        //     itemoption:temparr,
-        //     shopoption:shoparr
-        // })
     }
     getItems(context)
     {
@@ -544,21 +541,21 @@ export default class ConfirmEdit extends Component{
                 />
                 <Step
                 active={element.ORDER_STATE === 1}
-                icon='credit card'
+                icon='angle double right'
                 onClick={this.handleClick}
                 title='等待'
                 description={element.CONFIRM_TYPE === 0?'采购中':'从【' + element.FROM_SHOP_NAME + '】'}
                 />
                 <Step
                 active={element.ORDER_STATE === 2}
-                icon='credit card'
+                icon='angle double right'
                 onClick={this.handleClick}
                 title='入库'    // 根据状态判断
                 description={'【'+ element.TO_SHOP_NAME +'】'+ element.ALREADY_IN_NUMBER.toString() + '/' + element.ITEM_NUMBER.toString()}
                 ></Step>
                 <Step
                 active={element.ORDER_STATE === 3 || element.ORDER_STATE === 4}
-                icon='credit card'
+                icon='flag checkered'
                 onClick={this.handleClick}
                 title='完成'
                 description={element.CONFIRM_TYPE === 0?'采购完成':'转库完成'}
@@ -572,9 +569,13 @@ export default class ConfirmEdit extends Component{
     addNormolRow(element){
         return (
             <Table.Row key={element.ORDER_ID}>
-                            <Table.Cell collapsing>{element.ORDER_ID}</Table.Cell>
-                            <Table.Cell collapsing>{element.ORDER_TIME}</Table.Cell>
-                            <Table.Cell collapsing>{this.getOrderState(element)}</Table.Cell>
+                            <Table.Cell  collapsing>
+                            <SegmentGroup>
+                                <Segment size={'mini'}> {element.ORDER_ID}</Segment> 
+                                <Segment size={'mini'}>{element.ORDER_TIME}</Segment>
+                            </SegmentGroup>
+                            </Table.Cell>
+                             <Table.Cell collapsing>{this.getOrderState(element)}</Table.Cell>
                             <Table.Cell collapsing>
                                 {this.getButtonGroup(element)}
                             </Table.Cell>
@@ -585,7 +586,7 @@ export default class ConfirmEdit extends Component{
         element = {...element, DISP_FLG:1} // 补充一个编辑标记
         return (
             <Table.Row key={element.ORDER_ID}>
-                <Table.Cell  colSpan='3'>
+                <Table.Cell  colSpan='2'>
                     <SegmentGroup>
                         <Label>将商品【</Label>
                         <Dropdown color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
@@ -609,7 +610,7 @@ export default class ConfirmEdit extends Component{
         element = {...element, DISP_FLG:2} // 补充一个添加标记
         return (
             <Table.Row key={element.ORDER_ID}>
-                <Table.Cell  colSpan='3'>
+                <Table.Cell  colSpan='2'>
                 <SegmentGroup>
                     <Label>将商品【</Label>
                     <Dropdown color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
@@ -632,8 +633,10 @@ export default class ConfirmEdit extends Component{
     onRefClick(){
         this.getItems(this.context)
     }
-    render(){
-        var rows = [];
+
+    panes = [
+        { menuItem: '转库操作', render: () => {
+            var rows = [];
         if ( this.state.items.length > 0 ) {
             this.state.items.forEach(element=>{
                 if(this.state.editstate === 0){ // 普通模式
@@ -661,29 +664,53 @@ export default class ConfirmEdit extends Component{
         if(this.state.editstate === 0){
         // 添加空行
             rows.push(<Table.Row key={'new'}>
-                            <Table.Cell colSpan='3'></Table.Cell>
+                            <Table.Cell colSpan='2'></Table.Cell>
                             <Table.Cell>
                                 <Button onClick={()=>this.onAddNewClick()}>添加</Button>
                             </Table.Cell>
                         </Table.Row>)
         }
-        return(
-            
-            <div style={{ minHeight:800}}> 
-           
+            return(
+            <Tab.Pane>
                 <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
-                    <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell >订单ID</Table.HeaderCell>
-                        <Table.HeaderCell >创建时间</Table.HeaderCell>
-                        <Table.HeaderCell >订单状态</Table.HeaderCell>
-                        <Table.HeaderCell ><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
-                    <Table.Body>
-                        {rows}
-                    </Table.Body>
-                </Table>
+                            <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell width={1}>订单</Table.HeaderCell>
+                                <Table.HeaderCell width={4}>订单状态</Table.HeaderCell>
+                                <Table.HeaderCell width={2}><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
+                            </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {rows}
+                            </Table.Body>
+                        </Table>
+            </Tab.Pane>)}},
+        { menuItem: '清单', render: () => {
+            return(
+                <Tab.Pane>
+                    <ZYXiangXi></ZYXiangXi>
+
+
+
+
+                </Tab.Pane> 
+                )
+            }
+        }
+      ]
+
+    handleTabChange = (e, { activeIndex }) => this.setState({ activeIndex })
+    render(){
+        
+        return(
+            <div style={{ minHeight:800}}> 
+                <Tab
+                    panes={this.panes}
+                    activeIndex={this.state.activeIndex}
+                    onTabChange={this.handleTabChange}
+                    />
+                        
+                    
                 <Modal open={this.state.showset}>   
                         <Modal.Header>请输入本次{this.state.inwhorder.CONFIRM_TYPE === 0?'【采购】':'【转库】'}订单【{this.state.inwhorder.ORDER_ID}】的实际入库数量
                             <ButtonGroup style={{position:'absolute',right:60}}>

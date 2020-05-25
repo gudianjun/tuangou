@@ -75,12 +75,7 @@ export default class MenuExampleInvertedVertical extends Component {
           }
           else if(this.context.shoptype === 1){
              return(
-              <Menu inverted vertical  style={{width:"100%", borderRadius: "0px", fontSize:"15px" }}  icon='labeled'>
-                <Menu.Item
-                name='cangkuguanli'
-                active={activeItem === 'cangkuguanli'}
-                onClick={this.handleItemClick}
-                ><Icon name='shipping' />仓库管理</Menu.Item>               
+              <Menu inverted vertical  style={{width:"100%", borderRadius: "0px", fontSize:"15px" }}  icon='labeled'>       
                 <Menu.Item
                 name='kucunzonglan'
                 active={activeItem === 'kucunzonglan'}

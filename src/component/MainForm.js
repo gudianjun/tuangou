@@ -68,7 +68,7 @@ class MainForm extends Component{
                     else if(e.data.shoptype === 1) // 仓库
                     {
                         context.shoptype = e.data.shoptype
-                        this.setState({},()=>this.props.history.push("/main/cangkuguanli"))
+                        this.setState({},()=>this.props.history.push("/main/kucunzonglan"))
                     }
                     else{
                         // 管理员
@@ -154,7 +154,6 @@ class MainForm extends Component{
          else if(this.context.shoptype === 1){
             return(
                 <Switch>
-                            <Route exact path='/main/cangkuguanli' component={CangKuGuanLi}></Route>
                             <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
                             <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
                             <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>

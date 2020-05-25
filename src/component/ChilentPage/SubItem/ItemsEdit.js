@@ -503,22 +503,23 @@ export default class ItemsEdit extends Component{
     }
     addAddRow(element){
         element = {...element, DISP_FLG:2} // 补充一个添加标记
+        console.log('addAddRow', element)
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                             <Table.Cell>{this.getAddFlg(element)}{element.ITEM_ID}</Table.Cell>
-                            <Table.Cell><Dropdown
+                            <Table.Cell><Dropdown style={{ width: '50px'}}
                                 onChange={(e,f)=>this.handleAddItemComChange(e,f)}
                                 options={this.state.comtypes}
-                                placeholder='选择商品类别'
+                                placeholder='商品类别'
                                 selection
                                 value={element.COM_TYPE_ID}/>
                             </Table.Cell>
-                            <Table.Cell><Input fluid value={element.ITEM_NAME} onChange={(e, f)=>this.onEditItem('ITEM_NAME', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.ITEM_COST} onChange={(e, f)=>this.onEditItem('ITEM_COST', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.ITEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_PRICE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.ITEM_MEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_MEM_PRICE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.ITEM_GROUP_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_GROUP_PRICE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.ITEM_DEPOSIT_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_DEPOSIT_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_NAME} onChange={(e, f)=>this.onEditItem('ITEM_NAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_COST} onChange={(e, f)=>this.onEditItem('ITEM_COST', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_MEM_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_MEM_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_GROUP_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_GROUP_PRICE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_DEPOSIT_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_DEPOSIT_PRICE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell>
                              <ButtonGroup fluid>
                                 <Radio toggle label={element.ITEM_TYPE === 0 ? '单品' : '套装' } 
