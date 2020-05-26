@@ -469,9 +469,9 @@ export default class MemberEdit extends Component{
         element = {...element, DISP_FLG:2} // 补充一个添加标记
         return (
             <Table.Row key={element.MEM_ID}>
-                            <Table.Cell><Input fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '50px'}}  fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '50px'}} fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '50px'}} fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
                           
                             <Table.Cell>
                                 <DatePicker dateFormat="yyyy-MM-dd"
@@ -484,9 +484,9 @@ export default class MemberEdit extends Component{
                         
                             <Table.Cell><Dropdown options={this.sexoption}  value={element.MEM_SEX} onChange={(e, f)=>this.sexSelectChange(e, f)}></Dropdown></Table.Cell>
                             
-                            <Table.Cell><Input fluid value={element.MEM_PHONE} onChange={(e, f)=>this.onEditItem('MEM_PHONE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.MEM_ZIP} onChange={(e, f)=>this.onEditItem('MEM_ZIP', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input fluid value={element.MEM_ADDRESS} onChange={(e, f)=>this.onEditItem('MEM_ADDRESS', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '50px'}} fluid value={element.MEM_PHONE} onChange={(e, f)=>this.onEditItem('MEM_PHONE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '50px'}} fluid value={element.MEM_ZIP} onChange={(e, f)=>this.onEditItem('MEM_ZIP', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '50px'}} fluid value={element.MEM_ADDRESS} onChange={(e, f)=>this.onEditItem('MEM_ADDRESS', element, f.value)}></Input></Table.Cell>
                             <Table.Cell>
                                 {this.getButtonGroup(element)}
                             </Table.Cell>
