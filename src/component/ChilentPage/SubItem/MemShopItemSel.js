@@ -93,7 +93,7 @@ export default class MemShopItemSel extends Component{
         
         return(
             
-            <div>
+            <div style={{height:'84vh', overflowY:'scroll'}}>
                 <Table celled selectable>
                     <Table.Header  >
                     <Table.Row>
