@@ -1,5 +1,5 @@
-import React,{Component} from "react"
-import { Table, Grid} from 'semantic-ui-react'
+import React,{Component, Link} from "react"
+import { Table, Grid, Label, Button, Modal, ButtonGroup} from 'semantic-ui-react'
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
 // 定制一个添加按钮
@@ -11,7 +11,9 @@ export default class MemKuCunZongLan extends Component{
     constructor(props, context){
         super(props)
         this.state = {
-            data:[]
+            data:[],
+            showset:false,
+            modelinfo:{}
         }
 
         Common.sendMessage(Common.baseUrl + "/statistics/cangkumemzonglan"
@@ -26,6 +28,36 @@ export default class MemKuCunZongLan extends Component{
                 console.log(e)
             },null,
             this.context)
+    }
+    getMemShop(shopid, itemid, comtype){
+        Common.sendMessage(Common.baseUrl + "/statistics/shopmemitems"
+            , "POST"
+            , null
+            , {SHOP_ID:shopid, ITEM_ID:itemid, COM_TYPE_ID:comtype}
+            , null
+            , (e)=>{
+                this.setState(
+                    {
+                        showset:true,
+                        modelinfo:e.data
+                    }
+                )
+                console.log(e)
+            },null,
+            this.context)
+
+    }
+    getNumber(element, shop){
+        if(element['SHOP_NAME_' + shop.SHOP_ID]===0){
+            return (element['SHOP_NAME_' + shop.SHOP_ID])
+        }
+        else{
+            return ( 
+                <Label as='a' onClick={()=>this.getMemShop(shop.SHOP_ID, element.ITEM_ID, element.COM_TYPE_ID)}  color='blue' >
+                    {element['SHOP_NAME_' + shop.SHOP_ID]}
+            </Label>
+           )
+        }
     }
 
     render(){
@@ -45,7 +77,7 @@ export default class MemKuCunZongLan extends Component{
                     <Table.Cell key={ (nkey++).toString()}>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
                     <Table.Cell key={ (nkey++).toString()}>{element.ITEM_NAME}</Table.Cell>
                     {this.state.data.shopname.forEach(shop => {
-                            colms.push(<Table.Cell key={ (nkey++).toString()}  textAlign='right'>{element['SHOP_NAME_' + shop.SHOP_ID]}</Table.Cell>)
+                            colms.push(<Table.Cell key={ (nkey++).toString()}  textAlign='right'>{this.getNumber(element, shop)}</Table.Cell>)
                     })}
                     {colms}
                     <Table.Cell key={ (nkey++).toString()} textAlign='right'>{element.TOTLE_NUMBER}</Table.Cell>
@@ -53,6 +85,20 @@ export default class MemKuCunZongLan extends Component{
                     )
             });
             
+        }
+        var memrows=[]
+        if(this.state.showset){
+            this.state.modelinfo.infos.forEach(element => {
+                memrows.push(
+                    <Table.Row key = {element.MEM_CODE}>
+                        <Table.Cell>{element.MEM_CODE}</Table.Cell>
+                        <Table.Cell>{element.MEM_NAME}</Table.Cell>
+                        <Table.Cell textAlign='right'>{element.ITEM_NUMBER}</Table.Cell>
+                    </Table.Row>
+                        )
+            })
+
+           
         }
         return(
             <div>
@@ -73,12 +119,45 @@ export default class MemKuCunZongLan extends Component{
                                {rows}
                             </Table.Body>
                             <Table.Footer fullWidth>
-                             
+
                             </Table.Footer>
                         </Table>
                     </Grid.Column>
                     </Grid.Row>
                 </Grid>
+
+                <Modal open={this.state.showset}>   
+                    <Modal.Header>{'店铺【' + this.state.modelinfo.SHOP_NAME + '】中商品【' + this.state.modelinfo.ITEM_NAME + '】的会员存货：'}
+                        <ButtonGroup style={{position:'absolute',right:60}}>
+                            <Button onClick={()=>this.setState({showset:false})} >
+                                关闭
+                            </Button>
+                        </ButtonGroup>
+                    </Modal.Header>
+                    <Modal.Content>
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <Table celled selectable>
+                                    <Table.Header  >
+                                        <Table.Row key={ (nkey++).toString()}>
+                                            <Table.HeaderCell>会员号</Table.HeaderCell>
+                                            <Table.HeaderCell>会员姓名</Table.HeaderCell>
+                                            <Table.HeaderCell>持有数量</Table.HeaderCell>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body >
+                                            {memrows}
+                                    </Table.Body>
+                                    <Table.Footer fullWidth>
+                                    </Table.Footer>
+                                </Table>
+                            </Grid.Column>
+                        </Grid>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        
+                    </Modal.Actions>
+                </Modal>
             </div>
         )
     }

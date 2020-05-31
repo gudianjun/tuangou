@@ -71,6 +71,9 @@ class NumberButton extends Component{
         var { value } = f;
         const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
         if ((reg.test(value) && value.length < 4) || value === '') {
+            if(value === ''){
+                value='0'
+            }
           value = parseInt(value)
           const {shoppingItems} = this.context;
           var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)

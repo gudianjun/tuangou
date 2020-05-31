@@ -63,7 +63,12 @@ export default class MenuExampleInvertedVertical extends Component {
               active={activeItem === 'huiyuanguanli'}
               onClick={this.handleItemClick}
               ><Icon name='users' />会员管理</Menu.Item>
-
+            <Menu.Item
+                name='memkucunzonglan'
+                active={activeItem === 'memkucunzonglan'}
+                onClick={this.handleItemClick}
+                ><Icon name='shopping basket' />会员存货</Menu.Item>
+                
             <Menu.Item
                 name='caigouguanli'
                 active={activeItem === 'caigouguanli'}

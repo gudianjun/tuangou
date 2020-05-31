@@ -221,7 +221,7 @@ export default class MemberEdit extends Component{
     }
     // 编辑会员的存取货品
     onWHClick(item, ordertype){
-        // 设定套餐数据
+        // 获得会员仓库商品信息
         var arrayObj = []
 
         Common.sendMessage(Common.baseUrl + "/member/getmemwh"
@@ -470,7 +470,7 @@ export default class MemberEdit extends Component{
         return (
             <Table.Row key={element.MEM_ID}>
                             <Table.Cell><Input  style={{ minWidth: '100px'}}  fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
-                            <Table.Cell><Input  style={{ minWidth: '50px'}} fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Input  style={{ minWidth: '70px'}} fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input  style={{ minWidth: '70px'}} fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
                           
                             <Table.Cell>

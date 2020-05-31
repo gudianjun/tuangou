@@ -131,8 +131,7 @@ export default class ItemSelect extends Component{
             )
         }
         return(
-            <div 
-            >
+            <div style={{height:  '75vh' , overflowY:'scroll'}}>
                 <Table celled selectable>
                     <Table.Header  >
                     <Table.Row>

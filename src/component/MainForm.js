@@ -147,6 +147,7 @@ class MainForm extends Component{
                             <Route path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>
                             <Route path='/main/tuihuo' component={TuiHuo}></Route>
                             <Route path='/main/huiyuanguanli' component={HuiYuanGuanLi}></Route>
+                            <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
                             <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
                     </Switch>
                 )
