@@ -1,7 +1,7 @@
 export default class Common{
     static get baseUrl(){
         return  "http://47.108.133.145:5000/v1";
-       //  return  "http://192.168.3.11:5000/v1";
+        // return  "http://192.168.3.11:5000/v1";
     }
 
     static _setStorage(key, value){
@@ -16,7 +16,7 @@ export default class Common{
     static _clear(){
         localStorage.clear();
     }
-
+  
     static _getSendToken(){
         const token = Common._loadStorage("token");
         if(token === null){

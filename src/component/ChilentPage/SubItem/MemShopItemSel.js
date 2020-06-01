@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button } from 'semantic-ui-react'
+import { Icon, Label, Table,Button , Input} from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 // 仓库物品选择
@@ -10,7 +10,8 @@ export default class MemShopItemSel extends Component{
     constructor(props, context){
         super(props)
         this.state = {
-            items:[]
+            items:[],
+            searchtext: ''
         }
     }
 
@@ -77,22 +78,29 @@ export default class MemShopItemSel extends Component{
         var rows = [];
        
         this.props.ITEMS.forEach(element=>{
-
-            rows.push(
-                <Table.Row key={element.key}>
-                    <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                    <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                    <Table.Cell>{this.getNumber(element)}</Table.Cell>
-                    <Table.Cell>
-                        <Button icon onClick={()=>{this.onClickHandler(element)}}><Icon name='shopping cart'/></Button>
-                    </Table.Cell>
-                </Table.Row>
-            )
+            var index = 0
+            if(this.state.searchtext !== undefined){
+                index = (element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + element.ITEM_NAME).indexOf(this.state.searchtext.toUpperCase())
+            }
+            if( index>= 0){
+                rows.push(
+                    <Table.Row key={element.key}>
+                        <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                        <Table.Cell>{this.getNumber(element)}</Table.Cell>
+                        <Table.Cell>
+                            <Button icon onClick={()=>{this.onClickHandler(element)}}><Icon name='shopping cart'/></Button>
+                        </Table.Cell>
+                    </Table.Row>
+                )
+            }
         }
         )
         
         return(
-            
+            <div>
+
+            <Input icon='search' size='small' placeholder='Search...' fluid onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
             <div style={{height:'84vh', overflowY:'scroll'}}>
                 <Table celled selectable>
                     <Table.Header  >
@@ -108,6 +116,7 @@ export default class MemShopItemSel extends Component{
                         {rows}
                     </Table.Body>
                 </Table>
+            </div>
             </div>
         )
     }

@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Table,Button, Label } from 'semantic-ui-react'
+import { Icon, Table,Button, Label,Input } from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from '../../../common/common'
@@ -58,7 +58,8 @@ export default class ShopItemSelect extends Component{
         super(props)
 
         this.state = {
-            items : []
+            items : [],
+            searchtext:''
         }
 
         if(!this.props.isselect){
@@ -140,47 +141,57 @@ export default class ShopItemSelect extends Component{
         var rows = [];
        
         cangkuInfo.shopItems.forEach(element=>{
-            if(this.props.isselect){
-                rows.push(
-                    <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                        <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                        <Table.Cell>{element.ITEM_COUNT}</Table.Cell>
-                        <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                        ></AddButton></Table.Cell>
-                    </Table.Row>
-                 )
+            var index = 0
+            if(this.state.searchtext !== undefined){
+                index = (element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + element.ITEM_NAME).indexOf(this.state.searchtext.toUpperCase())
+            }
+            if( index>= 0){
+                if(this.props.isselect){
+                    rows.push(
+                        <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                            <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                            <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                            <Table.Cell>{element.ITEM_COUNT}</Table.Cell>
+                            <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                            ></AddButton></Table.Cell>
+                        </Table.Row>
+                    )
+                    }
+                else{
+                    rows.push(
+                        <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                            <Table.Cell>{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                            <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                            <Table.Cell>{element.ITEM_TYPE === 0?element.ITEM_COUNT:'套装'}</Table.Cell>
+                            <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                            ></AddButton></Table.Cell>
+                        </Table.Row>
+                    )
                 }
-            else{
-                rows.push(
-                    <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                        <Table.Cell>{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                        <Table.Cell>{element.ITEM_TYPE === 0?element.ITEM_COUNT:'套装'}</Table.Cell>
-                        <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                        ></AddButton></Table.Cell>
-                    </Table.Row>
-                 )
             }
         }
         )
         
         return(
-            <div style={{height: this.props.isselect?'75vh':'90vh', overflowY:'scroll'}}>
-                <Table celled selectable>
-                    <Table.Header  >
-                    <Table.Row>
-                        <Table.HeaderCell >商品编号</Table.HeaderCell>
-                        <Table.HeaderCell>商品名称</Table.HeaderCell>
-                        <Table.HeaderCell>数量</Table.HeaderCell>
-                        <Table.HeaderCell><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
+            <div>
+                <Input icon='search' size='small' placeholder='Search...' fluid onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
+                <div style={{height: this.props.isselect?'75vh':'90vh', overflowY:'scroll'}}>
+                    
+                    <Table celled selectable>
+                        <Table.Header  >
+                        <Table.Row>
+                            <Table.HeaderCell >商品编号</Table.HeaderCell>
+                            <Table.HeaderCell>商品名称</Table.HeaderCell>
+                            <Table.HeaderCell>数量</Table.HeaderCell>
+                            <Table.HeaderCell><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Header>
 
-                    <Table.Body >
-                        {rows}
-                    </Table.Body>
-                </Table>
+                        <Table.Body >
+                            {rows}
+                        </Table.Body>
+                    </Table>
+                </div>
             </div>
         )
     }

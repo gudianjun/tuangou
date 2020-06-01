@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button } from 'semantic-ui-react'
+import { Icon, Label, Table,Button, Input } from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from "../../../common/common"
@@ -10,6 +10,7 @@ class AddButton extends Component{
         this.state={
             itemKey:props.itemKey
             , iconN:props.iconN
+            
         };
     }
     static getDerivedStateFromProps(nexProps, prevState){
@@ -54,6 +55,7 @@ export default class ItemSelect extends Component{
         super(props)
         this.state = {
             items:[]
+            , searchtext:'' // 搜索文本
         }        
 
         this.onClick()
@@ -98,21 +100,11 @@ export default class ItemSelect extends Component{
     
     render(){
         var rows = [];
-        if ( this.state.items !=null ) {
+        if ( this.state.items !=null ) {           
             this.state.items.forEach(element=>{
-                if(this.props.seltype === 0){
-                    rows.push(
-                        <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                            <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                            <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                            <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
-                            <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                            ></AddButton></Table.Cell>
-                        </Table.Row>
-                    )
-                }
-                else{
-                    if(element.ITEM_TYPE === 0){
+                var index = (element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + element.ITEM_NAME).indexOf(this.state.searchtext.toUpperCase())
+                if( index>= 0){
+                    if(this.props.seltype === 0){
                         rows.push(
                             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                                 <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
@@ -124,28 +116,43 @@ export default class ItemSelect extends Component{
                         )
                     }
                     else{
+                        if(element.ITEM_TYPE === 0){
+                            rows.push(
+                                <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
+                                    <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                                    <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                                    <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
+                                    <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
+                                    ></AddButton></Table.Cell>
+                                </Table.Row>
+                            )
+                        }
+                        else{
 
+                        }
                     }
                 }
             }
             )
         }
         return(
-            <div style={{height:  '75vh' , overflowY:'scroll'}}>
-                <Table celled selectable>
-                    <Table.Header  >
-                    <Table.Row>
-                        <Table.HeaderCell >商品编号</Table.HeaderCell>
-                        <Table.HeaderCell>商品名称</Table.HeaderCell>
-                        <Table.HeaderCell>单价</Table.HeaderCell>
-                        <Table.HeaderCell><Button icon onClick={()=>{this.onClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body >
-                        {rows}
-                    </Table.Body>
-                </Table>
+            <div>
+                <Input icon='search' size='small' placeholder='Search...' fluid onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
+                <div  style={{height:  '75vh' , overflowY:'scroll' }}>
+                    <Table size='small' celled >
+                        <Table.Header fullWidth>
+                        <Table.Row>
+                            <Table.HeaderCell>编号</Table.HeaderCell>
+                            <Table.HeaderCell>商品名</Table.HeaderCell>
+                            <Table.HeaderCell>单价</Table.HeaderCell>
+                            <Table.HeaderCell><Button icon onClick={()=>{this.onClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {rows}
+                        </Table.Body>
+                    </Table>
+                </div>
             </div>
         )
     }
