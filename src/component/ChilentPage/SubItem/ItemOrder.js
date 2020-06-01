@@ -70,7 +70,7 @@ class NumberButton extends Component{
         
         var { value } = f;
         const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
-        if ((reg.test(value) && value.length < 4) || value === '') {
+        if ((reg.test(value) && value.length < 5) || value === '') {
             if(value === ''){
                 value='0'
             }
@@ -148,7 +148,7 @@ class NumberButton extends Component{
             <Button as='div' labelPosition='right'>
                 <Button  icon onClick={()=>this.minusClick()}><Icon name='minus' style={{width:"20px" }}/></Button>
                 
-                <Input value={this.props.itemvalue} onChange={(e,f)=>this.numberChange(e,f)}  as='a'  size="mini" basic="true" pointing='left' style={{width:"45px" }} inverted  placeholder="数量"/>
+                <Input value={this.props.itemvalue} onChange={(e,f)=>this.numberChange(e,f)}  as='a'  size="mini" basic="true" pointing='left' style={{width:"50px" }} inverted  placeholder="数量"/>
                 
                 <Button icon onClick={()=>this.plusClick()} ><Icon mini="true" name='plus'/></Button>
             </Button></div>
