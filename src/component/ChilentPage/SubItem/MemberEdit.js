@@ -23,7 +23,8 @@ export default class MemberEdit extends Component{
             comtypes:[], // 商品类别列表
             whmeminfo:{},    // 会员仓储信息
             whordertype:0,   // 0:存货，1：提货
-            whitems:[]  // 会员存储信息
+            whitems:[],  // 会员存储信息
+            searchtext:''
         }
         this.getItems() // 获得编辑列表
     }
@@ -545,15 +546,23 @@ export default class MemberEdit extends Component{
         var rows = [];
         if ( this.state.items.length > 0 ) {
             this.state.items.forEach(element=>{
+                var index = 0
+                if(this.state.searchtext !== undefined){
+                    index = (element.MEM_CODE.toUpperCase() + element.MEM_FIRSTNAME + element.MEM_LASTNAME).indexOf(this.state.searchtext.toUpperCase())
+                }
                 if(this.state.editstate === 0){ // 普通模式
-                    rows.push(this.addNormolRow(element))
+                    if( index>= 0){
+                        rows.push(this.addNormolRow(element))
+                    }
                 }
                 if(this.state.editstate === 1){ // 编辑模式
                     if(element.MEM_ID === this.state.editobject.MEM_ID){
                         rows.push(this.addEditRow(this.state.editobject))
                     }
                     else{
-                        rows.push(this.addNormolRow(element))
+                        if( index>= 0){
+                            rows.push(this.addNormolRow(element))
+                        }
                     }
                 }
                 if(this.state.editstate === 2){ // 编辑模式
@@ -561,7 +570,9 @@ export default class MemberEdit extends Component{
                         rows.push(this.addAddRow(this.state.editobject))
                     }
                     else{
-                        rows.push(this.addNormolRow(element))
+                        if( index>= 0){
+                            rows.push(this.addNormolRow(element))
+                        }
                     }
                 }
             }
@@ -584,10 +595,10 @@ export default class MemberEdit extends Component{
                         </Table.Row>)
         }
         return(
-            
-            <div style={{ minHeight:800}}> 
-           
-                <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
+            <div >
+                <Input icon='search' size='small' placeholder='Search...'  onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
+            <div style={{ height:  '85vh' , overflowY:'scroll' }}> 
+                <Table celled selectable >
                     <Table.Header  >
                     <Table.Row>
                         <Table.HeaderCell >会员号</Table.HeaderCell>
@@ -607,7 +618,7 @@ export default class MemberEdit extends Component{
                     </Table.Body>
                 </Table>
                 <Modal open={this.state.showset}>   
-        <Modal.Header>会员【{this.state.whmeminfo.MEM_LASTNAME + ' ' + this.state.whmeminfo.MEM_FIRSTNAME}】的{this.state.whordertype ===0 ? '存货':'提货'}
+                    <Modal.Header>会员【{this.state.whmeminfo.MEM_LASTNAME + ' ' + this.state.whmeminfo.MEM_FIRSTNAME}】的{this.state.whordertype ===0 ? '存货':'提货'}
                       <ButtonGroup style={{position:'absolute',right:60}}>
                         <Button  onClick={()=>this.onSetSave()} primary >
                              保存
@@ -633,6 +644,7 @@ export default class MemberEdit extends Component{
                         
                     </Modal.Actions>
                 </Modal>
+            </div>
             </div>
         )
     }
