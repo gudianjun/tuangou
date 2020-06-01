@@ -16,7 +16,8 @@ export default class ItemsEdit extends Component{
             baseitems:[],
             showset:false,   // 是否显示套装编辑画面
             editobject:{},   //进行编辑的对象
-            comtypes:[] // 商品类别列表
+            comtypes:[], // 商品类别列表
+            searchtext:''
         }
         this.getItems() // 获得编辑列表
     }
@@ -537,15 +538,24 @@ export default class ItemsEdit extends Component{
         var rows = [];
         if ( this.state.items.length > 0 ) {
             this.state.items.forEach(element=>{
+                var index = 0
+                if(this.state.searchtext !== undefined){
+                    index = (element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + element.ITEM_NAME).indexOf(this.state.searchtext.toUpperCase())
+                }
+
                 if(this.state.editstate === 0){ // 普通模式
+                    if( index>= 0){
                     rows.push(this.addNormolRow(element))
+                    }
                 }
                 if(this.state.editstate === 1){ // 编辑模式
                     if(element.ITEM_ID === this.state.editobject.ITEM_ID && element.COM_TYPE_ID === this.state.editobject.COM_TYPE_ID){
                         rows.push(this.addEditRow(this.state.editobject))
                     }
                     else{
+                        if( index>= 0){
                         rows.push(this.addNormolRow(element))
+                        }
                     }
                 }
                 if(this.state.editstate === 2){ // 编辑模式
@@ -553,7 +563,9 @@ export default class ItemsEdit extends Component{
                         rows.push(this.addAddRow(this.state.editobject))
                     }
                     else{
+                        if( index>= 0){
                         rows.push(this.addNormolRow(element))
+                        }
                     }
                 }
             }
@@ -578,7 +590,9 @@ export default class ItemsEdit extends Component{
         }
         return(
             
-            <div>
+            <div >
+            <Input icon='search' size='small' placeholder='Search...'  onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
+            <div style={{ height:  '85vh' , overflowY:'scroll' }}> 
                 <Table celled selectable>
                     <Table.Header  >
                     <Table.Row>
@@ -625,7 +639,7 @@ export default class ItemsEdit extends Component{
                         
                     </Modal.Actions>
                 </Modal>
-            </div>
+            </div></div>
         )
     }
 }
