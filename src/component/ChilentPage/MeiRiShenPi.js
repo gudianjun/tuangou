@@ -382,6 +382,7 @@ export default class MeiRiShenPi extends Component{
                     <Modal.Content>
                         <Grid columns='equal'>
                             <Grid.Column>
+                            <div  style={{height:  '75vh' , overflowY:'scroll' }}>
                                 <Table celled selectable>
                                     <Table.Header  >
                                         <Table.Row  >
@@ -400,6 +401,7 @@ export default class MeiRiShenPi extends Component{
                                             
                                     </Table.Footer>
                                 </Table>
+                                </div>
                             </Grid.Column>
                         </Grid>
                     </Modal.Content>
