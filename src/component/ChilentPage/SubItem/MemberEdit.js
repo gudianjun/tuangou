@@ -304,7 +304,6 @@ export default class MemberEdit extends Component{
                         <Button secondary onClick={(e)=>this.onWHClick(item, 0)}>存货</Button>
                         <Button.Or />
                         <Button secondary onClick={(e)=>this.onWHClick(item, 1)}>提货</Button>
-                        
                         <Button onClick={(e)=>this.onDelClick(e, item.MEM_ID)}>删除</Button>
                     </ButtonGroup>
                 )
@@ -632,7 +631,7 @@ export default class MemberEdit extends Component{
                     <Modal.Content>
                         <Grid columns='equal'>
                             <Grid.Column width={"6"}> 
-                                <MemShopItemSel ITEMS={this.state.whitems} ORDER_TYPE={this.state.whordertype}></MemShopItemSel>
+                                <MemShopItemSel ITEMS={this.state.whitems} ORDER_TYPE={this.state.whordertype} MEM_ID={this.state.whmeminfo.MEM_ID}></MemShopItemSel>
                             </Grid.Column>
                             <Grid.Column>
                                
@@ -644,6 +643,8 @@ export default class MemberEdit extends Component{
                         
                     </Modal.Actions>
                 </Modal>
+
+                
             </div>
             </div>
         )

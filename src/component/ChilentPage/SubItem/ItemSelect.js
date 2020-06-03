@@ -109,7 +109,7 @@ export default class ItemSelect extends Component{
                             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                                 <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                 <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                                <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
+                                <Table.Cell>{Common.formatCurrency(element.ITEM_PRICE)}</Table.Cell>
                                 <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
                                 ></AddButton></Table.Cell>
                             </Table.Row>
@@ -121,7 +121,7 @@ export default class ItemSelect extends Component{
                                 <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                                     <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                     <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                                    <Table.Cell>{element.ITEM_PRICE}</Table.Cell>
+                                    <Table.Cell textAlign='right' >{Common.formatCurrency(element.ITEM_PRICE)}</Table.Cell>
                                     <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
                                     ></AddButton></Table.Cell>
                                 </Table.Row>
@@ -145,7 +145,7 @@ export default class ItemSelect extends Component{
                             <Table.HeaderCell>编号</Table.HeaderCell>
                             <Table.HeaderCell>商品名</Table.HeaderCell>
                             <Table.HeaderCell>单价</Table.HeaderCell>
-                            <Table.HeaderCell><Button icon onClick={()=>{this.onClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
+                            <Table.HeaderCell><Button icon onClick={()=>{this.onClick()}}> <Icon  name='refresh'></Icon></Button> </Table.HeaderCell>
                         </Table.Row>
                         </Table.Header>
                         <Table.Body>

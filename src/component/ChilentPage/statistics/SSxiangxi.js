@@ -2,6 +2,7 @@ import React,{Component} from "react"
 import {  Label,  Table, Grid} from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import { MainContext} from '../ObjContext'
+import Common from '../../../common/common'
 // 定制一个添加按钮
 
 // 销售详细
@@ -28,10 +29,10 @@ export default class SSxiangxi extends Component{
                     <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
                     <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.XS_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.XS_ITEM_PRICE}</Table.Cell>
+                    <Table.Cell textAlign='right'>{Common.formatCurrency(element.XS_ITEM_PRICE)}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.TH_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.TH_ITEM_PRICE}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.XS_TOTLE}</Table.Cell>
+                    <Table.Cell textAlign='right'>{Common.formatCurrency(element.TH_ITEM_PRICE)}</Table.Cell>
+                    <Table.Cell textAlign='right'>{Common.formatCurrency(element.XS_TOTLE)}</Table.Cell>
                 </Table.Row>
                     )
                     heji+=element.XS_TOTLE
@@ -63,7 +64,7 @@ export default class SSxiangxi extends Component{
                                 <Table.Row>
                                    
                                     <Table.HeaderCell colSpan='7' textAlign='right'>
-        <Label size='huge' color='violet'>销售合计:{heji}</Label>
+        <Label size='huge' color='violet'>销售合计:{Common.formatCurrency(heji)}</Label>
                                     </Table.HeaderCell>
                                 </Table.Row>
                             </Table.Footer>

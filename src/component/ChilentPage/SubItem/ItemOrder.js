@@ -533,11 +533,11 @@ export default class ItemOrder extends Component{
         if(this.props.opetype === 0){
             jiesuancolor = "red" 
             jiesuanicon = 'cart'
-            buttonTitle = '合计【' + shoujia.toLocaleString('zh') + '】元'
+            buttonTitle = '合计【' + Common.formatCurrency(shoujia) + '】元'
         } else if(this.props.opetype === 1){
             jiesuancolor = "blue" 
             jiesuanicon = 'undo'
-            buttonTitle = '退还【' + shoujia.toLocaleString('zh') + '】元'
+            buttonTitle = '退还【' + Common.formatCurrency(shoujia) + '】元'
         }
         else if(this.props.opetype === 2){
             jiesuancolor = "orange" 

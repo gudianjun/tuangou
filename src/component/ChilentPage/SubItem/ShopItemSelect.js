@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Table,Button, Label,Input } from 'semantic-ui-react'
+import { Icon, Table,Button, Label,Input} from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from '../../../common/common'
@@ -12,6 +12,7 @@ class AddButton extends Component{
         this.state={
             itemkey:props.itemkey
             , iconN:props.iconN
+            
         };
     }
     static getDerivedStateFromProps(nexProps, prevState){
@@ -192,6 +193,8 @@ export default class ShopItemSelect extends Component{
                         </Table.Body>
                     </Table>
                 </div>
+
+                
             </div>
         )
     }

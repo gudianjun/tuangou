@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Menu ,Input, Grid, Label, Divider, Header, Icon, Table, Button, ButtonGroup} from "semantic-ui-react"
+import { Menu ,Input, Grid, Label, Divider, Header, Icon, Table, Button, ButtonGroup, Modal} from "semantic-ui-react"
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -13,6 +13,7 @@ export default class MeiRiShenPi extends Component{
         this.state = {
             selectobject:[],
             showset:false,
+            modelinfo:{}, // 模型要显示的数据
             selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10)
         }
         this.getInitData()
@@ -33,8 +34,8 @@ export default class MeiRiShenPi extends Component{
         , null
         , (e)=>{
            this.setState({
-               selectobject:e.data,
-               showset:true})
+               selectobject:e.data
+            })
         },null,
         this.context)     
      }
@@ -192,6 +193,79 @@ export default class MeiRiShenPi extends Component{
             return (<Input fluid value={item.SHIJI_RUZHANG} onChange={(e, f)=>this.onEditItem(item, f.value)}></Input>)
         } 
     }
+    getItems(element, seltype){
+        Common.sendMessage(Common.baseUrl + "/statistics/shenpiitems"
+        , "POST"
+        , null
+        , {
+            SEL_TYPE:seltype,
+            ORDER_TIME:this.state.selectdate,
+            SHOP_ID:element.SHOP_ID
+        }
+        , null
+        , (e)=>{
+           this.setState({
+            modelinfo:e.data,
+            showset:true
+            })
+        },null,
+        this.context)     
+    }
+    getNumber(element, seltype){
+        // {element.DISP_STATE !== 0 ? element.TOTAL_XS : '-'}
+        if(element.DISP_STATE !== 0){
+            if(seltype === 0){
+                if(element.TOTAL_XS===0){
+                    return (0)
+                }
+                else{
+                    return ( 
+                        <Label as='a' onClick={()=>this.getItems(element, seltype)}  color='blue' >
+                            {Common.formatCurrency(element.TOTAL_XS)}
+                    </Label>
+                )
+                }
+            }
+            else if(seltype === 1){
+                if(element.TOTAL_TH===0){
+                    return (0)
+                }
+                else{
+                    return ( 
+                        <Label as='a' onClick={()=>this.getItems(element, seltype)}  color='blue' >
+                            {Common.formatCurrency(element.TOTAL_TH)}
+                    </Label>
+                )
+                }
+            }
+            else if(seltype === 2){
+                if(element.TOTAL_XH_COST===0){
+                    return (0)
+                }
+                else{
+                    return ( 
+                        <Label as='a' onClick={()=>this.getItems(element, seltype)}  color='blue' >
+                            {Common.formatCurrency(element.TOTAL_XH_COST)}
+                    </Label>
+                )
+                }
+            }
+        }
+        else{
+            return ('-')
+        }
+    }
+    getSelName(seltype){
+        if(seltype === 0){
+            return '销售'
+        }
+        else if(seltype === 1){
+            return '退货'
+        }
+        else if(seltype === 2){
+            return '销毁'
+        }
+    }
     render(){
         var rows=[]
         if (this.state!=null && this.state.selectobject !== null){
@@ -199,13 +273,13 @@ export default class MeiRiShenPi extends Component{
                 rows.push(
                 <Table.Row key={element.SHOP_ID}>
                     <Table.Cell>{this.getRefFlg(element)}{element.SHOP_NAME}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_XS : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_XS_COST : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_TH : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_TH_COST : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.TOTAL_XH_COST : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? element.EMP_PRICE : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'><Label color={'red'}>{element.DISP_STATE !== 0 ? element.TOTAL_XS - element.TOTAL_TH : '请刷新'}</Label></Table.Cell>
+                    <Table.Cell textAlign='right'>{this.getNumber(element, 0)}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS_COST) : '-'}</Table.Cell>
+                    <Table.Cell textAlign='right'>{this.getNumber(element, 1)}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_TH_COST) : '-'}</Table.Cell>
+                    <Table.Cell textAlign='right'>{this.getNumber(element, 2)}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.EMP_PRICE) : '-'}</Table.Cell>
+                    <Table.Cell textAlign='right'><Label color={'red'}>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS - element.TOTAL_TH): '请刷新'}</Label></Table.Cell>
                     <Table.Cell textAlign='right'>{this.getShijiRuZhang(element)}</Table.Cell>
                     <Table.Cell>{element.DISP_STATE !== 1 ? '未审批':'已审批'}</Table.Cell>
                     <Table.Cell>
@@ -215,6 +289,40 @@ export default class MeiRiShenPi extends Component{
                 ) 
                 });
         }
+        var itemrows=[]
+        if(this.state.showset){
+            var nkey = 0
+            var total = 0.0
+            this.state.modelinfo.items.forEach(element => {
+                    var priceName = '成本价'
+                    if(element.PRICE_SELECT === 0){
+                        priceName = '零售价'
+                    }
+                    else if(element.PRICE_SELECT === 1){
+                        priceName = '会员价'
+                    }
+                    else if(element.PRICE_SELECT === 2){
+                        priceName = '团购价'
+                    }
+                    else if(element.PRICE_SELECT === 3){
+                        priceName = '处理价'
+                    }
+                    total += (element.ITEM_PRICE * element.ITEM_NUMBER)
+                    itemrows.push(
+                    <Table.Row key = {nkey++}>
+                        <Table.Cell >{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                        <Table.Cell >{element.ITEM_NAME}</Table.Cell>
+                        <Table.Cell >{priceName}</Table.Cell>
+                        <Table.Cell textAlign='right' >{Common.formatCurrency(element.ITEM_PRICE)}</Table.Cell>
+                        <Table.Cell textAlign='right' >{element.ITEM_NUMBER}</Table.Cell>
+                        <Table.Cell textAlign='right' >{Common.formatCurrency(element.ITEM_PRICE * element.ITEM_NUMBER)}</Table.Cell>
+                    </Table.Row>
+                        )
+            })
+
+           
+        }
+
         return(
             <div style={{ minHeight:800}}>             
             <Grid columns='equal' >
@@ -262,6 +370,43 @@ export default class MeiRiShenPi extends Component{
                     {rows}
                     </Table.Body>
                 </Table>
+
+                <Modal open={this.state.showset}>   
+                    <Modal.Header>{'【' + this.state.modelinfo.date + ' 】店铺【' + this.state.modelinfo.shopname + '】当日的【' + this.getSelName(this.state.modelinfo.seltype) + '】'}
+                        <ButtonGroup style={{position:'absolute',right:60}}>
+                            <Button onClick={()=>this.setState({showset:false})} >
+                                关闭
+                            </Button>
+                        </ButtonGroup>
+                    </Modal.Header>
+                    <Modal.Content>
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <Table celled selectable>
+                                    <Table.Header  >
+                                        <Table.Row  >
+                                            <Table.HeaderCell>商品ID</Table.HeaderCell>
+                                            <Table.HeaderCell>商品名称</Table.HeaderCell>
+                                            <Table.HeaderCell>价格类型</Table.HeaderCell>
+                                            <Table.HeaderCell>{this.state.modelinfo.seltype === 2? '成本' : '单价'}</Table.HeaderCell>
+                                            <Table.HeaderCell>销售数量</Table.HeaderCell>
+                                            <Table.HeaderCell>小计</Table.HeaderCell>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body >
+                                            {itemrows}
+                                    </Table.Body>
+                                    <Table.Footer fullWidth  >
+                                            
+                                    </Table.Footer>
+                                </Table>
+                            </Grid.Column>
+                        </Grid>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        {'合计' + (this.state.modelinfo.seltype === 2 ? '成本：' : '价格：') + Common.formatCurrency(total)}
+                    </Modal.Actions>
+                </Modal>
         </div>
         )
     }

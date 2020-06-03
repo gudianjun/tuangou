@@ -357,7 +357,7 @@ export default class ConfirmEdit extends Component{
                     if(item.ORDER_STATE === 0) // 编辑状态，只有自己可以看到，此时可以编辑数量以及下一步操作，删除。编辑只能编辑商品，数量，目标店铺，三个信息
                     {
                         return (
-                            <ButtonGroup>
+                            <ButtonGroup vertical>
                                 <Button onClick={(e)=>this.onEditClick(item)} >编辑</Button>    
                                 <Button primary onClick={(e)=>this.onNextClick(item)} >下一步</Button>
                                 <Button onClick={(e)=>this.onDelClick(item)}>删除</Button>
@@ -367,7 +367,7 @@ export default class ConfirmEdit extends Component{
                     else if(item.ORDER_STATE === 1) // 已经提交，对方可以看到了
                     {
                         return (
-                            <ButtonGroup>
+                            <ButtonGroup vertical>
                                 <Button primary onClick={(e)=>this.onBackClick(item)} >回退</Button>
                                 <Button onClick={(e)=>this.onDelClick(item)}>删除</Button>
                             </ButtonGroup>
@@ -531,14 +531,17 @@ export default class ConfirmEdit extends Component{
     getOrderState(element){
        
             return (
-                <Step.Group>
+                <Step.Group widths={4}>
                 <Step
-                active={element.ORDER_STATE === 0}
-                icon='truck'
-                onClick={this.handleClick}
-                title='商品'
-                description= {element.ITEM_NAME}
-                />
+                    active={element.ORDER_STATE === 0}
+                    onClick={this.handleClick}
+                >
+                        <Icon name='truck' />
+                        <Step.Content>
+                            <Step.Title>商品</Step.Title>
+                            <Step.Description> {'【' +element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + '】' + element.ITEM_NAME}</Step.Description>
+                        </Step.Content>
+                </Step>
                 <Step
                 active={element.ORDER_STATE === 1}
                 icon='angle double right'
@@ -670,21 +673,21 @@ export default class ConfirmEdit extends Component{
                             </Table.Cell>
                         </Table.Row>)
         }
-            return(
-            <Tab.Pane>
-                <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
-                            <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell width={1}>订单</Table.HeaderCell>
-                                <Table.HeaderCell width={4}>订单状态</Table.HeaderCell>
-                                <Table.HeaderCell width={2}><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
-                            </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                {rows}
-                            </Table.Body>
-                        </Table>
-            </Tab.Pane>)}},
+        return(
+        <Tab.Pane>
+            <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
+                        <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell width={1}>订单</Table.HeaderCell>
+                            <Table.HeaderCell width={6}>订单状态</Table.HeaderCell>
+                            <Table.HeaderCell width={1}><Button icon onClick={()=>{this.onRefClick()}}> <Icon  name='refresh'></Icon>操作</Button> </Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {rows}
+                        </Table.Body>
+                    </Table>
+        </Tab.Pane>)}},
         { menuItem: '清单', render: () => {
             return(
                 <Tab.Pane>
@@ -703,7 +706,7 @@ export default class ConfirmEdit extends Component{
     render(){
         
         return(
-            <div style={{ minHeight:800}}> 
+            <div style={{ minHeight:800, overflowX:'scroll'}}> 
                 <Tab
                     panes={this.panes}
                     activeIndex={this.state.activeIndex}
