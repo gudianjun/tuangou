@@ -91,7 +91,7 @@ class LoginForm extends Component{
                 </Header>
                 <Form size='large'>
                     <Segment stacked>
-                    <Form.Dropdown placeholder={this.state.shopShowInfo}  fluid  selection  options={this.state.shopList} 
+                    <Form.Dropdown placeholder={this.state.shopShowInfo} search  fluid  selection  options={this.state.shopList} 
                     onChange={(e, f)=>{this.setState({selectShop:this.state.shopList.find(element=>element.value === f.value)})}}/>
                     <Form.Input
                         maxLength='20'

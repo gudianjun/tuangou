@@ -9,6 +9,7 @@ class ShoppingItem{
     ITEM_NAME='KNOW'
     ITEM_NUMBER=0
     PRICE_SELECT = 1 // 默认价格选择，为会员价格
+    ITEM_TYPE=0 // 商品类型
     PRICE_ARR=[
             0,
             0,
@@ -25,7 +26,7 @@ class ShoppingItem{
         this.ITEM_NAME = iteminfo.ITEM_NAME
         this.ITEM_NUMBER = count
         this.PRICE_SELECT = 2   // 默认选择团购价格
-        
+        this.ITEM_TYPE = iteminfo.ITEM_TYPE
         this.PRICE_ARR = [
             iteminfo.ITEM_PRICE,
             iteminfo.ITEM_MEM_PRICE,

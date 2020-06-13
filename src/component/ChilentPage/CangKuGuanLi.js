@@ -102,6 +102,7 @@ export default class CangKuGuanLi extends Component{
                     <Dropdown
                             placeholder='选择一个仓库'
                             fluid
+                            search
                             selection
                             options={this.state.shopList}
                             onChange={(e,f)=>this.onShopChange(f.value)}

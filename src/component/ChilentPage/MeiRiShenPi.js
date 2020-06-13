@@ -12,6 +12,7 @@ export default class MeiRiShenPi extends Component{
         super(props)
         this.state = {
             selectobject:[],
+            searchtext:'',  // 搜索文本
             showset:false,
             modelinfo:{}, // 模型要显示的数据
             selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10)
@@ -270,23 +271,29 @@ export default class MeiRiShenPi extends Component{
         var rows=[]
         if (this.state!=null && this.state.selectobject !== null){
             this.state.selectobject.forEach(element => {
-                rows.push(
-                <Table.Row key={element.SHOP_ID}>
-                    <Table.Cell>{this.getRefFlg(element)}{element.SHOP_NAME}</Table.Cell>
-                    <Table.Cell textAlign='right'>{this.getNumber(element, 0)}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS_COST) : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{this.getNumber(element, 1)}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_TH_COST) : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'>{this.getNumber(element, 2)}</Table.Cell>
-                    <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.EMP_PRICE) : '-'}</Table.Cell>
-                    <Table.Cell textAlign='right'><Label color={'red'}>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS - element.TOTAL_TH): '请刷新'}</Label></Table.Cell>
-                    <Table.Cell textAlign='right'>{this.getShijiRuZhang(element)}</Table.Cell>
-                    <Table.Cell>{element.DISP_STATE !== 1 ? '未审批':'已审批'}</Table.Cell>
-                    <Table.Cell>
-                        {this.getButtons(element)}
-                    </Table.Cell>
-                </Table.Row>
-                ) 
+                var index = 0
+                if(this.state.searchtext !== undefined){
+                    index = (element.SHOP_NAME).indexOf(this.state.searchtext.toUpperCase())
+                }
+                if(index>=0){
+                    rows.push(
+                    <Table.Row key={element.SHOP_ID}>
+                        <Table.Cell>{this.getRefFlg(element)}{element.SHOP_NAME}</Table.Cell>
+                        <Table.Cell textAlign='right'>{this.getNumber(element, 0)}</Table.Cell>
+                        <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS_COST) : '-'}</Table.Cell>
+                        <Table.Cell textAlign='right'>{this.getNumber(element, 1)}</Table.Cell>
+                        <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_TH_COST) : '-'}</Table.Cell>
+                        <Table.Cell textAlign='right'>{this.getNumber(element, 2)}</Table.Cell>
+                        <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.EMP_PRICE) : '-'}</Table.Cell>
+                        <Table.Cell textAlign='right'><Label color={'red'}>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS - element.TOTAL_TH): '请刷新'}</Label></Table.Cell>
+                        <Table.Cell textAlign='right'>{this.getShijiRuZhang(element)}</Table.Cell>
+                        <Table.Cell>{element.DISP_STATE !== 1 ? '未审批':'已审批'}</Table.Cell>
+                        <Table.Cell>
+                            {this.getButtons(element)}
+                        </Table.Cell>
+                    </Table.Row>
+                    ) 
+                }
                 });
         }
         var itemrows=[]
@@ -310,6 +317,7 @@ export default class MeiRiShenPi extends Component{
                     total += (element.ITEM_PRICE * element.ITEM_NUMBER)
                     itemrows.push(
                     <Table.Row key = {nkey++}>
+                        <Table.Cell >{nkey}</Table.Cell>
                         <Table.Cell >{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                         <Table.Cell >{element.ITEM_NAME}</Table.Cell>
                         <Table.Cell >{priceName}</Table.Cell>
@@ -337,7 +345,9 @@ export default class MeiRiShenPi extends Component{
                                         onChange={(e)=>{this.dateChange(e)}}
                                         placeholder='Enter date'   showYearDropdown
                                 /> 
-                            </Menu.Item><Menu.Item>
+                            </Menu.Item>
+                            <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
+                            <Menu.Item>
                         </Menu.Item>
                     </Menu>
                     </Grid.Column>
@@ -386,6 +396,7 @@ export default class MeiRiShenPi extends Component{
                                 <Table celled selectable>
                                     <Table.Header  >
                                         <Table.Row  >
+                                            <Table.HeaderCell>序号</Table.HeaderCell>
                                             <Table.HeaderCell>商品ID</Table.HeaderCell>
                                             <Table.HeaderCell>商品名称</Table.HeaderCell>
                                             <Table.HeaderCell>价格类型</Table.HeaderCell>

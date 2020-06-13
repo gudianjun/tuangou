@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button, Tab, Step, ButtonGroup,Input, Dropdown, SegmentGroup, Segment, Modal, Form, Container } from 'semantic-ui-react'
+import { Icon, Label, Table,Button, Tab, Step, ButtonGroup,Input, Dropdown, SegmentGroup, Segment, Modal, Form } from 'semantic-ui-react'
 import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import ZYXiangXi from '../../ChilentPage/statistics/ZYXiangXi'
@@ -15,12 +15,13 @@ export default class ConfirmEdit extends Component{
         var temparr = []
         
         context.items.forEach(element=>{
-            if(element.ITEM_TYPE === 0) // 单品
+            if(element.ITEM_TYPE !== 1) // 单品
             {
                 temparr.push({
                     key:element.COM_TYPE_ID +  element.ITEM_ID.toString(),
                     text: element.COM_TYPE_ID +  element.ITEM_ID.toString() + '_' + element.ITEM_NAME,
-                    value:element.COM_TYPE_ID +  element.ITEM_ID.toString()
+                    value:element.COM_TYPE_ID +  element.ITEM_ID.toString(),
+                    icon:element.ITEM_TYPE === 2 ? 'balance scale' : ''
                 })
             }
        })
@@ -55,7 +56,7 @@ export default class ConfirmEdit extends Component{
             activePage:-1,  // 当前激活的页面
             selectobject:{}, // 分页查询结果对象
             timeinterval:setInterval(()=>{
-                if(this.state.editstate === 0){
+                if(this.state.editstate === 0 && !this.state.showset){
                     this.getItems(context)
                 }
             }, 10000)
@@ -87,10 +88,13 @@ export default class ConfirmEdit extends Component{
                     }
                     var itemnameindex = context.items.findIndex(elm=>{return elm.ITEM_ID === element.ITEM_ID && elm.COM_TYPE_ID === element.COM_TYPE_ID})
                     var itemname = '未知'
+                    var itemtype = 0
                     if(inshopnameindex >=0){
                         itemname = context.items[itemnameindex].ITEM_NAME
+                        itemtype = context.items[itemnameindex].ITEM_TYPE
                     }
-                    arrayObj.push({...element, key:element.ORDER_ID, FROM_SHOP_NAME: fromshopname, TO_SHOP_NAME: inshopname, ITEM_NAME:itemname})
+                    arrayObj.push({...element, key:element.ORDER_ID, FROM_SHOP_NAME: fromshopname, TO_SHOP_NAME: inshopname, ITEM_NAME:itemname, 
+                        ITEM_TYPE:itemtype})
                 });
 
                 this.setState({
@@ -221,6 +225,12 @@ export default class ConfirmEdit extends Component{
             })
             return
         }
+        if(item.ITEM_NUMBER === '' || parseFloat(item.ITEM_NUMBER) <= 0 ){
+            setMainContext({
+                errorMessage:'必须输入商品数量'
+            })
+            return
+        }
         var suburl = ''
         if(ope===1) // 编辑
         {
@@ -238,7 +248,7 @@ export default class ConfirmEdit extends Component{
             'TO_SHOP_ID': item.TO_SHOP_ID,// # 
             'ITEM_ID': item.ITEM_ID,// 
             'COM_TYPE_ID':item.COM_TYPE_ID,// 
-            'ITEM_NUMBER': item.ITEM_NUMBER
+            'ITEM_NUMBER': parseFloat(item.ITEM_NUMBER)
             }
         , null
         , (e)=>{
@@ -428,7 +438,14 @@ export default class ConfirmEdit extends Component{
     onNumberSave(item){
         // 进行入库操作
         const {setMainContext} = this.context
-        if(this.state.inwhnumber > item.ITEM_NUMBER-item.ALREADY_IN_NUMBER) {
+        if(this.state.inwhnumber==='' || parseFloat(this.state.inwhnumber) <= 0){
+            // 数量不正确
+            setMainContext({
+                errorMessage:'必须输入数量' 
+            })
+            return
+        }
+        if(parseFloat(this.state.inwhnumber) > item.ITEM_NUMBER-item.ALREADY_IN_NUMBER) {
             // 数量不正确
             setMainContext({
                 errorMessage:'数量不正确，入库的数量不能大于：' + (item.ITEM_NUMBER-item.ALREADY_IN_NUMBER).toString()
@@ -441,7 +458,7 @@ export default class ConfirmEdit extends Component{
         , null
         , {
             'ORDER_ID' : item.ORDER_ID,
-            'ITEM_NUMBER' : this.state.inwhnumber
+            'ITEM_NUMBER' : parseFloat(this.state.inwhnumber)
             }
         , null
         , (e)=>{
@@ -459,45 +476,121 @@ export default class ConfirmEdit extends Component{
 
     }
     onINWHNumber(e, f, item){
+        // var value = f.value
+        // const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+        // var number = 0
+        // if ((reg.test(value) && value.length < 6) || value === '') {
+        //   if(value===''){
+        //     number = 1
+        //   }
+        //   else{
+        //     number = parseInt(value)
+        //   }
+        // }
+        // if(number > item.ITEM_NUMBER - item.ALREADY_IN_NUMBER){
+        //     // 数量大于最大可能入库数量
+        //     number = item.ITEM_NUMBER - item.ALREADY_IN_NUMBER
+        // }
+        // if(number === 0){
+        //     number = 1
+        // }
+        // this.setState({
+        //     inwhnumber:number
+        // })
+
         var value = f.value
-        const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
         var number = 0
-        if ((reg.test(value) && value.length < 6) || value === '') {
-          if(value===''){
-            number = 1
-          }
-          else{
-            number = parseInt(value)
-          }
+        if(item.ITEM_TYPE === 2){
+           
+            var isBuling = false
+            // 检查是否为数字
+            if(value.length > 0 && value[value.length - 1] === '.')
+            {
+                value+='0'
+                isBuling = true
+            }
+            const reg = /^\d+([.]\d{1,2})?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+            if ((reg.test(value) && value.length < 8) || value === '') {
+                if(value===''){
+                    number = ''
+                }
+                else{
+                    if(isBuling){   // 后面补了一个零去掉
+                        value = value.substring(0, value.length - 1)
+                    }
+                    number = value
+                }
+                if(number > item.ITEM_NUMBER - item.ALREADY_IN_NUMBER){
+                    // 数量大于最大可能入库数量
+                    number = item.ITEM_NUMBER - item.ALREADY_IN_NUMBER
+                }
+                this.setState({
+                    inwhnumber:number
+                })
+            }
+       }
+        else{
+            const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+            if ((reg.test(value) && value.length < 6) || value === '') {
+                if(value === ''){
+                    value=''
+                    number=''
+                }
+                else{
+                    number = parseInt(value)
+                }
+                if(number > item.ITEM_NUMBER - item.ALREADY_IN_NUMBER){
+                    // 数量大于最大可能入库数量
+                    number = item.ITEM_NUMBER - item.ALREADY_IN_NUMBER
+                }
+                this.setState({
+                    inwhnumber:number
+                })
+            }
         }
-        if(number > item.ITEM_NUMBER - item.ALREADY_IN_NUMBER){
-            // 数量大于最大可能入库数量
-            number = item.ITEM_NUMBER - item.ALREADY_IN_NUMBER
-        }
-        if(number === 0){
-            number = 1
-        }
-        this.setState({
-            inwhnumber:number
-        })
     }
     // 编辑项目
     onEditItem(item, value){
-            const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
-            if ((reg.test(value) && value.length < 6) || value === '') {
-              if(value===''){
-                    item.ITEM_NUMBER=1
-                    this.setState({
-                        editobject:item
-                    })
-              }
-              else{
-                item.ITEM_NUMBER= parseInt(value)
+        if(item.ITEM_TYPE === 2){
+           
+            var isBuling = false
+            // 检查是否为数字
+            if(value.length > 0 && value[value.length - 1] === '.')
+            {
+                value+='0'
+                isBuling = true
+            }
+            const reg = /^\d+([.]\d{1,2})?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+            if ((reg.test(value) && value.length < 8) || value === '') {
+                if(value===''){
+                    item.ITEM_NUMBER = ''
+                }
+                else{
+                    if(isBuling){   // 后面补了一个零去掉
+                        value = value.substring(0, value.length - 1)
+                    }
+                    item.ITEM_NUMBER = value
+                }
                 this.setState({
                     editobject:item
                 })
-              }
             }
+       }
+        else{
+            const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+            if ((reg.test(value) && value.length < 6) || value === '') {
+                if(value === ''){
+                    value=''
+                    item.ITEM_NUMBER = ''
+                }
+                else{
+                    item.ITEM_NUMBER = parseInt(value)
+                }
+                this.setState({
+                    editobject:item
+                })
+            }
+        }
     }
 
     // 目标店铺选择变更
@@ -522,6 +615,11 @@ export default class ConfirmEdit extends Component{
             editobject.ITEM_ID = this.context.items[index].ITEM_ID
             editobject.COM_TYPE_ID = this.context.items[index].COM_TYPE_ID
             editobject.ITEM_NAME = this.context.items[index].ITEM_NAME
+            editobject.ITEM_TYPE = this.context.items[index].ITEM_TYPE
+            if(editobject.ITEM_TYPE === 0){
+                // 如果是整装商品，则商品数量要转换成整型
+            }
+            editobject.ITEM_NUMBER = editobject.ITEM_NUMBER==='' ? '' : parseInt(editobject.ITEM_NUMBER)
             this.setState({
                 editobject:editobject,
             })
@@ -585,20 +683,26 @@ export default class ConfirmEdit extends Component{
                         </Table.Row>
         )
     }
+    getShanZhuang(element){
+        if(element.ITEM_TYPE === 2){
+            return ( <Icon name='balance scale' />)
+        }
+    }
     addEditRow(element){
         element = {...element, DISP_FLG:1} // 补充一个编辑标记
         return (
             <Table.Row key={element.ORDER_ID}>
-                <Table.Cell  colSpan='2'>
+                <Table.Cell  colSpan='2' >
                     <SegmentGroup>
+                        {this.getShanZhuang(element)}
                         <Label>将商品【</Label>
                         <Dropdown color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
                         <Label>】</Label>
-                        <Input label='数量' value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
+                        <Input label='数量' placeholder='选择一个商品'  icon={element.ITEM_TYPE === 2?'balance scale':''} value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
                         <Label>从</Label>
                         {element.CONFIRM_TYPE === 0 ? ( <Label color='blue'>采购</Label> ):( <Label color='blue'>{Common._loadStorage('shopname')}</Label> ) }
                         <Label>转移到【</Label>
-                        <Dropdown placeholder='选择一个仓库' value={element.TO_SHOP_ID} selection options={this.state.shopoption} onChange={(e, f)=>this.shopSelectChange(e, f)}/>
+                        <Dropdown placeholder='选择一个仓库' search value={element.TO_SHOP_ID} selection options={this.state.shopoption} onChange={(e, f)=>this.shopSelectChange(e, f)}/>
                         <Label>】</Label>
                     </SegmentGroup>
                 </Table.Cell>
@@ -615,14 +719,15 @@ export default class ConfirmEdit extends Component{
             <Table.Row key={element.ORDER_ID}>
                 <Table.Cell  colSpan='2'>
                 <SegmentGroup>
+                    {this.getShanZhuang(element)}
                     <Label>将商品【</Label>
                     <Dropdown color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
                     <Label>】</Label>
-                    <Input label='数量' value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
+                    <Input label='数量' placeholder='商品数量' icon={element.ITEM_TYPE === 2?'balance scale':''} value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
                     <Label>从</Label>
                     {element.CONFIRM_TYPE === 0 ? ( <Label color='blue'>采购</Label> ):( <Label color='blue'>{Common._loadStorage('shopname')}</Label> ) }
                     <Label>转移到【</Label>
-                    <Dropdown placeholder='选择一个仓库' value={element.TO_SHOP_ID}  selection options={this.state.shopoption} onChange={(e, f)=>this.shopSelectChange(e, f)}/>
+                    <Dropdown placeholder='选择一个仓库' search value={element.TO_SHOP_ID}  selection options={this.state.shopoption} onChange={(e, f)=>this.shopSelectChange(e, f)}/>
                     <Label>】</Label>
                 </SegmentGroup>
                 </Table.Cell>
@@ -703,6 +808,14 @@ export default class ConfirmEdit extends Component{
       ]
 
     handleTabChange = (e, { activeIndex }) => this.setState({ activeIndex })
+
+    getstring(inwhnumber){
+        var index = inwhnumber.toString().indexOf('.')
+        if(index>=0 && inwhnumber.toString().length-index>3){
+            return inwhnumber.toString().substring(0, index+3)
+        }
+        return inwhnumber.toString()
+    }
     render(){
         
         return(
@@ -738,7 +851,8 @@ export default class ConfirmEdit extends Component{
                             </Form.Field>
                             <Form.Field>
                             <label>本次入库数量：</label>
-                            <Input placeholder='商品数量' disabled={this.state.inwhorder.CONFIRM_TYPE === 0?false:true} value={this.state.inwhnumber} onChange={(e, f)=>this.onINWHNumber(e, f, this.state.inwhorder)} />
+                            <Input placeholder='商品数量' disabled={this.state.inwhorder.CONFIRM_TYPE === 0?false:true} 
+                                value={this.state.inwhorder.ITEM_TYPE === 2? this.getstring(this.state.inwhnumber) :this.state.inwhnumber} onChange={(e, f)=>this.onINWHNumber(e, f, this.state.inwhorder)} />
                             </Form.Field>                           
                         </Form>
                         </Modal.Content>

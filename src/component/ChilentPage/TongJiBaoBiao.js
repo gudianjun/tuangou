@@ -44,7 +44,7 @@ class ComTypePie extends React.Component {
         var cols = {
             percent: {
               formatter: val => {
-                return `${val * 100}%`;
+                return `${(val * 100).toFixed(2)}%`;
               },
             },
           };
@@ -67,7 +67,7 @@ class ComTypePie extends React.Component {
                 color="item"
                 label={['count', {
                     content: d => {
-                    return `${d.item}: ${d.percent * 100}%`;
+                    return `${d.item}: ${(d.percent * 100).toFixed(2)}%`;
                     },
                 }]}
                 />
@@ -114,7 +114,7 @@ class ShopPie extends React.Component {
         var cols = {
             percent: {
               formatter: val => {
-                return `${val * 100}%`;
+                return `${(val * 100).toFixed(2)}%`;
               },
             },
           };
@@ -137,7 +137,7 @@ class ShopPie extends React.Component {
                 color="item"
                 label={['count', {
                     content: d => {
-                    return `${d.item}: ${d.percent * 100}%`;
+                    return `${d.item}: ${(d.percent * 100).toFixed(2)}%`;
                     },
                 }]}
                 />
@@ -183,7 +183,7 @@ class Top10 extends React.Component {
         var cols = {
             percent: {
               formatter: val => {
-                return `${val * 100}%`;
+                return `${(val * 100).toFixed(2)}%`;
               },
             },
           };
@@ -206,7 +206,7 @@ class Top10 extends React.Component {
                 color="item"
                 label={['count', {
                     content: d => {
-                    return `${d.item}: ${d.percent * 100}%`;
+                    return `${d.item}: ${(d.percent * 100).toFixed(2)}%`;
                     },
                 }]}
                 />
@@ -240,7 +240,7 @@ class KeDanJia extends React.Component {
                 time: element.TEDAY,
                 call: element.TOTAL_XS_COUNT,
                 TotalSales:  element.TOTAL_XS,
-                OrderCount: element.TOTAL_XS_COUNT === 0? 0: element.TOTAL_XS / element.TOTAL_XS_COUNT,
+                OrderCount: element.TOTAL_XS_COUNT === 0? 0: (element.TOTAL_XS / element.TOTAL_XS_COUNT).toFixed(2),
             })
         });
 
@@ -513,7 +513,7 @@ class Groupedcolumn extends React.Component {
                 name:'实际销售额'
             }
             this.props.datas.forEach(element => {
-                xiaoshou[element.TEDAY] = (element.TOTAL_XS - element.TOTAL_TH) 
+                xiaoshou[element.TEDAY] = (element.TOTAL_XS - element.TOTAL_TH)
                 fields.push(element.TEDAY)
             });
             data.push(xiaoshou)
@@ -530,7 +530,7 @@ class Groupedcolumn extends React.Component {
                 name:'净盈利'
             }
             this.props.datas.forEach(element => {
-                jingyingli[element.TEDAY] = (element.TOTAL_XS - element.TOTAL_TH) - (element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST)
+                jingyingli[element.TEDAY] = ((element.TOTAL_XS - element.TOTAL_TH) - (element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST))
             });
             data.push(jingyingli)
 
@@ -647,7 +647,7 @@ export default class TongJiBaoBiao extends Component{
         }
         var fields = []
         month12s.forEach(element => {
-            xiaoshou[element.TEDAY] = element.TOTAL_XS - element.TOTAL_TH
+            xiaoshou[element.TEDAY] = Common.formatCurrency(element.TOTAL_XS - element.TOTAL_TH)
             fields.push(element.TEDAY)
         });
         data.push(xiaoshou)
@@ -656,7 +656,7 @@ export default class TongJiBaoBiao extends Component{
             name:'销售成本'
         }
         month12s.forEach(element => {
-            chengben[element.TEDAY] = element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST
+            chengben[element.TEDAY] = Common.formatCurrency(element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST)
         });
         data.push(chengben)
 
@@ -699,10 +699,10 @@ export default class TongJiBaoBiao extends Component{
         if (this.state.datas.cangkuinfo.length>0){
             return (
                 <Grid.Row>
-                    <Grid.Column width={4}><Segment inverted color='red'>会员存货总成本：{this.state.datas.cangkuinfo[1].ITEM_COST}</Segment></Grid.Column>
-                    <Grid.Column width={4}><Segment inverted color='orange'>会员存货总数量：{this.state.datas.cangkuinfo[1].ITEM_COUNT}</Segment></Grid.Column>
-                    <Grid.Column width={4}><Segment inverted color='red'>库存存货总成本：{this.state.datas.cangkuinfo[0].ITEM_COST}</Segment></Grid.Column>
-                    <Grid.Column width={4}><Segment inverted color='orange'>库存存货总数量：{this.state.datas.cangkuinfo[0].ITEM_COUNT}</Segment></Grid.Column>
+                    <Grid.Column width={4}><Segment inverted color='red'>会员存货总成本：{Common.formatCurrency(this.state.datas.cangkuinfo[1].ITEM_COST)}</Segment></Grid.Column>
+                    <Grid.Column width={4}><Segment inverted color='orange'>会员存货总数量：{Common.formatCurrency(this.state.datas.cangkuinfo[1].ITEM_COUNT)}</Segment></Grid.Column>
+                    <Grid.Column width={4}><Segment inverted color='red'>库存存货总成本：{Common.formatCurrency(this.state.datas.cangkuinfo[0].ITEM_COST)}</Segment></Grid.Column>
+                    <Grid.Column width={4}><Segment inverted color='orange'>库存存货总数量：{Common.formatCurrency(this.state.datas.cangkuinfo[0].ITEM_COUNT)}</Segment></Grid.Column>
                 </Grid.Row>
             )
         }
@@ -727,12 +727,12 @@ export default class TongJiBaoBiao extends Component{
             return (
               <Grid.Row>
                 <Grid.Column width={8}>
-                    <Segment inverted color='violet'>本月销售金额：{this.state.datas.months[0].TOTAL_XS - this.state.datas.months[0].TOTAL_TH}</Segment>
+                    <Segment inverted color='violet'>本月销售金额：{Common.formatCurrency(this.state.datas.months[0].TOTAL_XS - this.state.datas.months[0].TOTAL_TH)}</Segment>
                 </Grid.Column>
                 <Grid.Column  width={8}> <Segment inverted color='violet'>本月净利润：{
-                    (this.state.datas.months[0].TOTAL_XS - this.state.datas.months[0].TOTAL_TH) -
+                    Common.formatCurrency((this.state.datas.months[0].TOTAL_XS - this.state.datas.months[0].TOTAL_TH) -
                     (this.state.datas.months[0].TOTAL_XS_COST - 
-                    this.state.datas.months[0].TOTAL_TH_COST + this.state.datas.months[0].TOTAL_XH_COST)}</Segment></Grid.Column>
+                    this.state.datas.months[0].TOTAL_TH_COST + this.state.datas.months[0].TOTAL_XH_COST))}</Segment></Grid.Column>
                 </Grid.Row>
             )
         }
@@ -746,7 +746,7 @@ export default class TongJiBaoBiao extends Component{
         var rowcoms = []
         this.state.datas.coms.forEach(comtype=>{
           rowcoms.push(
-            <Table.Cell key={element.SHOP_ID.toString() + '_' + comtype}>{element[comtype]}</Table.Cell>
+            <Table.Cell  textAlign='right' key={element.SHOP_ID.toString() + '_' + comtype}>{Common.formatCurrency(element[comtype])}</Table.Cell>
           )
 
         })
@@ -755,10 +755,10 @@ export default class TongJiBaoBiao extends Component{
           <Table.Row key={'KEY_' + element.SHOP_ID.toString()}>
             <Table.Cell>{element.SHOP_NAME}</Table.Cell>
             {rowcoms}
-            <Table.Cell>{element.ITEM_XS_PRICE}</Table.Cell>
-            <Table.Cell>{element.ITEM_TH_PRICE}</Table.Cell>
-            <Table.Cell>{element.REAL_XS_PRICE}</Table.Cell>
-            <Table.Cell>{element.REAL_SHOURU}</Table.Cell>
+            <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_PRICE)}</Table.Cell>
+            <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_TH_PRICE)}</Table.Cell>
+            <Table.Cell textAlign='right'>{Common.formatCurrency(element.REAL_XS_PRICE)}</Table.Cell>
+            <Table.Cell textAlign='right'>{Common.formatCurrency(element.REAL_SHOURU)}</Table.Cell>
 
           </Table.Row>
         )
@@ -797,14 +797,12 @@ export default class TongJiBaoBiao extends Component{
               <Table.Cell>{index}</Table.Cell>
               <Table.Cell>{element.ITEM_NAME}</Table.Cell>
               <Table.Cell>{element.COM_TYPE_ID}</Table.Cell>
-              <Table.Cell>{Common.formatCurrency(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)}</Table.Cell>
-              <Table.Cell>{Common.formatCurrency(element.ITEM_XS_NUMBER - element.ITEM_TH_NUMBER)}</Table.Cell>
-              <Table.Cell>{Common.formatCurrency(element.ITEM_XS_COST - element.ITEM_TH_COST)}</Table.Cell>
-
-              <Table.Cell>{this.toPercent(hejiuxiaoshou === 0? 0:(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)/hejiuxiaoshou)}</Table.Cell>
-
-              <Table.Cell>{Common.formatCurrency(element.BF_ITEM_XS_PRICE - element.BF_ITEM_TH_PRICE)}</Table.Cell>
-              <Table.Cell>{shangsheng}</Table.Cell>
+              <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)}</Table.Cell>
+              <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_NUMBER - element.ITEM_TH_NUMBER)}</Table.Cell>
+              <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_COST - element.ITEM_TH_COST)}</Table.Cell>
+              <Table.Cell textAlign='right'>{this.toPercent(hejiuxiaoshou === 0? 0:(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)/hejiuxiaoshou)}</Table.Cell>
+              <Table.Cell textAlign='right'>{Common.formatCurrency(element.BF_ITEM_XS_PRICE - element.BF_ITEM_TH_PRICE)}</Table.Cell>
+              <Table.Cell textAlign='center'>{shangsheng}</Table.Cell>
           </Table.Row>
           )
         });

@@ -99,6 +99,14 @@ export default class MemShopItemSel extends Component{
         console.log(this.context)
         setMainContext({shoppingItems:shoppingItems})
     }
+    getSetFlg(item){
+        if (item.ITEM_TYPE === 1){
+            return (<Label color='green' ribbon>SET</Label>)
+        }
+        else if (item.ITEM_TYPE === 2){
+            return (<Label color='blue' ribbon>散</Label>)
+        }
+    }
     render(){
         var rows = [];
        
@@ -110,9 +118,9 @@ export default class MemShopItemSel extends Component{
             if( index>= 0){
                 rows.push(
                     <Table.Row key={element.key}>
-                        <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                        <Table.Cell>{this.getDelFlg(element)}{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                         <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                        <Table.Cell>{this.getNumber(element)}</Table.Cell>
+                        <Table.Cell textAlign='right'>{this.getNumber(element)}</Table.Cell>
                         <Table.Cell>
                             <Button icon onClick={()=>{this.onClickHandler(element)}}><Icon name='shopping cart'/></Button>
                         </Table.Cell>

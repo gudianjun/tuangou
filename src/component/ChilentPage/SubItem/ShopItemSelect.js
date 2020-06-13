@@ -134,8 +134,23 @@ export default class ShopItemSelect extends Component{
         }
     }
     getSetFlg(item){
-        if (item.ITEM_TYPE === 1)
-            return (<Label color='red' ribbon>SET</Label>)
+        if (item.ITEM_TYPE === 1){
+            return (<Label color='green' ribbon>SET</Label>)
+        }
+        else if (item.ITEM_TYPE === 2){
+            return (<Label color='blue' ribbon>散</Label>)
+        }
+    }
+    getItemCount(element){
+        if(element.ITEM_TYPE === 0){
+            return parseInt(element.ITEM_COUNT)
+        }
+        else if(element.ITEM_TYPE === 1){
+            return '套装'
+        }
+        else if(element.ITEM_TYPE === 2){
+            return element.ITEM_COUNT.toFixed(2)
+        }
     }
     render(){
         const {cangkuInfo} = this.context
@@ -150,9 +165,9 @@ export default class ShopItemSelect extends Component{
                 if(this.props.isselect){
                     rows.push(
                         <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                            <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                            <Table.Cell>{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                             <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                            <Table.Cell>{element.ITEM_COUNT}</Table.Cell>
+                            <Table.Cell textAlign='right'>{element.ITEM_COUNT}</Table.Cell>
                             <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
                             ></AddButton></Table.Cell>
                         </Table.Row>
@@ -163,7 +178,7 @@ export default class ShopItemSelect extends Component{
                         <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                             <Table.Cell>{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                             <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                            <Table.Cell>{element.ITEM_TYPE === 0?element.ITEM_COUNT:'套装'}</Table.Cell>
+                            <Table.Cell>{this.getItemCount(element)}</Table.Cell>
                             <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
                             ></AddButton></Table.Cell>
                         </Table.Row>

@@ -35,6 +35,7 @@ class WHTab extends Component{
                 <Dropdown
                             placeholder='选择目标仓库'
                             fluid
+                            search
                             selection
                             options={cangkuInfo.shopList}
                             value={cangkuInfo.selectedShopid2}

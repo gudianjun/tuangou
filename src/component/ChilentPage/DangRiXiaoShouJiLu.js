@@ -191,7 +191,7 @@ export default class DangRiXiaoShouJiLu extends Component{
                                         placeholder='Enter date'   showYearDropdown
                                 /> 
                                 </Menu.Item><Menu.Item>
-                            <Dropdown options={this.state.Shops}   onChange={(e, f)=>this.shopSelectChange(e, f)}    placeholder='请选择一个店铺'></Dropdown> 
+                            <Dropdown options={this.state.Shops} search  onChange={(e, f)=>this.shopSelectChange(e, f)}    placeholder='请选择一个店铺'></Dropdown> 
                             </Menu.Item>
                         </Menu>
                         </Grid.Column>

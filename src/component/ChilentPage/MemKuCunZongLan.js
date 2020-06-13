@@ -1,7 +1,8 @@
-import React,{Component, Link} from "react"
+import React,{Component} from "react"
 import { Table, Grid, Label, Button, Modal, ButtonGroup, Input} from 'semantic-ui-react'
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
+import _ from 'lodash'
 // 定制一个添加按钮
 
 // 会员的库存总览
@@ -12,6 +13,8 @@ export default class MemKuCunZongLan extends Component{
         super(props)
         this.state = {
             data:[],
+            column:null,
+            direction:null,
             showset:false,
             modelinfo:{}
         }
@@ -59,6 +62,25 @@ export default class MemKuCunZongLan extends Component{
            )
         }
     }
+    handleSort = (clickedColumn) => () => {
+        const { column, modelinfo, direction } = this.state
+    
+        if (column !== clickedColumn) {
+            modelinfo.infos = _.sortBy(modelinfo.infos, [clickedColumn])
+          this.setState({
+            column: clickedColumn,
+            modelinfo:modelinfo,
+            direction: 'ascending',
+          })
+    
+          return
+        }
+        modelinfo.infos = modelinfo.infos.reverse()
+        this.setState({
+            modelinfo: modelinfo,
+          direction: direction === 'ascending' ? 'descending' : 'ascending',
+        })
+      }
 
     render(){
         var nkey = 1
@@ -93,10 +115,13 @@ export default class MemKuCunZongLan extends Component{
             
         }
         var memrows=[]
-        if(this.state.showset){
+        if(this.state.showset){ 
+            var seq = 1
             this.state.modelinfo.infos.forEach(element => {
+               
                 memrows.push(
                     <Table.Row key = {element.MEM_CODE}>
+                        <Table.Cell>{seq++}</Table.Cell>
                         <Table.Cell>{element.MEM_CODE}</Table.Cell>
                         <Table.Cell>{element.MEM_NAME}</Table.Cell>
                         <Table.Cell textAlign='right'>{element.ITEM_NUMBER}</Table.Cell>
@@ -104,6 +129,7 @@ export default class MemKuCunZongLan extends Component{
                         )
             })
         }
+        const { column, direction } = this.state
         return(
             <div >
             <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
@@ -143,12 +169,13 @@ export default class MemKuCunZongLan extends Component{
                     <Modal.Content>
                         <Grid columns='equal'>
                             <Grid.Column>
-                                <Table celled selectable>
+                                <Table celled selectable sortable>
                                     <Table.Header  >
                                         <Table.Row key={ (nkey++).toString()}>
-                                            <Table.HeaderCell>会员号</Table.HeaderCell>
-                                            <Table.HeaderCell>会员姓名</Table.HeaderCell>
-                                            <Table.HeaderCell>持有数量</Table.HeaderCell>
+                                            <Table.HeaderCell  >序号</Table.HeaderCell>
+                                            <Table.HeaderCell sorted={column === 'MEM_CODE' ? direction : null} onClick={this.handleSort('MEM_CODE')}>会员号</Table.HeaderCell>
+                                            <Table.HeaderCell sorted={column === 'MEM_NAME' ? direction : null} onClick={this.handleSort('MEM_NAME')}>会员姓名</Table.HeaderCell>
+                                            <Table.HeaderCell sorted={column === 'ITEM_NUMBER' ? direction : null} onClick={this.handleSort('ITEM_NUMBER')}>持有数量</Table.HeaderCell>
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body >

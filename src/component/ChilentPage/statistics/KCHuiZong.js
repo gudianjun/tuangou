@@ -28,16 +28,16 @@ export default class KCHuiZong extends Component{
                 <Table.Row key = {element.COM_TYPE_ID + element.ITEM_ID}>
                     <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
                     <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                    <Table.Cell>{element.XS_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.TH_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.XH_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.RK_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.CK_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.HC_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.HT_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.CG_ITEM_NUMBER}</Table.Cell>
-                    <Table.Cell>{element.IN_TOTLE}</Table.Cell>
-                    <Table.Cell>{element.OUT_TOTLE}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.XS_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.TH_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.XH_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.RK_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.CK_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.HC_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.HT_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.CG_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.IN_TOTLE}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.OUT_TOTLE}</Table.Cell>
                 </Table.Row>
                     )
                     hejiin+=element.IN_TOTLE

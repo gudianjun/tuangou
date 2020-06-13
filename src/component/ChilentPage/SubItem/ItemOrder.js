@@ -67,37 +67,68 @@ class NumberButton extends Component{
     static contextType = MainContext;
 
     numberChange = (e,f) => {
-        
+        const {shoppingItems} = this.context;
         var { value } = f;
-        const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
-        if ((reg.test(value) && value.length < 5) || value === '') {
-            if(value === ''){
-                value='0'
-            }
-          value = parseInt(value)
-          const {shoppingItems} = this.context;
-          var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
-          if(value===''){
-            shoppingItems[index].ITEM_NUMBER = 1
-          }
-          else{
-            if(this.props.opetype === 9)    // 会员提货
+        var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
+        const {setMainContext} = this.context;
+        if(shoppingItems[index].ITEM_TYPE === 2){
+           
+            var isBuling = false
+            // 检查是否为数字
+            if(value.length > 0 && value[value.length - 1] === '.')
             {
-                
-                var oldindex = this.props.ITEMS.findIndex(element=>{return element.ITEM_ID === shoppingItems[index].ITEM_ID &&  element.COM_TYPE_ID === shoppingItems[index].COM_TYPE_ID })
-                if(oldindex >=0 && this.props.ITEMS[oldindex].ITEM_NUMBER - value >= 0){
+                value+='0'
+                isBuling = true
+            }
+            const reg = /^\d+([.]\d{1,2})?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+            if ((reg.test(value) && value.length < 8) || value === '') {
+                if(value===''){
+                    shoppingItems[index].ITEM_NUMBER = 0
+                }
+                else{
+                    if(isBuling){   // 后面补了一个零去掉
+                        value = value.substring(0, value.length - 1)
+                    }
                     shoppingItems[index].ITEM_NUMBER = value
                 }
+                shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
+                setMainContext({
+                    shoppingItems:shoppingItems
+                })
             }
-            else{
-                shoppingItems[index].ITEM_NUMBER = parseInt(value)
+
+        }
+        else{
+            const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+            if ((reg.test(value) && value.length < 5) || value === '') {
+                if(value === ''){
+                    value='0'
+                }
+                value = parseInt(value)
+                const {shoppingItems} = this.context;
+                index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
+                if(value===''){
+                    shoppingItems[index].ITEM_NUMBER = 1
+                }
+                else{
+                    if(this.props.opetype === 9)    // 会员提货
+                    {
+                        
+                        var oldindex = this.props.ITEMS.findIndex(element=>{return element.ITEM_ID === shoppingItems[index].ITEM_ID &&  element.COM_TYPE_ID === shoppingItems[index].COM_TYPE_ID })
+                        if(oldindex >=0 && this.props.ITEMS[oldindex].ITEM_NUMBER - value >= 0){
+                            shoppingItems[index].ITEM_NUMBER = value
+                        }
+                    }
+                    else{
+                        shoppingItems[index].ITEM_NUMBER = parseInt(value)
+                    }
+                }
+                
+                shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
+                setMainContext({
+                    shoppingItems:shoppingItems
+                })
             }
-          }
-          const {setMainContext} = this.context;
-          shoppingItems[index].PRICE_SUBTOTAL = shoppingItems[index].PRICE_ARR[shoppingItems[index].PRICE_SELECT] * shoppingItems[index].ITEM_NUMBER
-          setMainContext({
-            shoppingItems:shoppingItems
-          })
         }
       }
       plusClick(){
@@ -141,14 +172,25 @@ class NumberButton extends Component{
               })
         }
       }
-   
+    getItemCount(){
+        const {shoppingItems} = this.context;
+        var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
+
+        if(shoppingItems[index].ITEM_TYPE === 2){
+            return shoppingItems[index].ITEM_NUMBER
+        }
+        else{
+            return parseInt(shoppingItems[index].ITEM_NUMBER)
+        }
+       
+    }
     render(){
         return (
             <div>
             <Button as='div' labelPosition='right'>
                 <Button  icon onClick={()=>this.minusClick()}><Icon name='minus' style={{width:"20px" }}/></Button>
                 
-                <Input value={this.props.itemvalue} onChange={(e,f)=>this.numberChange(e,f)}  as='a'  size="mini" basic="true" pointing='left' style={{width:"50px" }} inverted  placeholder="数量"/>
+                <Input value={this.getItemCount()} onChange={(e,f)=>this.numberChange(e,f)}  as='a'  size="mini" basic="true" pointing='left' style={{width:"50px" }} inverted  placeholder="数量"/>
                 
                 <Button icon onClick={()=>this.plusClick()} ><Icon mini="true" name='plus'/></Button>
             </Button></div>
@@ -345,7 +387,7 @@ export default class ItemOrder extends Component{
         },
         this.context)
    }
-    jiezhangClick(){
+   jiezhangClick(){
          // 检查数据，如果订单为空，则不允许提交
         var {shoppingItems} = this.context;
         const {setMainContext} = this.context;
@@ -364,8 +406,21 @@ export default class ItemOrder extends Component{
                     setMainContext({errorMessage:"需要选择一个目标仓库！"})
                     return
                 }
+
+                
             }
-            
+            var dayu0 = false
+            shoppingItems.forEach(element=>{
+                if(parseFloat(element.ITEM_NUMBER) <=0.000000000000001){
+                    setMainContext({errorMessage:"商品数量必须大于0"})
+                    dayu0 = true
+                    return
+                }
+            })
+            if(dayu0){
+                return
+            }
+
             var {confirmInfo} = this.context;
             
             confirmInfo.open=true
@@ -411,7 +466,7 @@ export default class ItemOrder extends Component{
                         ITEM_ID:element.ITEM_ID,
                         COM_TYPE_ID:element.COM_TYPE_ID,
                         PRICE_SELECT:element.PRICE_SELECT,
-                        ITEM_NUMBER:element.ITEM_NUMBER
+                        ITEM_NUMBER:parseFloat(element.ITEM_NUMBER)
                     }
                 )
             })
@@ -499,6 +554,16 @@ export default class ItemOrder extends Component{
                 </Table.Cell>
         }
     }
+    // 设定套装散装标记
+    getSetFlg(item){
+        if (item.ITEM_TYPE === 1){
+            return (<Label color='green' ribbon>SET</Label>)
+        }
+        else if (item.ITEM_TYPE === 2){
+            return (<Label color='blue' ribbon>散</Label>)
+        }
+    }
+    
     render(){
         var rows = [];
         var yuanjia = 0
@@ -510,10 +575,10 @@ export default class ItemOrder extends Component{
             this.context.shoppingItems.forEach(element=>{
                 yuanjia += element.ITEM_NUMBER * element.PRICE_ARR[0]
                 shoujia += element.ITEM_NUMBER * element.PRICE_ARR[element.PRICE_SELECT]
-                jianshu += element.ITEM_NUMBER
+                jianshu += parseFloat(element.ITEM_NUMBER)
                 rows.push(
                     <Table.Row key={element.key} itemkey={element.key}>
-                                <Table.Cell collapsing >{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                                <Table.Cell collapsing >{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                 <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                                 {this.getDanJiaRow(element)}
                                 <Table.Cell collapsing >
@@ -624,7 +689,7 @@ export default class ItemOrder extends Component{
                                 <Label.Group tag size='large'>
                                 {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7  && this.props.opetype!== 8 && this.props.opetype!== 9? <Label as='a'>原价:￥{yuanjia.toLocaleString('zh')}</Label>:<div></div>}
                                 {this.props.opetype!==2  && this.props.opetype!==3  && this.props.opetype!==4 && this.props.opetype!==7  && this.props.opetype!== 8 && this.props.opetype!== 9? <Label as='a' color='red'>优惠:￥{youhui.toLocaleString('zh')}</Label>:<div></div>}
-                                    <Label as='a'>件数:{jianshu}</Label>
+                                    <Label as='a'>件数:{jianshu.toFixed(2)}</Label>
                                 </Label.Group>
                                 </Table.HeaderCell>
                             </Table.Row>

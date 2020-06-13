@@ -507,7 +507,7 @@ export default class MemberEdit extends Component{
                 subitem.push({
                     ITEM_ID:element.ITEM_ID,
                     COM_TYPE_ID:element.COM_TYPE_ID,
-                    ITEM_NUMBER:element.ITEM_NUMBER
+                    ITEM_NUMBER:parseFloat(element.ITEM_NUMBER)
                 })
             });
             var itemstr = JSON.stringify(subitem)

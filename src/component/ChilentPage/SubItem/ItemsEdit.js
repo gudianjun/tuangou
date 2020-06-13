@@ -130,29 +130,38 @@ export default class ItemsEdit extends Component{
         })
     }
     // 单品套装改变事件
-    onEditSetChange(item){
-        if (item.ITEM_TYPE === 0){
-            item.ITEM_TYPE = 1
+    onEditSetChange(item, e,f){
+        // 套装不能散装
+        if(f.label === '单品'){
+            item.ITEM_TYPE = f.checked?0:0
         }
-        else{
-            item.ITEM_TYPE = 0
+        else if(f.label === '套装'){
+            item.ITEM_TYPE = f.checked?1:0
+        }
+        else if(f.label === '散装'){
+            item.ITEM_TYPE = f.checked?2:0
         }
         this.setState(
         {
             editobject: item
         })
     }
+ 
     getDelFlg(item){
         if (item.DEL_FLG === 1)
             return (<Label ribbon><Icon name='delete' /> </Label>)
     }
     getAddFlg(item){
         if (item.DISP_FLG === 2)
-            return (<Label color='red' ribbon><Icon name='add circle' /> </Label>)
+            return (<Label color='olive' ribbon>+</Label>)
     }
     getSetFlg(item){
-        if (item.ITEM_TYPE === 1)
-            return (<Label color='red' ribbon>SET</Label>)
+        if (item.ITEM_TYPE === 1){
+            return (<Label color='green' ribbon>SET</Label>)
+        }
+        else if (item.ITEM_TYPE === 2){
+            return (<Label color='blue' ribbon>散</Label>)
+        }
     }
 
     // 恢复选中的商品
@@ -336,7 +345,7 @@ export default class ItemsEdit extends Component{
                     <Button primary onClick={(e)=>this.onSubmitEditClick(item, 1)}>提交</Button>
                     <Button secondary onClick={(e)=>this.onCancelClick(e, item.ITEM_ID, item.COM_TYPE_ID)}>取消</Button>
                     <Button onClick={()=>this.onSetEditClick(item)}
-                        style={{display: item.ITEM_TYPE === 0 ? 'none' : 'block'}}>套装
+                        style={{display: item.ITEM_TYPE !== 1 ? 'none' : 'block'}}>套装
                 </Button>
                 </ButtonGroup>
             )
@@ -347,7 +356,7 @@ export default class ItemsEdit extends Component{
                     <Button primary onClick={(e)=>this.onSubmitEditClick(item, 2)}>提交</Button>
                     <Button secondary onClick={(e)=>this.onCancelClick(e, item.ITEM_ID, item.COM_TYPE_ID)}>放弃</Button>
                     <Button onClick={()=>this.onSetEditClick(item)}
-                        style={{display: item.ITEM_TYPE === 0 ? 'none' : 'block'}}>套装
+                        style={{display:item.ITEM_TYPE !== 1  ? 'none' : 'block'}}>套装
                 </Button>
                 </ButtonGroup>
             )
@@ -381,18 +390,23 @@ export default class ItemsEdit extends Component{
             showset:true
         })
     }
+    getTypeName(element){
+        if(element.ITEM_TYPE === 0){return '单品'}
+        else if(element.ITEM_TYPE === 1){return '套装'}
+        else if(element.ITEM_TYPE === 2){return '散装'}
+    }
     addNormolRow(element){
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                             <Table.Cell collapsing>{this.getDelFlg(element)} {this.getSetFlg(element)} {element.ITEM_ID}</Table.Cell>
                             <Table.Cell collapsing>{element.COM_TYPE_ID}</Table.Cell>
                             <Table.Cell collapsing>{element.ITEM_NAME}</Table.Cell>
-                            <Table.Cell collapsing>{element.ITEM_COST}</Table.Cell>
-                            <Table.Cell collapsing>{element.ITEM_PRICE}</Table.Cell>
-                            <Table.Cell collapsing>{element.ITEM_MEM_PRICE}</Table.Cell>
-                            <Table.Cell collapsing>{element.ITEM_GROUP_PRICE}</Table.Cell>
-                            <Table.Cell collapsing>{element.ITEM_DEPOSIT_PRICE}</Table.Cell>
-                            <Table.Cell collapsing>{element.ITEM_TYPE === 0 ? '单品' : '套装' }</Table.Cell>
+                            <Table.Cell collapsing  textAlign='right'>{element.ITEM_COST}</Table.Cell>
+                            <Table.Cell collapsing  textAlign='right'>{element.ITEM_PRICE}</Table.Cell>
+                            <Table.Cell collapsing  textAlign='right'>{element.ITEM_MEM_PRICE}</Table.Cell>
+                            <Table.Cell collapsing  textAlign='right'>{element.ITEM_GROUP_PRICE}</Table.Cell>
+                            <Table.Cell collapsing  textAlign='right'>{element.ITEM_DEPOSIT_PRICE}</Table.Cell>
+                            <Table.Cell collapsing>{this.getTypeName(element)}</Table.Cell>
                             <Table.Cell collapsing>
                                 {this.getButtonGroup(element)}
                             </Table.Cell>
@@ -448,7 +462,7 @@ export default class ItemsEdit extends Component{
             subitem.push({
                 SUB_ITEM_ID:element.ITEM_ID,
                 SUB_COM_TYPE_ID:element.COM_TYPE_ID,
-                ITEM_NUMBER:element.ITEM_NUMBER
+                ITEM_NUMBER:parseFloat(element.ITEM_NUMBER)
             })
         });
         editobject.ITEM_UNIT_INFO=JSON.stringify(subitem)
@@ -461,7 +475,7 @@ export default class ItemsEdit extends Component{
         element = {...element, DISP_FLG:1} // 补充一个编辑标记
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                            <Table.Cell>{element.ITEM_ID}</Table.Cell>
+                            <Table.Cell>{this.getDelFlg(element)} {this.getSetFlg(element)}{element.ITEM_ID}</Table.Cell>
                             <Table.Cell>{element.COM_TYPE_ID}</Table.Cell>
                             <Table.Cell><Input fluid value={element.ITEM_NAME} onChange={(e, f)=>this.onEditItem('ITEM_NAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.ITEM_COST} onChange={(e, f)=>this.onEditItem('ITEM_COST', element, f.value)}></Input></Table.Cell>
@@ -470,9 +484,15 @@ export default class ItemsEdit extends Component{
                             <Table.Cell><Input fluid value={element.ITEM_GROUP_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_GROUP_PRICE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input fluid value={element.ITEM_DEPOSIT_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_DEPOSIT_PRICE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell>
-                             <ButtonGroup fluid>
-                                <Radio toggle label={element.ITEM_TYPE === 0 ? '单品' : '套装' } 
-                                    checked={element.ITEM_TYPE === 0 ? false : true} onChange={()=>this.onEditSetChange(element)}>
+                             <ButtonGroup fluid vertical>
+                                <Radio  name='radioGroup' label={'单品'} 
+                                    checked={element.ITEM_TYPE === 0 ? true : false} onChange={(e, f)=>this.onEditSetChange(element,e,f)}>
+                                </Radio>
+                                <Radio  name='radioGroup' label={'套装'} 
+                                    checked={element.ITEM_TYPE === 1 ? true : false} onChange={(e, f)=>this.onEditSetChange(element,e,f)}>
+                                </Radio>
+                                <Radio  name='radioGroup' label={'散装'} 
+                                    checked={element.ITEM_TYPE === 2 ? true : false} onChange={(e, f)=>this.onEditSetChange(element,e,f)}>
                                 </Radio>
                             </ButtonGroup>
                             </Table.Cell>
@@ -507,7 +527,7 @@ export default class ItemsEdit extends Component{
         console.log('addAddRow', element)
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                            <Table.Cell>{this.getAddFlg(element)}{element.ITEM_ID}</Table.Cell>
+                            <Table.Cell> {this.getAddFlg(element)}{this.getSetFlg(element)}{element.ITEM_ID}</Table.Cell>
                             <Table.Cell><Dropdown style={{ width: '50px'}}
                                 onChange={(e,f)=>this.handleAddItemComChange(e,f)}
                                 options={this.state.comtypes}
@@ -522,9 +542,15 @@ export default class ItemsEdit extends Component{
                             <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_GROUP_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_GROUP_PRICE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.ITEM_DEPOSIT_PRICE} onChange={(e, f)=>this.onEditItem('ITEM_DEPOSIT_PRICE', element, f.value)}></Input></Table.Cell>
                             <Table.Cell>
-                             <ButtonGroup fluid>
-                                <Radio toggle label={element.ITEM_TYPE === 0 ? '单品' : '套装' } 
-                                    checked={element.ITEM_TYPE === 0 ? false : true} onChange={()=>this.onEditSetChange(element)}>
+                             <ButtonGroup fluid vertical>
+                                <Radio  name='radioGroup' label={'单品'} 
+                                    checked={element.ITEM_TYPE === 0 ? true : false} onChange={(e, f)=>this.onEditSetChange(element,e,f)}>
+                                </Radio>
+                                <Radio  name='radioGroup' label={'套装'} 
+                                    checked={element.ITEM_TYPE === 1 ? true : false} onChange={(e, f)=>this.onEditSetChange(element,e,f)}>
+                                </Radio>
+                                <Radio  name='radioGroup' label={'散装'} 
+                                    checked={element.ITEM_TYPE === 2 ? true : false} onChange={(e, f)=>this.onEditSetChange(element,e,f)}>
                                 </Radio>
                             </ButtonGroup>
                             </Table.Cell>

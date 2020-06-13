@@ -81,6 +81,14 @@ export default class ItemSelect extends Component{
         if (item.ITEM_TYPE === 1)
             return (<Label color='red' ribbon>SET</Label>)
     }
+    getSetFlg(item){
+        if (item.ITEM_TYPE === 1){
+            return (<Label color='green' ribbon>SET</Label>)
+        }
+        else if (item.ITEM_TYPE === 2){
+            return (<Label color='blue' ribbon>散</Label>)
+        }
+    }
     onClick(){
         Common.sendMessage(Common.baseUrl + "/xiaoshou/getitems"
             , "POST"
@@ -107,7 +115,7 @@ export default class ItemSelect extends Component{
                     if(this.props.seltype === 0){
                         rows.push(
                             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                                <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                                <Table.Cell>{this.getDelFlg(element)}{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                 <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                                 <Table.Cell>{Common.formatCurrency(element.ITEM_PRICE)}</Table.Cell>
                                 <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
@@ -116,10 +124,10 @@ export default class ItemSelect extends Component{
                         )
                     }
                     else{
-                        if(element.ITEM_TYPE === 0){
+                        if(element.ITEM_TYPE === 0 || element.ITEM_TYPE === 2){
                             rows.push(
                                 <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
-                                    <Table.Cell>{this.getDelFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                                    <Table.Cell>{this.getDelFlg(element)}{this.getSetFlg(element)}{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
                                     <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                                     <Table.Cell textAlign='right' >{Common.formatCurrency(element.ITEM_PRICE)}</Table.Cell>
                                     <Table.Cell><AddButton itemKey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
