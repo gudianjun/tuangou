@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button, Tab, Step, ButtonGroup,Input, Dropdown, SegmentGroup, Segment, Modal, Form } from 'semantic-ui-react'
+import { Icon, Label, Table,Button, Tab, Step, ButtonGroup,Input, Dropdown, SegmentGroup, Segment, Modal, Form, TableHeader } from 'semantic-ui-react'
 import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import ZYXiangXi from '../../ChilentPage/statistics/ZYXiangXi'
@@ -89,9 +89,16 @@ export default class ConfirmEdit extends Component{
                     var itemnameindex = context.items.findIndex(elm=>{return elm.ITEM_ID === element.ITEM_ID && elm.COM_TYPE_ID === element.COM_TYPE_ID})
                     var itemname = '未知'
                     var itemtype = 0
-                    if(inshopnameindex >=0){
-                        itemname = context.items[itemnameindex].ITEM_NAME
-                        itemtype = context.items[itemnameindex].ITEM_TYPE
+                    if(itemnameindex >=0){
+                        try
+                        {
+                            itemname = context.items[itemnameindex].ITEM_NAME
+                            itemtype = context.items[itemnameindex].ITEM_TYPE
+                        }
+                        catch(err)
+                        {
+                            throw err;
+                        }
                     }
                     arrayObj.push({...element, key:element.ORDER_ID, FROM_SHOP_NAME: fromshopname, TO_SHOP_NAME: inshopname, ITEM_NAME:itemname, 
                         ITEM_TYPE:itemtype})

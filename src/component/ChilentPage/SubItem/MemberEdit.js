@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Dropdown } from 'semantic-ui-react'
+import { Icon, Label, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Dropdown, Form, Segment, ButtonOr } from 'semantic-ui-react'
 import {MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import DatePicker, { setDefaultLocale } from "react-datepicker";
@@ -19,11 +19,17 @@ export default class MemberEdit extends Component{
             items:[],
             baseitems:[],
             showset:false,   // 是否显示套装编辑画面
+            showmem:false,  // 显示会员存取款履历
+            showaddmoney:false,     // 显示添加moeny画面
+            addmoneyobj:{}, // 添加钱对象
+            moneyhistory:{},    // 会员的存取款履历
+            addmoney:0,
             editobject:{},   //进行编辑的对象
             comtypes:[], // 商品类别列表
             whmeminfo:{},    // 会员仓储信息
             whordertype:0,   // 0:存货，1：提货
             whitems:[],  // 会员存储信息
+            memmoenyitems:{},   // 会员存取款历史信息
             searchtext:''
         }
         this.getItems() // 获得编辑列表
@@ -211,7 +217,14 @@ export default class MemberEdit extends Component{
     onEditClick(e, id){
         console.log(e, id)
         // 发送恢复删除请求
+        // 存在添加行时，先删除
+        
         const {baseitems} = this.state
+        var indexAdd = baseitems.findIndex((element)=>{return element.key===999999})
+        if(indexAdd>=0){
+            baseitems.splice(indexAdd, 1);
+        }
+
         var index = baseitems.findIndex((element)=>{return element.MEM_ID===id})
         var editobject = {}
         editobject = {...baseitems[index]}
@@ -245,7 +258,33 @@ export default class MemberEdit extends Component{
             this.context)
         
     }
-  
+    onAddMoneyClick(item){
+        this.setState({showaddmoney:true, addmoneyobj:item, addmoney:0})
+    }
+    // 编辑会员的存取货品
+    onCunKuanClick(item){
+        // 获得会员仓库商品信息
+        var arrayObj = []
+
+        Common.sendMessage(Common.baseUrl + "/member/getmemwh"
+            , "POST"
+            , null
+            , {MEM_ID:item.MEM_ID}
+            , null
+            , (e)=>{
+                e.data.forEach(element => {
+                    arrayObj.push({...element, key:element.COM_TYPE_ID + '_' +element.ITEM_ID.toString()})
+                });
+                // 写入缓存
+                this.setState({
+                    whitems:arrayObj,
+                    showset:true,
+                    whmeminfo:item,
+                })
+            },null,
+            this.context)
+        
+    }
     onSubmitEditClick(item, ope=1){
         // 编辑下面的提交按钮
         // 如果是套餐，则，子清单不能为空。
@@ -304,6 +343,8 @@ export default class MemberEdit extends Component{
                         <Button secondary onClick={(e)=>this.onWHClick(item, 0)}>存货</Button>
                         <Button.Or />
                         <Button secondary onClick={(e)=>this.onWHClick(item, 1)}>提货</Button>
+                        <Button.Or />
+                        <Button  color='orange' onClick={(e)=>this.onAddMoneyClick(item)}>存款</Button>
                         <Button onClick={(e)=>this.onDelClick(e, item.MEM_ID)}>删除</Button>
                     </ButtonGroup>
                 )
@@ -334,11 +375,30 @@ export default class MemberEdit extends Component{
             )
         }
     }
-
+    // 显示存取款履历
+    showAddMoneyHistory(element){
+        Common.sendMessage(Common.baseUrl + "/member/memmoneyhistory"
+            , "POST"
+            , null
+            , {MEM_ID:element.MEM_ID}
+            , null
+            , (e)=>{
+                // 写入缓存
+                this.setState({moneyhistory:e.data,showmem:true})
+            },null,
+            this.context)        
+    }
+    // 添加普通的行
     addNormolRow(element){
         return (
             <Table.Row key={element.MEM_ID}>
                             <Table.Cell collapsing>{element.MEM_CODE}</Table.Cell>
+                            <Table.Cell collapsing textAlign='right'>
+                            <Label as='a' onClick={()=>this.showAddMoneyHistory(element)}  
+                            color={element.MEM_MONEY>0?'blue' :'green'}>
+                                {Common.formatCurrency(element.MEM_MONEY)}
+                            </Label>
+                                </Table.Cell>
                             <Table.Cell collapsing>{element.MEM_LASTNAME}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_FIRSTNAME}</Table.Cell>
                             <Table.Cell collapsing>{element.MEM_BIRTHDAY}</Table.Cell>
@@ -444,6 +504,7 @@ export default class MemberEdit extends Component{
         return (
             <Table.Row key={element.MEM_ID}>
                             <Table.Cell><Input style={{ minWidth: '100px'}}  fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Label style={{ minWidth: '100px'}} >-</Label></Table.Cell>
                             <Table.Cell><Input style={{ minWidth: '50px'}} fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input style={{ minWidth: '70px'}} fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell>
@@ -470,6 +531,7 @@ export default class MemberEdit extends Component{
         return (
             <Table.Row key={element.MEM_ID}>
                             <Table.Cell><Input  style={{ minWidth: '100px'}}  fluid value={element.MEM_CODE} onChange={(e, f)=>this.onEditItem('MEM_CODE', element, f.value)}></Input></Table.Cell>
+                            <Table.Cell><Label style={{ minWidth: '100px'}} >-</Label></Table.Cell>
                             <Table.Cell><Input  style={{ minWidth: '70px'}} fluid value={element.MEM_LASTNAME} onChange={(e, f)=>this.onEditItem('MEM_LASTNAME', element, f.value)}></Input></Table.Cell>
                             <Table.Cell><Input  style={{ minWidth: '70px'}} fluid value={element.MEM_FIRSTNAME} onChange={(e, f)=>this.onEditItem('MEM_FIRSTNAME', element, f.value)}></Input></Table.Cell>
                           
@@ -540,7 +602,50 @@ export default class MemberEdit extends Component{
                 })
         }
     }
+    // 会员添加存款按钮按下
+    onAddMoneyButton(){
+        const {setMainContext} = this.context
 
+        if(this.state.addmoney<=0){
+            setMainContext({
+                errorMessage:'存入金额必须大于0！'
+            })
+            return
+        }
+        var {baseitems} = this.state
+        Common.sendMessage(Common.baseUrl + "/member/addmoney"
+            , "POST"
+            , null
+            , {MEM_ID:this.state.addmoneyobj.MEM_ID,
+                MEM_MONEY:this.state.addmoney}
+            , null
+            , (e)=>{
+                // 写入缓存
+                var index = baseitems.findIndex((ele)=>{return ele.MEM_ID===e.data.MEM_ID})
+                if(index>=0){
+                    baseitems[index].MEM_MONEY = e.data.MEM_MONEY
+                }
+                this.setState({showaddmoney:false})
+            },null,
+            this.context)        
+    }
+    numberChange = (e,f) => {
+        var {addmoney} = this.state;
+        var { value } = f;
+        const reg = /^\d*?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+        if ((reg.test(value) && value.length < 5) || value === '') {
+            if(value===''){
+                addmoney = 1
+            }
+            else{
+                addmoney = parseInt(value)
+            }
+            this.setState({
+                addmoney:addmoney
+            })
+        }
+        
+      }
     render(){
         var rows = [];
         if ( this.state.items.length > 0 ) {
@@ -588,10 +693,37 @@ export default class MemberEdit extends Component{
                             <Table.Cell></Table.Cell>
                             <Table.Cell></Table.Cell>
                             <Table.Cell></Table.Cell>
+                            <Table.Cell></Table.Cell>
                             <Table.Cell>
                                 <Button onClick={()=>this.onAddNewClick()}>添加</Button>
                             </Table.Cell>
                         </Table.Row>)
+        }
+        var mhrows = []
+        if(this.state.showmem){
+            var key=0
+            this.state.moneyhistory.items.forEach(element => {
+                var typename = '未知'
+                if(element.ORDER_TYPE === 1){
+                    typename = '存款'
+                }
+                else if(element.ORDER_TYPE === 2){
+                    typename = '销售'
+                }
+                else if(element.ORDER_TYPE === 3){
+                    typename = '退货'
+                }
+                else if(element.ORDER_TYPE === 4){
+                    typename = '调整'
+                }
+                mhrows.push(<Table.Row key={key++}>
+                    <Table.Cell>{key}</Table.Cell>
+                    <Table.Cell>{element.ORDER_ID}</Table.Cell>
+                    <Table.Cell>{typename}</Table.Cell>
+                    <Table.Cell>{element.MEM_MONEY}</Table.Cell>
+                    <Table.Cell>{element.ORDER_TIME}</Table.Cell>
+                    </Table.Row>)
+            });
         }
         return(
             <div >
@@ -601,14 +733,15 @@ export default class MemberEdit extends Component{
                     <Table.Header  >
                     <Table.Row>
                         <Table.HeaderCell >会员号</Table.HeaderCell>
+                        <Table.HeaderCell >余额</Table.HeaderCell>
                         <Table.HeaderCell >姓氏</Table.HeaderCell>
                         <Table.HeaderCell >名字</Table.HeaderCell>
                         <Table.HeaderCell >生日</Table.HeaderCell>
                         <Table.HeaderCell >性别</Table.HeaderCell>
                         <Table.HeaderCell >电话号码</Table.HeaderCell>
                         <Table.HeaderCell >邮编</Table.HeaderCell>
-                        <Table.HeaderCell width={4} >住址</Table.HeaderCell>
-                        <Table.HeaderCell width={3} ><Radio toggle label='显示全部' checked={this.state.showall} onChange={()=>this.onShowChange()}></Radio></Table.HeaderCell>
+                        <Table.HeaderCell width={3} >住址</Table.HeaderCell>
+                        <Table.HeaderCell width={4} ><Radio toggle label='显示全部' checked={this.state.showall} onChange={()=>this.onShowChange()}></Radio></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 
@@ -644,7 +777,97 @@ export default class MemberEdit extends Component{
                     </Modal.Actions>
                 </Modal>
 
-                
+                <Modal open={this.state.showmem}>   
+                    <Modal.Header>{'会员【' + this.state.moneyhistory.MEM_NAME + '】当前余额【' + Common.formatCurrency(this.state.moneyhistory.MEM_MONEY) + '】'}
+                        <ButtonGroup style={{position:'absolute',right:60}}>
+                            <Button onClick={()=>this.setState({showmem:false})} >
+                                关闭
+                            </Button>
+                        </ButtonGroup>
+                    </Modal.Header>
+                    <Modal.Content>
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <Table celled selectable sortable>
+                                    <Table.Header  >
+                                        <Table.Row key={ 1}>
+                                            <Table.HeaderCell >序号</Table.HeaderCell>
+                                            <Table.HeaderCell >订单ID</Table.HeaderCell>
+                                            <Table.HeaderCell >订单类型</Table.HeaderCell>
+                                            <Table.HeaderCell >订单金额</Table.HeaderCell>
+                                            <Table.HeaderCell >订单时间</Table.HeaderCell>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body >
+                                            {mhrows}
+                                    </Table.Body>
+                                    <Table.Footer fullWidth>
+                                    </Table.Footer>
+                                </Table>
+                            </Grid.Column>
+                        </Grid>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        记录最多只显示最近的100条记录
+                    </Modal.Actions>
+                </Modal>  
+
+                <Modal open={this.state.showaddmoney}>   
+                    <Modal.Header>会员【{this.state.addmoneyobj.MEM_LASTNAME + this.state.addmoneyobj.MEM_FIRSTNAME}】的存款
+                        <ButtonGroup style={{position:'absolute',right:60}}>
+                            <Button primary onClick={()=>this.onAddMoneyButton()} >
+                                添加
+                            </Button>
+                            <Button.Or />
+                            <Button onClick={()=>this.setState({showaddmoney:false})} >
+                                关闭
+                            </Button>
+                        </ButtonGroup>
+                    </Modal.Header>
+                    <Modal.Content>
+                        <Grid>
+                            <Grid.Row>
+                                <Grid.Column textAlign='right'>
+                                    <Input type='text' placeholder='存入金额' >
+                                        <Label basic size='massive'>¥</Label>
+                                        <Input placeholder='存入金额'  
+                                        onChange={(e,f)=>this.numberChange(e,f)} 
+                                        size='massive'
+                                        style={{fontSize:'24px'}}
+                                        value={this.state.addmoney}
+                                        />
+                                        <Label  size='massive'>.00</Label>
+                                    </Input>
+                                </Grid.Column>
+                            </Grid.Row>
+                            <Grid.Row>
+                                <Grid.Column  textAlign='right'>
+                                    <ButtonGroup>
+                                        <Button onClick={()=>this.setState({addmoney:10})}>10</Button>
+                                        <Button.Or />
+                                        <Button onClick={()=>this.setState({addmoney:20})}>20</Button>
+                                        <Button.Or />
+                                        <Button onClick={()=>this.setState({addmoney:50})}>50</Button>
+                                        <Button.Or />
+                                        <Button onClick={()=>this.setState({addmoney:100})}>100</Button>
+                                        <Button.Or />
+                                        <Button onClick={()=>this.setState({addmoney:200})}>200</Button>
+                                        <Button.Or />
+                                        <Button onClick={()=>this.setState({addmoney:500})}>500</Button>
+                                        <Button.Or />
+                                        <Button onClick={()=>this.setState({addmoney:1000})}>1000</Button>
+                                    </ButtonGroup>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                       
+                       
+                    </Modal.Content>
+                    <Modal.Actions>
+                        
+                    </Modal.Actions>
+                </Modal>  
+
             </div>
             </div>
         )

@@ -5,8 +5,8 @@ import Common from "../../common/common"
 import _ from 'lodash'
 // 定制一个添加按钮
 
-// 会员的库存总览
-export default class MemKuCunZongLan extends Component{
+// 会员存款总览
+export default class MemCunKuanZongLan extends Component{
     static contextType = MainContext;
 
     constructor(props, context){
@@ -133,7 +133,7 @@ export default class MemKuCunZongLan extends Component{
         return(
             <div >
             <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
-            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'scroll' }}> 
+            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'hidden' }}> 
                 <Grid columns='equal'>
                     <Grid.Row  key={ (nkey++).toString()}>
                     <Grid.Column>

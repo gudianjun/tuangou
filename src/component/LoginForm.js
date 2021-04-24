@@ -87,7 +87,7 @@ class LoginForm extends Component{
             <Grid textAlign='center' verticalAlign='middle'>
                 <Grid.Column style={{ maxWidth: 450 }}>
                 <Header as='h2' color='teal' textAlign='center'>
-                    <Image src={logo} /> 为了我们的生活一起努力
+                    <Image src={logo} /> 百膳坊
                 </Header>
                 <Form size='large'>
                     <Segment stacked>

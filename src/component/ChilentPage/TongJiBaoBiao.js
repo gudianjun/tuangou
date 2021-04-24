@@ -798,7 +798,7 @@ export default class TongJiBaoBiao extends Component{
               <Table.Cell>{element.ITEM_NAME}</Table.Cell>
               <Table.Cell>{element.COM_TYPE_ID}</Table.Cell>
               <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)}</Table.Cell>
-              <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_NUMBER - element.ITEM_TH_NUMBER)}</Table.Cell>
+              <Table.Cell textAlign='right'>{element.ITEM_XS_NUMBER - element.ITEM_TH_NUMBER}</Table.Cell>
               <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_COST - element.ITEM_TH_COST)}</Table.Cell>
               <Table.Cell textAlign='right'>{this.toPercent(hejiuxiaoshou === 0? 0:(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)/hejiuxiaoshou)}</Table.Cell>
               <Table.Cell textAlign='right'>{Common.formatCurrency(element.BF_ITEM_XS_PRICE - element.BF_ITEM_TH_PRICE)}</Table.Cell>

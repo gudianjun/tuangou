@@ -65,7 +65,7 @@ export default class KuCunZongLan extends Component{
 
             <div >
             <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
-            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'hidden' }}> 
+            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'scroll' }}> 
                 <Grid columns='equal'>
                     <Grid.Row  key={ (nkey++).toString()}>
                     <Grid.Column>
