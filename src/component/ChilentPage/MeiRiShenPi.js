@@ -166,7 +166,7 @@ export default class MeiRiShenPi extends Component{
             value+='0'
             isBuling = true
         }
-        const reg = /^\d+([.]\d{1,2})?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
+        const reg = /^[\-]?(\d+([.]\d{1,2})?)?$/;		// 以数字1开头，任意数字结尾，且中间出现零个或多个数字
         if ((reg.test(value) && value.length < 12) || value === '') {
             if(value===''){
                 selectobject[index].SHIJI_RUZHANG = ''
@@ -191,7 +191,8 @@ export default class MeiRiShenPi extends Component{
             return (item.SHIJI_RUZHANG)
         } 
         else if(item.DISP_STATE === 2){
-            return (<Input fluid value={item.SHIJI_RUZHANG} onChange={(e, f)=>this.onEditItem(item, f.value)}></Input>)
+            return (<Input fluid value={item.SHIJI_RUZHANG}
+                           onChange={(e, f)=>this.onEditItem(item, f.value)}></Input>)
         } 
     }
     getItems(element, seltype){

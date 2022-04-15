@@ -12,6 +12,14 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+/*Fix the header to the top*/
+.freeze-head-and-col tr:first-of-type th{
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
+  background-color: cyan;
+}
+
 
 .App-header {
   background-color: #282c34;

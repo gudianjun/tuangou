@@ -1,7 +1,7 @@
 export default class Common{
     static get baseUrl(){
-           return  "http://47.108.133.145:5000/v1";
-      //return  "http://localhost:5000/v1";
+        //   return  "http://47.108.133.145:5000/v1";
+      return  "https://127.0.0.1:5000/v1";
     }
 
     static _setStorage(key, value){
@@ -30,7 +30,6 @@ export default class Common{
         var authdata = window.btoa(str);
         return 'Basic ' + authdata
     }
-  
     static sendMessage(url, sendType, urlPram, bodyObj, newHeader, callbackobj=null, callbackErr=null, cot=null){
         console.log(url)
         const auth = Common._getSendToken()

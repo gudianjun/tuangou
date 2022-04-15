@@ -161,27 +161,51 @@ class MainForm extends Component{
     this.context)
   }
   getRoute(){
-      const {menumstate} = this.context;
+      const {checkRole} = this.context;
      if(this.context.shoptype !== -1){
+        if(this.context.shoptype === 0)
+        {
          return(
-             <Switch>
-                 {menumstate.xiaoshou ? (<Route path='/main/xiaoshou' component={XiaoShou}></Route>) : null}
-                 {menumstate.baofei ? (<Route path='/main/baofei' component={BaoFei}></Route>) : null}
-                 {menumstate.dangrixiaoshoujilu ? (<Route path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>) : null}
-                 {menumstate.tuihuo ? (<Route path='/main/tuihuo' component={TuiHuo}></Route>) : null}
-                 {menumstate.huiyuanguanli ? (<Route path='/main/huiyuanguanli' component={HuiYuanGuanLi}></Route>) : null}
-                 {menumstate.memkucunzonglan ? (<Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>) : null}
-                 {menumstate.caigouguanli ? (<Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>) : null}
-                 {menumstate.kucunzonglan ? (<Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>) : null}
-                 {menumstate.cangkuguanli ? (<Route path='/main/cangkuguanli' component={CangKuGuanLi}></Route>) : null}
-                 {menumstate.dianpuguanli ? (<Route path='/main/dianpuguanli' component={DianPuGuanLi}></Route>) : null}
-                 {menumstate.yuangongguanli ? (<Route path='/main/yuangongguanli' component={YuanGongGuanLi}></Route>) : null}
-                 {menumstate.shangpinguanli ? (<Route path='/main/shangpinguanli' component={ShangPinGuanLi}></Route>) : null}
-                 {menumstate.meirishenpi ? (<Route path='/main/meirishenpi' component={MeiRiShenPi}></Route>) : null}
-                 {menumstate.tongjibaobiao ? (<Route path='/main/tongjibaobiao' component={TongJiBaoBiao}></Route>) : null}
-                 {(menumstate.quanxianguanli || this.context.shoptype === 99) ? (<Route path='/main/quanxianguanli' component={Role}></Route>) : null}
-             </Switch>
-         )
+                <Switch>
+                     <Route exact path='/main/xiaoshou' component={XiaoShou}></Route>
+
+                            <Route path='/main/baofei' component={BaoFei}></Route>
+                            <Route path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>
+                            <Route path='/main/tuihuo' component={TuiHuo}></Route>
+                            <Route path='/main/huiyuanguanli' component={HuiYuanGuanLi}></Route>
+                            <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
+                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
+                    </Switch>
+                )
+         }
+         else if(this.context.shoptype === 1){
+            return(
+                <Switch>
+                            <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
+                            <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
+                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
+                </Switch>
+                )
+         }
+         else if(this.context.shoptype === 99){
+            return(
+                <Switch>
+
+                            <Route path='/main/dangrixiaoshoujilu' component={DangRiXiaoShouJiLu}></Route>
+                            <Route path='/main/cangkuguanli' component={CangKuGuanLi}></Route>
+                            <Route path='/main/caigouguanli' component={CaiGouGuanLi}></Route>
+                            <Route path='/main/dianpuguanli' component={DianPuGuanLi}></Route>
+                            <Route path='/main/yuangongguanli' component={YuanGongGuanLi}></Route>
+                            <Route path='/main/kucunzonglan' component={KuCunZongLan}></Route>
+                            <Route path='/main/huiyuanguanli' component={HuiYuanGuanLi}></Route>
+                            <Route path='/main/memkucunzonglan' component={MemKuCunZongLan}></Route>
+                            <Route path='/main/shangpinguanli' component={ShangPinGuanLi}></Route>
+                            <Route path='/main/meirishenpi' component={MeiRiShenPi}></Route>
+                            <Route path='/main/tongjibaobiao' component={TongJiBaoBiao}></Route>
+                            <Route path='/main/quanxianguanli' component={Role}></Route>
+                </Switch>
+                )
+         }
      }
   }
   getMessageCount(){

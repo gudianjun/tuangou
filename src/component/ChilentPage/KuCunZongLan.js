@@ -2,6 +2,7 @@ import React,{Component} from "react"
 import { Table, Grid, Input} from 'semantic-ui-react'
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
+
 // 定制一个添加按钮
 
 // 会员的库存总览
@@ -69,7 +70,7 @@ export default class KuCunZongLan extends Component{
                 <Grid columns='equal'>
                     <Grid.Row  key={ (nkey++).toString()}>
                     <Grid.Column>
-                        <Table celled selectable>
+                        <Table celled selectable >
                             <Table.Header  >
                                 <Table.Row key={ (nkey++).toString()}>
                                     <Table.HeaderCell key={ (nkey++).toString()}>商品编号</Table.HeaderCell>

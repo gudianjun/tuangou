@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Icon, Table,Button, Label,Input} from 'semantic-ui-react'
+import {Icon, Table, Button, Label, Input, Modal, ButtonGroup, Grid} from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from '../../../common/common'
@@ -141,12 +141,21 @@ export default class ShopItemSelect extends Component{
             return (<Label color='blue' ribbon>散</Label>)
         }
     }
+    showSetInfo(element){
+
+    }
+
     getItemCount(element){
         if(element.ITEM_TYPE === 0){
             return parseInt(element.ITEM_COUNT)
         }
         else if(element.ITEM_TYPE === 1){
-            return '套装'
+            return (
+                <Label as='a' onClick={()=>this.showSetInfo(element)}
+                       color={'blue'}>
+                    {'套装'}
+                </Label>
+            ) // '套装'
         }
         else if(element.ITEM_TYPE === 2){
             return element.ITEM_COUNT.toFixed(2)
@@ -169,7 +178,8 @@ export default class ShopItemSelect extends Component{
                             <Table.Cell>{element.ITEM_NAME}</Table.Cell>
                             <Table.Cell textAlign='right'>{element.ITEM_COUNT}</Table.Cell>
                             <Table.Cell><AddButton itemkey = {element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()} 
-                            ></AddButton></Table.Cell>
+                            ></AddButton>
+                            </Table.Cell>
                         </Table.Row>
                     )
                     }
@@ -207,9 +217,10 @@ export default class ShopItemSelect extends Component{
                             {rows}
                         </Table.Body>
                     </Table>
-                </div>
 
-                
+                    
+
+                </div>
             </div>
         )
     }

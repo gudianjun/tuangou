@@ -71,6 +71,11 @@ class LoginForm extends Component{
       Common._setStorage("shopname", e.data.name)
       Common._setStorage("token", e.data.token)
       Common._setStorage("shoptype", e.data.shoptype)
+        const {setMainContext, checkRole} = this.context
+        setMainContext({
+            rolemodels:e.data.rolemodels,
+        })
+        checkRole()
       // 跳转到主画面
       this.setState({}, ()=>{
         this.context.shoptype = e.data.shoptype

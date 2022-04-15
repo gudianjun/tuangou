@@ -6,7 +6,9 @@ import MainForm from './component/MainForm'
 
 import {MainContext} from './component/ChilentPage/ObjContext'
 import Common from './common/common'
+import * as commonConst from './common/commonConst'
 import LoaderExampleInline from './component/Loading'
+import {array, element} from "prop-types";
 class App extends React.Component{
   
   constructor(props, context){
@@ -33,6 +35,7 @@ class App extends React.Component{
   }
   // 系统总上下文
   mainContext = {
+
     messagecount:0, // 转库采购消息数量
     timeinterval:-1,  // 定时器句柄
     shoptype:-1, // 默认为没有类型
@@ -46,8 +49,26 @@ class App extends React.Component{
       shopList:[],  // 移库仓库清单
       selectedShopid2:-1  // 移库目标仓库选择id
     },
+    menumstate: {
+      xiaoshou: false,
+      baofei: false,
+      dangrixiaoshoujilu: false,
+      tuihuo: false,
+      huiyuanguanli : false,
+      memkucunzonglan : false,
+      caigouguanli : false,
+      kucunzonglan : false,
+      cangkuguanli : false,
+      dianpuguanli : false,
+      yuangongguanli : false,
+      shangpinguanli : false,
+      meirishenpi : false,
+      tongjibaobiao : false,
+      quanxianguanli : false,
+    },
     shoppingItems:[],
     setMainContext:(obj)=>{this.setMainContext(obj)},
+    checkRole:(modelName)=>{this.checkRole(modelName)},
     logout:()=>{
       // 登出操作，
       console.log("mainContext->logout")
@@ -66,11 +87,28 @@ class App extends React.Component{
             }
         }
     }
- 
+
 
   setMainContext(obj){
     this.mainContext = {...this.mainContext, ...obj}
     this.setState({})
+  }
+
+  checkRole(modelName){
+    if(this.mainContext.rolemodels !== undefined) {
+      this.mainContext.rolemodels.forEach(element=>{
+        if(element.ALLOW_FLG === 1) {
+          this.mainContext.menumstate[element.MODEL_TITLE] = true
+        }
+        else{
+          this.mainContext.menumstate[element.MODEL_TITLE] = false
+        }
+      })
+      return
+    }
+
+      this.mainContext.menumstate.forEach(element=>{element=false})
+
   }
 
   resetMainContext(obj){

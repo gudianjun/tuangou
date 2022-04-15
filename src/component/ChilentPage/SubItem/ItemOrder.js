@@ -211,6 +211,7 @@ class SelectPrice extends Component{
     static contextType = MainContext;
     priceSelect(e,f){
         console.log(f)
+        var key = f.key
         const {value} = f
         const {shoppingItems} = this.context;
         const {setMainContext} = this.context;
@@ -225,8 +226,8 @@ class SelectPrice extends Component{
     
     render(){
         const {shoppingItems} = this.context;
-        var index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
-        var priceTypes = [
+        let index = shoppingItems.findIndex(e=>e.key === this.props.itemkey)
+        const priceTypes = [
             {key: "0",
             text: "零",
             value: shoppingItems[index].PRICE_ARR[0].toLocaleString('zh')},
@@ -244,7 +245,7 @@ class SelectPrice extends Component{
         // onChange={(e, f)=>{this.setState({selectShop:this.state.shopList.find(element=>element.value === f.value)})}}value
         return (
             <Input type='text' placeholder='P' action>
-                    <Select onChange={(e,f)=>{this.priceSelect(e,f)}} style={{width:"50px" }} compact options={priceTypes} 
+                    <Select onChange={ (e,f)=>{this.priceSelect(e,f)}} style={{width:"50px" }} compact options={priceTypes}
                     value={priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')} />
                         <Label as='a' style={{fontSize:"16px" }} >
                         {priceTypes[shoppingItems[index].PRICE_SELECT].value.toLocaleString('zh')}
@@ -288,7 +289,7 @@ export default class ItemOrder extends Component{
     constructor(props, context){
         super(props)
         this.state = {
-            
+            curShoujia:0,   // 当前售价
         }
     }
     
@@ -392,6 +393,7 @@ export default class ItemOrder extends Component{
         var {shoppingItems} = this.context;
         const {setMainContext} = this.context;
         const {cangkuInfo} = this.context;
+        const {selectMemID, memoptions , ismemorder, updateItems}=this.props;
 
         if(shoppingItems.length > 0){    
             if(this.props.opetype === 3 || this.props.opetype === 4 || this.props.opetype === 5 || this.props.opetype === 6){
@@ -406,8 +408,19 @@ export default class ItemOrder extends Component{
                     setMainContext({errorMessage:"需要选择一个目标仓库！"})
                     return
                 }
-
-                
+            }
+            if(this.props.opetype === 0 && ismemorder && selectMemID !== -1){
+                let memIndex =  memoptions.findIndex(elm=>{return elm.key === selectMemID});
+                let money = memoptions[memIndex].memmoney
+                if(money < this.state.curShoujia){
+                    // 显示消息
+                    setMainContext({errorMessage:"当前会员余额不足！"})
+                    return
+                }
+            }
+            if(this.props.opetype === 0 && ismemorder && selectMemID === -1){
+                setMainContext({errorMessage:"必须选择一个会员！"})
+                return
             }
             var dayu0 = false
             shoppingItems.forEach(element=>{
@@ -504,6 +517,9 @@ export default class ItemOrder extends Component{
                     else if(this.props.opetype === 0 || this.props.opetype === 1 || this.props.opetype === 2){
                         this.onShopChange(cangkuInfo.selectedShopid)
                     }
+                    if(this.props.updateItems !== undefined) {
+                        this.props.updateItems()
+                    }
                 }
                 ,(e)=>{
                     console.log("login 报错了")
@@ -590,7 +606,8 @@ export default class ItemOrder extends Component{
                 )
                 }
             )
-            youhui = yuanjia-shoujia
+            this.state.curShoujia = shoujia
+            youhui = yuanjia - shoujia
         }
         var buttonTitle = '销售'
         var jiesuancolor = "red"    // 结算按钮颜色

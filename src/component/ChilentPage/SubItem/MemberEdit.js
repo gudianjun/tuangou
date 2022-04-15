@@ -6,6 +6,7 @@ import DatePicker, { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ItemOrder from './ItemOrder'
 import MemShopItemSel from './MemShopItemSel'
+import PropTypes from "prop-types";
 setDefaultLocale('zhCN');
 // 会员编辑
 export default class MemberEdit extends Component{
@@ -30,8 +31,14 @@ export default class MemberEdit extends Component{
             whordertype:0,   // 0:存货，1：提货
             whitems:[],  // 会员存储信息
             memmoenyitems:{},   // 会员存取款历史信息
-            searchtext:''
+            searchtext:'',
+            Shops:context.shops,
+            shoptype:context.shoptype,
+            modelinfo:[],    // 选择用户的存取货履历
+            showmemWH:false, // 显示用户存取货对话框
+            memWHName:"",   // 会员名称
         }
+        this.SHOP_ID = -1;
         this.getItems() // 获得编辑列表
     }
     // static getDerivedStateFromProps(nexProps, prevState){
@@ -41,23 +48,49 @@ export default class MemberEdit extends Component{
     getItems()
     {
         var arrayObj = []
-        Common.sendMessage(Common.baseUrl + "/member/getmembers"
-            , "POST"
-            , null
-            , null
-            , null
-            , (e)=>{
-                e.data.forEach(element => {
-                    arrayObj.push({...element, key:element.MEM_ID})
-                });
-                // 写入缓存
-                this.setState({
-                    editstate:0,
-                    editobject:[],
-                    baseitems:arrayObj
-                })
-            },null,
-            this.context)
+        if(this.state.shoptype === 0) {
+
+            Common.sendMessage(Common.baseUrl + "/member/getmembers"
+                , "POST"
+                , null
+                , null
+                , null
+                , (e) => {
+                    e.data.forEach(element => {
+                        arrayObj.push({...element, key: element.MEM_ID})
+                    });
+                    // 写入缓存
+                    this.setState({
+                        editstate: 0,
+                        editobject: [],
+                        baseitems: arrayObj
+                    })
+                }, null,
+                this.context)
+        }
+        else {
+            if(this.SHOP_ID!==-1) {
+                Common.sendMessage(Common.baseUrl + "/member/getmembers2"
+                    , "POST"
+                    , null
+                    , {
+                        'SHOP_ID': this.SHOP_ID
+                    }
+                    , null
+                    , (e) => {
+                        e.data.forEach(element => {
+                            arrayObj.push({...element, key: element.MEM_ID})
+                        });
+                        // 写入缓存
+                        this.setState({
+                            editstate: 0,
+                            editobject: [],
+                            baseitems: arrayObj
+                        })
+                    }, null,
+                    this.context)
+            }
+        }
     }
     static getDerivedStateFromProps(nexProps, prevState){
         var items = []
@@ -102,6 +135,10 @@ export default class MemberEdit extends Component{
         return true;
     }
     static propTypes = {
+        SHOP_ID:PropTypes.number
+    }
+    static defaultProps = {
+        SHOP_ID:-1
     }
     // 是否显示全部
     onShowChange(){
@@ -148,6 +185,26 @@ export default class MemberEdit extends Component{
                     baseitems:baseitems
                 })
             },null,
+            this.context)
+    }
+    // 提货详细
+    onTihuoXiangXi(e, id) {
+        Common.sendMessage(Common.baseUrl + "/member/memhistory"
+            , "POST"
+            , null
+            , {MEM_ID: id, SHOP_ID:this.SHOP_ID}
+            , null
+            , (e) => {
+                let memindex = this.state.baseitems.findIndex(t=>t.MEM_ID === id)
+                this.setState(
+                    {
+                        showmemWH:true,
+                        memWHName:this.state.baseitems[memindex].MEM_LASTNAME+ this.state.baseitems[memindex].MEM_FIRSTNAME ,
+                        modelinfo: e.data
+                    }
+                )
+                console.log(e)
+            }, null,
             this.context)
     }
     // 删除选中的商品
@@ -335,42 +392,49 @@ export default class MemberEdit extends Component{
         this.context)
     }
     getButtonGroup(item){
-        if (item.DISP_FLG === 0){
-            if(item.DEL_FLG === 0){
+        if(this.state.shoptype === 0) {
+            if (item.DISP_FLG === 0) { // 通常状态
+                if (item.DEL_FLG === 0) {
+                    return (
+                        <ButtonGroup>
+                            <Button primary onClick={(e) => this.onEditClick(e, item.MEM_ID)}>编辑</Button>
+                            <Button secondary onClick={(e) => this.onWHClick(item, 0)}>存货</Button>
+                            <Button.Or/>
+                            <Button secondary onClick={(e) => this.onWHClick(item, 1)}>提货</Button>
+                            <Button.Or/>
+                            <Button color='orange' onClick={(e) => this.onAddMoneyClick(item)}>存款</Button>
+                            <Button onClick={(e) => this.onDelClick(e, item.MEM_ID)}>删除</Button>
+                        </ButtonGroup>
+                    )
+                } else {
+                    return (
+                        <ButtonGroup>
+                            <Button onClick={(e) => this.onHuiFuClick(e, item.MEM_ID)}>恢复</Button>
+                        </ButtonGroup>
+                    )
+                }
+            } else if (item.DISP_FLG === 1) {  // 编辑
                 return (
+
                     <ButtonGroup>
-                        <Button primary onClick={(e)=>this.onEditClick(e, item.MEM_ID)} >编辑</Button>
-                        <Button secondary onClick={(e)=>this.onWHClick(item, 0)}>存货</Button>
-                        <Button.Or />
-                        <Button secondary onClick={(e)=>this.onWHClick(item, 1)}>提货</Button>
-                        <Button.Or />
-                        <Button  color='orange' onClick={(e)=>this.onAddMoneyClick(item)}>存款</Button>
-                        <Button onClick={(e)=>this.onDelClick(e, item.MEM_ID)}>删除</Button>
+                        <Button primary onClick={(e) => this.onSubmitEditClick(item, 1)}>提交</Button>
+                        <Button secondary onClick={(e) => this.onCancelClick(e, item.MEM_ID)}>取消</Button>
                     </ButtonGroup>
                 )
-            }
-            else{
+            } else if (item.DISP_FLG === 2) {  // 添加
                 return (
                     <ButtonGroup>
-                        <Button onClick={(e)=>this.onHuiFuClick(e, item.MEM_ID)}>恢复</Button>
+                        <Button primary onClick={(e) => this.onSubmitEditClick(item, 2)}>提交</Button>
+                        <Button secondary onClick={(e) => this.onCancelClick(e, item.MEM_ID)}>放弃</Button>
                     </ButtonGroup>
                 )
             }
         }
-        else if (item.DISP_FLG === 1){  // 编辑
-            return (
-       
-                <ButtonGroup>
-                    <Button primary onClick={(e)=>this.onSubmitEditClick(item, 1)}>提交</Button>
-                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.MEM_ID)}>取消</Button>
-                </ButtonGroup>
-            )
-        }
-        else if (item.DISP_FLG === 2){  // 添加
+        else
+        {
             return (
                 <ButtonGroup>
-                    <Button primary onClick={(e)=>this.onSubmitEditClick(item, 2)}>提交</Button>
-                    <Button secondary onClick={(e)=>this.onCancelClick(e, item.MEM_ID)}>放弃</Button>
+                    <Button onClick={(e) => this.onTihuoXiangXi(e, item.MEM_ID)}>提货详细</Button>
                 </ButtonGroup>
             )
         }
@@ -380,7 +444,10 @@ export default class MemberEdit extends Component{
         Common.sendMessage(Common.baseUrl + "/member/memmoneyhistory"
             , "POST"
             , null
-            , {MEM_ID:element.MEM_ID}
+            , {
+                MEM_ID:element.MEM_ID,
+                SHOP_ID:this.SHOP_ID
+            }
             , null
             , (e)=>{
                 // 写入缓存
@@ -646,6 +713,11 @@ export default class MemberEdit extends Component{
         }
         
       }
+    shopSelectChange(e, f){
+        this.SHOP_ID = f.value
+        this.getItems();
+
+    }
     render(){
         var rows = [];
         if ( this.state.items.length > 0 ) {
@@ -682,7 +754,7 @@ export default class MemberEdit extends Component{
             }
             )
         }
-        if(this.state.editstate === 0){
+        if(this.state.editstate === 0 && this.state.shoptype === 0){
         // 添加空行
             rows.push(<Table.Row key={'new'}>
                             <Table.Cell></Table.Cell>
@@ -725,10 +797,41 @@ export default class MemberEdit extends Component{
                     </Table.Row>)
             });
         }
+
+        var memrows=[]
+        var totel = 0
+        if(this.state.showmemWH){
+            this.state.modelinfo.items.forEach(element => {
+                if(element.ORDER_TYPE === 0){
+                    totel+=element.ITEM_NUMBER
+                }
+                else if(element.ORDER_TYPE === 1){
+                    totel-=element.ITEM_NUMBER
+                }
+                memrows.push(
+                    <Table.Row key = {element.ORDER_ID + element.COM_TYPE_ID + element.ITEM_ID.toString()}>
+                        <Table.Cell>{element.ORDER_ID}</Table.Cell>
+                        <Table.Cell>{element.ORDER_TIME}</Table.Cell>
+                        <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                        <Table.Cell>{element.ORDER_TYPE === 0 ? '存入': '提出'}</Table.Cell>
+                        <Table.Cell>{element.ITEM_NUMBER}</Table.Cell>
+                    </Table.Row>
+                )
+            })
+
+
+        }
         return(
             <div >
                 <Input icon='search' size='small' placeholder='Search...'  onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
-            <div style={{ height:  '85vh' , overflowY:'scroll' }}> 
+
+                {
+                    this.state.shoptype === 0 ? null:(
+                    <Dropdown visible={"false"} options={this.state.Shops} search
+                              onChange={(e, f) => this.shopSelectChange(e, f)} placeholder='请选择一个店铺'></Dropdown>)
+                }
+                 <div style={{ height:  '85vh' , overflowY:'scroll' }}>
                 <Table celled selectable >
                     <Table.Header  >
                     <Table.Row>
@@ -866,7 +969,44 @@ export default class MemberEdit extends Component{
                     <Modal.Actions>
                         
                     </Modal.Actions>
-                </Modal>  
+                </Modal>
+
+                <Modal open={this.state.showmemWH}>
+                         <Modal.Header> {'会员【' + this.state.memWHName + '】存取记录'  }
+                             <ButtonGroup style={{position:'absolute',right:60}}>
+                                 <Button onClick={()=>this.setState({showmemWH:false})} >
+                                     关闭
+                                 </Button>
+                             </ButtonGroup>
+                         </Modal.Header>
+                         <Modal.Content>
+                             <Grid columns='equal'>
+                                 <Grid.Column>
+                                     <div  style={{height:  '75vh' , overflowY:'scroll' }}>
+                                         <Table celled selectable>
+                                             <Table.Header  >
+                                                 <Table.Row >
+                                                     <Table.HeaderCell>订单编号</Table.HeaderCell>
+                                                     <Table.HeaderCell>订单时间</Table.HeaderCell>
+                                                     <Table.HeaderCell>商品ID</Table.HeaderCell>
+                                                     <Table.HeaderCell>商品名称</Table.HeaderCell>
+                                                     <Table.HeaderCell>操作类型</Table.HeaderCell>
+                                                     <Table.HeaderCell>数量</Table.HeaderCell>
+                                                 </Table.Row>
+                                             </Table.Header>
+                                             <Table.Body >
+                                                 {memrows}
+                                             </Table.Body>
+                                             <Table.Footer fullWidth>
+                                             </Table.Footer>
+                                         </Table></div>
+                                 </Grid.Column>
+                             </Grid>
+                         </Modal.Content>
+                         <Modal.Actions>
+                             {'合计拥有数量：' + totel}
+                         </Modal.Actions>
+                     </Modal>
 
             </div>
             </div>
