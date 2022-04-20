@@ -4,51 +4,56 @@ import {element, func} from "prop-types";
 import Common from "../../../common/common";
 import {MainContext} from "../../../component/ChilentPage/ObjContext";
 
-const ShopTypeManage = ({getAllRoles}) =>{
+const ComTypeManage = () =>{
     const {_currentValue} = MainContext;
     const [showall, setShowall] = useState(false)
     const [shoptypes, setShoptypes] = useState([])
     const [editstate, setEditstate] = useState(0) // 0:初始状态，1:编辑现存状态，2:添加状态
     const initFlg = useRef(false);
-    const [editObj, setEditObj] = useState({shoptype:'',shoptypename:'', shoptypehaswarehouse:0})
+    const [editObj, setEditObj] = useState({comtypeid:'',comtypename:'',comtypesort:''})
     useEffect(()=>{
 
     }, [showall])
     function getAllTypes(){
-        Common.sendMessage(Common.baseUrl + "/rolemanage/getallshoptype"
+        Common.sendMessage(Common.baseUrl + "/rolemanage/getallcomtype"
             , "POST"
             , null
             , null
             , null
             , (e)=>{
                 console.log(e)
-                getAllRoles()
                 setShoptypes(e.data)
             },null,
             null)
     }
     function onEditItem(flg, value){
-        if(flg === "shoptype") {
-            const reg = /^\d+$/;
+        if(flg === "comtypeid") {
+            const reg = /^[A-Z0-9]+$/;
             if (reg.test(value) || value === '') {
-                setEditObj({shoptype: value, shoptypename: editObj.shoptypename, shoptypehaswarehouse:editObj.shoptypehaswarehouse})
+                setEditObj({comtypeid: value, comtypename: editObj.comtypename,comtypesort:editObj.comtypesort})
             }
         }
-        else{
-            setEditObj({shoptype:editObj.shoptype,shoptypename:value, shoptypehaswarehouse:editObj.shoptypehaswarehouse })
+        else if(flg === "comtypename"){
+            setEditObj({comtypeid: editObj.comtypeid, comtypename: value, comtypesort:editObj.comtypesort})
+        }
+        else if(flg === "comtypesort"){
+            const reg = /^\d+$/;
+            if (reg.test(value) || value === '') {
+                setEditObj({comtypeid: editObj.comtypeid, comtypename: editObj.comtypename,comtypesort:value})
+            }
         }
     }
     function onSaveAddStop(){
-        if(editObj.shoptype.length > 0 && editObj.shoptypename.length > 0){
-            Common.sendMessage(Common.baseUrl + "/rolemanage/addshoptype"
+        if(editObj.comtypeid.length > 0 && editObj.comtypename.length > 0 && editObj.comtypesort.length > 0){
+            Common.sendMessage(Common.baseUrl + "/rolemanage/addcomtype"
                 , "POST"
                 , null
-                , {SHOP_TYPE:editObj.shoptype, SHOP_TYPE_NAME:editObj.shoptypename, SHOP_TYPE_HAS_WAREHOUSE:editObj.shoptypehaswarehouse}
+                , {COM_TYPE_ID:editObj.comtypeid, COM_TYPE_NAME:editObj.comtypename, COM_TYPE_SORT:editObj.comtypesort}
                 , null
                 , (e)=>{
                     initFlg.current = false
                     setEditstate(0)
-                    setEditObj({shoptype:'',shoptypename:'', shoptypehaswarehouse: 0})
+                    setEditObj({comtypeid:'',comtypename:'',comtypesort:''})
                 },(err)=>{
 
                     const {setMainContext} = _currentValue
@@ -82,17 +87,13 @@ const ShopTypeManage = ({getAllRoles}) =>{
             return (
                 <Table.Row key={99999}>
                     <Table.Cell collapsing>
-                        <Input fluid value={editObj.shoptype} onChange={(e, f)=>onEditItem('shoptype', f.value)}></Input>
+                        <Input fluid value={editObj.comtypeid} onChange={(e, f)=>onEditItem('comtypeid', f.value)}></Input>
                     </Table.Cell>
                     <Table.Cell collapsing>
-                        <Input fluid value={editObj.shoptypename} onChange={(e, f)=>onEditItem('shoptypename', f.value)}></Input>
+                        <Input fluid value={editObj.comtypename} onChange={(e, f)=>onEditItem('comtypename', f.value)}></Input>
                     </Table.Cell>
                     <Table.Cell collapsing>
-                        <Checkbox label={editObj.shoptypehaswarehouse === 1 ? '有仓库' : '无'} checked={editObj.shoptypehaswarehouse === 1 ? true : false}
-                                  onChange={(e,f)=>{
-                                      let value = f.checked ? 1 : 0
-                                      setEditObj({shoptype:editObj.shoptype,shoptypename:editObj.shoptypename, shoptypehaswarehouse:value })
-                                  }}></Checkbox>
+                        <Input fluid value={editObj.comtypesort} onChange={(e, f)=>onEditItem('comtypesort', f.value)}></Input>
                     </Table.Cell>
                     <Table.Cell collapsing>
                         {
@@ -110,29 +111,26 @@ const ShopTypeManage = ({getAllRoles}) =>{
     function addNormolRow(element){
         if(showall || element.DEL_FLG === 0){
             return (
-                <Table.Row key={element.SHOP_TYPE}>
-                    <Table.Cell collapsing>{element.SHOP_TYPE}</Table.Cell>
+                <Table.Row key={element.COM_TYPE_ID}>
+                    <Table.Cell collapsing>{element.COM_TYPE_ID}</Table.Cell>
                     {
-                        (editstate === 1 && element.SHOP_TYPE === editObj.shoptype)?
+                        (editstate === 1 && element.COM_TYPE_ID === editObj.comtypeid)?
                             (<Table.Cell collapsing>
-                                <Input fluid value={editObj.shoptypename}
+                                <Input fluid value={editObj.comtypename}
                                        onChange={(e, f)=>
-                                           onEditItem('shoptypename', f.value)}>
+                                           onEditItem('comtypename', f.value)}>
                                 </Input></Table.Cell>)
-                            :(<Table.Cell collapsing>{element.SHOP_TYPE_NAME}</Table.Cell>)
+                            :(<Table.Cell collapsing>{element.COM_TYPE_NAME}</Table.Cell>)
 
                     }
                     {
-                        (editstate === 1 && element.SHOP_TYPE === editObj.shoptype)?
+                        (editstate === 1 && element.COM_TYPE_ID === editObj.comtypeid)?
                             (<Table.Cell collapsing>
-                                <Checkbox label={(editObj.shoptypehaswarehouse === 1) ? '有仓库' : '无'} checked={(editObj.shoptypehaswarehouse === 1) ? true : false}
-                                          onChange={(e,f)=>{
-                                              let value = f.checked ? 1 : 0
-                                              setEditObj({shoptype:editObj.shoptype,shoptypename:editObj.shoptypename, shoptypehaswarehouse:value })
-                                          }}></Checkbox>
-                            </Table.Cell>)
-                            :(<Table.Cell collapsing>{element.SHOP_TYPE_HAS_WAREHOUSE === 1 ? '有仓库' : '无'}</Table.Cell>)
-
+                                <Input fluid value={editObj.comtypesort}
+                                       onChange={(e, f)=>
+                                           onEditItem('comtypesort', f.value)}>
+                                </Input></Table.Cell>)
+                            :(<Table.Cell collapsing>{element.COM_TYPE_SORT}</Table.Cell>)
 
                     }
                     <Table.Cell collapsing>
@@ -140,13 +138,11 @@ const ShopTypeManage = ({getAllRoles}) =>{
                             element.DEL_FLG === 0?
                             (
                                 <ButtonGroup>
-                                    {(element.SHOP_TYPE !== 99 && element.SHOP_TYPE !== 0) ?
-                                        (<Button primary onClick={(e) => onDeleteStop(element)}>{
-                                            editstate===1 && editObj.shoptype === element.SHOP_TYPE? "提交" : "删除"}</Button>):null }
-                                    {(element.SHOP_TYPE !== 99 && element.SHOP_TYPE !== 0) ? (<Button.Or/>) : null }
-                                    {(element.SHOP_TYPE !== 99 && element.SHOP_TYPE !== 0) ?
-                                        (<Button secondary onClick={(e) => onEditShop(element)}>{
-                                        editstate===1 && editObj.shoptype === element.SHOP_TYPE? "取消" : "编辑"}</Button>):null}
+                                 <Button primary onClick={(e) => onDeleteStop(element)}>{
+                                            editstate===1 && editObj.comtypeid === element.COM_TYPE_ID? "提交" : "删除"}</Button>
+                                    <Button.Or/>
+                                    <Button secondary onClick={(e) => onEditShop(element)}>{
+                                        editstate===1 && editObj.comtypeid === element.COM_TYPE_ID? "取消" : "编辑"}</Button>
                                 </ButtonGroup>
                             )
                             :(<Button secondary onClick={(e) => onRecoverStop(element)}>恢复</Button>)
@@ -159,16 +155,16 @@ const ShopTypeManage = ({getAllRoles}) =>{
 
     function onDeleteStop(element){
         if(editstate === 0) {
-            Common.sendMessage(Common.baseUrl + "/rolemanage/delteshoptype"
+            Common.sendMessage(Common.baseUrl + "/rolemanage/deltecomtype"
                 , "POST"
                 , null
-                , {SHOP_TYPE: element.SHOP_TYPE}
+                , {COM_TYPE_ID: element.COM_TYPE_ID}
                 , null
                 , (e) => {
                     initFlg.current = false
 
                     setEditstate(0)
-                    setEditObj({shoptype: '', shoptypename: ''})
+                    setEditObj({comtypeid:'',comtypename:'',comtypesort:''})
                 }, (err) => {
 
                     const {setMainContext} = _currentValue
@@ -178,17 +174,16 @@ const ShopTypeManage = ({getAllRoles}) =>{
                 },
                 null)
         }
-        else if(editstate === 1 && element.SHOP_TYPE === editObj.shoptype) { // 编辑状态
-            Common.sendMessage(Common.baseUrl + "/rolemanage/editshoptypename"
+        else if(editstate === 1 && element.COM_TYPE_ID === editObj.comtypeid) { // 编辑状态
+            Common.sendMessage(Common.baseUrl + "/rolemanage/editcomtype"
                 , "POST"
                 , null
-                , {SHOP_TYPE: element.SHOP_TYPE, SHOP_TYPE_NAME: editObj.shoptypename,
-                    SHOP_TYPE_HAS_WAREHOUSE:editObj.shoptypehaswarehouse}
+                , {COM_TYPE_ID:editObj.comtypeid, COM_TYPE_NAME:editObj.comtypename, COM_TYPE_SORT:editObj.comtypesort}
                 , null
                 , (e) => {
                     initFlg.current = false
                     setEditstate(0)
-                    setEditObj({shoptype: '', shoptypename: '', shoptypehaswarehouse: 0})
+                    setEditObj({comtypeid:'',comtypename:'',comtypesort:''})
                 }, (err) => {
 
                     const {setMainContext} = _currentValue
@@ -203,27 +198,27 @@ const ShopTypeManage = ({getAllRoles}) =>{
     function onEditShop(element){
         if(editstate === 0) {
             setEditstate(1)
-            setEditObj({shoptype: element.SHOP_TYPE, shoptypename: element.SHOP_TYPE_NAME, shoptypehaswarehouse: element.SHOP_TYPE_HAS_WAREHOUSE})
+            setEditObj({comtypeid:element.COM_TYPE_ID,comtypename:element.COM_TYPE_NAME,comtypesort:element.COM_TYPE_SORT})
         }
-        else if(editstate === 1 && element.SHOP_TYPE === editObj.shoptype) {
+        else if(editstate === 1 && element.COM_TYPE_ID === editObj.comtypeid) {
             setEditstate(0)
-            setEditObj({shoptype: '', shoptypename: '', shoptypehaswarehouse: 0})
+            setEditObj({comtypeid:'',comtypename:'',comtypesort:''})
         }
-        else if(editstate === 2) {
+        else if(editstate === 2  ) {
             setEditstate(0)
-            setEditObj({shoptype: '', shoptypename: '', shoptypehaswarehouse: 0})
+            setEditObj({comtypeid:'',comtypename:'',comtypesort:''})
         }
     }
     function onRecoverStop(element){
-        Common.sendMessage(Common.baseUrl + "/rolemanage/delteshoptype"
+        Common.sendMessage(Common.baseUrl + "/rolemanage/deltecomtype "
             , "POST"
             , null
-            , {SHOP_TYPE:element.SHOP_TYPE, DEL_FLG:0}
+            , {COM_TYPE_ID:element.COM_TYPE_ID, DEL_FLG:0}
             , null
             , (e)=>{
                 initFlg.current = false
                 setEditstate(0)
-                setEditObj({shoptype:'',shoptypename:'', shoptypehaswarehouse: 0})
+                setEditObj({comtypeid:'',comtypename:'',comtypesort:''})
             },(err)=>{
 
                 const {setMainContext} = _currentValue
@@ -244,12 +239,12 @@ const ShopTypeManage = ({getAllRoles}) =>{
     return (
         <div>
 
-            <Table celled selectable fixed>
+            <Table celled selectable fixed >
                 <Table.Header  >
                     <Table.Row>
-                        <Table.HeaderCell >店铺类型编号</Table.HeaderCell>
-                        <Table.HeaderCell >类型名称</Table.HeaderCell>
-                        <Table.HeaderCell >是否允许仓储</Table.HeaderCell>
+                        <Table.HeaderCell >商品类型ID</Table.HeaderCell>
+                        <Table.HeaderCell >商品类型名称</Table.HeaderCell>
+                        <Table.HeaderCell >排序</Table.HeaderCell>
                         <Table.HeaderCell width={3} >
                             <Radio toggle label='显示全部' checked={showall}
                                    onChange={(e,f)=>setShowall(f.checked)}>
@@ -274,4 +269,4 @@ const ShopTypeManage = ({getAllRoles}) =>{
     );
 
 }
-export default ShopTypeManage;
+export default ComTypeManage;

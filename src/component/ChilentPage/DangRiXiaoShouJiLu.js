@@ -3,7 +3,7 @@ import { Menu, Grid, Header, Tab, Icon, Divider, Dropdown } from "semantic-ui-re
 import SSxiangxi from './statistics/SSxiangxi'
 import { MainContext} from './ObjContext'
 import DatePicker from "react-datepicker";
-import PropTypes from 'prop-types';
+import PropTypes, {element} from 'prop-types';
 import "react-datepicker/dist/react-datepicker.css";
 import KCHuiZong from './statistics/KCHuiZong'
 import DDHuiZong from './statistics/DDHuiZong'
@@ -70,7 +70,7 @@ export default class DangRiXiaoShouJiLu extends Component{
         super(props)
         this.state={
             selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10),
-            Shops:context.shops,
+            Shops:[],
             selectType:0,    // 0: 订单合计，1：仓库概况：2：订单汇总
             datas:[],    // 查询结果
             page_index:1,
@@ -78,7 +78,19 @@ export default class DangRiXiaoShouJiLu extends Component{
             allpage:0,
             shoptype:context.shoptype
         }
+        console.log("aaaaa")
+        // 请求商店列表
+        Common.sendMessage(Common.baseUrl + "/shop/getshops", "POST", null
+            , {ishaswh:2}, null
+            , (e)=>{
+                let shops = []
+                e.data.forEach(element=>{
+                    shops.push({key:element.SHOP_ID, value:element.SHOP_ID, text:element.SHOP_NAME})
+                })
+                this.setState({Shops:shops})
 
+            }
+        )
        this.SHOP_ID = -1
     }
     getitemsDDHuiZong(selecttype){

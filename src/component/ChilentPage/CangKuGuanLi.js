@@ -6,12 +6,16 @@ import { MainContext} from './ObjContext'
 import ShopItemSelect from "./SubItem/ShopItemSelect"
 
 export default class CangKuGuanLi extends Component{
+
     constructor(props, context){
         super(props)
-        this.state={shopList:[]}
+        this.state={shopList:[],
+
+        }
+
         context.cangkuInfo.shopItems = []
         context.cangkuInfo.selectedShopid = -1
-        // 请求商店列表
+         // 请求商店列表
         Common.sendMessage(Common.baseUrl + "/login/getshops", "POST", null
         , {shoptype:1}, null
         , (e)=>{

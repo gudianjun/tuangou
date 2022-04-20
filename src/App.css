@@ -20,6 +20,25 @@
   background-color: cyan;
 }
 
+.fixContainer{
+  width:600px;
+  height: 500px;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.fixContainer tr:nth-of-type(odd){
+  background: #E7F2FF;
+}
+.fixContainer table td{
+  word-break: break-all;word-wrap: break-word;
+}
+.fixContainer table td{
+  word-break: break-all;word-wrap: break-word;
+}
+
+
+
 
 .App-header {
   background-color: #282c34;

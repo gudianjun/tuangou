@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Table, Grid, Label, Button, Modal, ButtonGroup, Input} from 'semantic-ui-react'
+import {Table, Grid, Label, Button, Modal, ButtonGroup, Input, GridColumn, Dropdown, GridRow} from 'semantic-ui-react'
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
 import _ from 'lodash'
@@ -16,7 +16,8 @@ export default class MemKuCunZongLan extends Component{
             column:null,
             direction:null,
             showset:false,
-            modelinfo:{}
+            modelinfo:{},
+            dropselect:-1,
         }
 
         Common.sendMessage(Common.baseUrl + "/statistics/cangkumemzonglan"
@@ -81,14 +82,23 @@ export default class MemKuCunZongLan extends Component{
           direction: direction === 'ascending' ? 'descending' : 'ascending',
         })
       }
-
+    onShopChange(value){
+        this.setState({dropselect:value})
+    }
     render(){
         var nkey = 1
         var rows=[]
         var shopclms=[]
+
+        var dropshops=[]
+        dropshops.push({key:-1,value:-1,text:"全部"})
+
         if (this.state.data.shopname !== undefined){
             this.state.data.shopname.forEach(shop => {
-            shopclms.push(<Table.HeaderCell  key={ (nkey++).toString()}>{shop.SHOP_NAME}</Table.HeaderCell>)
+                if(this.state.dropselect === -1 || shop.SHOP_ID === this.state.dropselect) {
+                    shopclms.push(<Table.HeaderCell key={(nkey++).toString()}>{shop.SHOP_NAME}</Table.HeaderCell>)
+                }
+                dropshops.push({key: shop.SHOP_ID, value: shop.SHOP_ID, text: shop.SHOP_NAME})
             })
             
             this.state.data.items.forEach(element => {
@@ -99,17 +109,25 @@ export default class MemKuCunZongLan extends Component{
                 if(index>=0){
                     var colms = []
                     nkey++
-                    rows.push(
-                    <Table.Row key = {element.COM_TYPE_ID + '_' + element.ITEM_ID + nkey.toString()}>
-                        <Table.Cell key={ (nkey++).toString()}>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
-                        <Table.Cell key={ (nkey++).toString()}>{element.ITEM_NAME}</Table.Cell>
-                        {this.state.data.shopname.forEach(shop => {
-                                colms.push(<Table.Cell key={ (nkey++).toString()}  textAlign='right'>{this.getNumber(element, shop)}</Table.Cell>)
-                        })}
-                        {colms}
-                        <Table.Cell key={ (nkey++).toString()} textAlign='right'>{element.TOTLE_NUMBER}</Table.Cell>
-                    </Table.Row>
+
+                        rows.push(
+                            <Table.Row key={element.COM_TYPE_ID + '_' + element.ITEM_ID + nkey.toString()}>
+                                <Table.Cell
+                                    key={(nkey++).toString()}>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
+                                <Table.Cell key={(nkey++).toString()}>{element.ITEM_NAME}</Table.Cell>
+                                {
+                                    this.state.data.shopname.forEach(shop => {
+                                        if(this.state.dropselect === -1 || shop.SHOP_ID === this.state.dropselect) {
+                                            colms.push(<Table.Cell key={(nkey++).toString()} textAlign='right'><span
+                                                title={shop.SHOP_NAME + ":" + element.ITEM_NAME}>{this.getNumber(element, shop)}</span></Table.Cell>)
+                                        }
+                                })}
+                                {colms}
+                                <Table.Cell key={(nkey++).toString()}
+                                            textAlign='right'>{element.TOTLE_NUMBER}</Table.Cell>
+                            </Table.Row>
                         )
+
                 }
             });
             
@@ -132,8 +150,25 @@ export default class MemKuCunZongLan extends Component{
         const { column, direction } = this.state
         return(
             <div >
-            <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
-            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'scroll' }}> 
+                <Grid columns='equal'>
+                <GridRow>
+                <GridColumn>
+                    <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
+                </GridColumn>
+                <GridColumn>
+                    <Dropdown
+                        placeholder='选择一个仓库'
+
+                        search
+                        selection
+                        options={dropshops}
+                        value={this.state.dropselect}
+                        onChange={(e,f)=>this.onShopChange(f.value)}
+                    />
+                </GridColumn>
+                </GridRow>
+                </Grid>
+                <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'scroll' }}>
                 <Grid columns='equal'>
                     <Grid.Row  key={ (nkey++).toString()}>
                     <Grid.Column>

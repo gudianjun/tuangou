@@ -4,6 +4,7 @@ import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {element} from "prop-types";
 setDefaultLocale('zhCN');
 // 店铺管理
 export default class ShopEdit extends Component{
@@ -18,27 +19,33 @@ export default class ShopEdit extends Component{
             baseitems:[],
             showset:false,   // 是否显示套装编辑画面
             editobject:{},   //进行编辑的对象
-            shoptype:[{
-                key:99,
-                text:'管理员',
-                value:99
-            },{
-                key:0,
-                text:'店铺',
-                value:0
-            },{
-                key:1,
-                text:'仓库',
-                value:1
-            }] // 商店类型
+            shoptype:[] // 商店类型
           
         }
         this.getItems() // 获得编辑列表
+        this.getAllShopTypes()
     }
     // static getDerivedStateFromProps(nexProps, prevState){
         
     // } 
-
+    getAllShopTypes(){
+        Common.sendMessage(Common.baseUrl + "/rolemanage/getallshoptype"
+            , "POST"
+            , null
+            , null
+            , null
+            , (e)=>{
+                let stypes=[]
+                e.data.forEach(element=>{
+                    if(element.DEL_FLG == 1){
+                        return
+                    }
+                    stypes.push({key:element.SHOP_TYPE, value:element.SHOP_TYPE, text:element.SHOP_TYPE_NAME})
+                })
+                this.setState({shoptype:stypes})
+            },null,
+            null)
+    }
     getItems()
     {
     
@@ -227,7 +234,7 @@ export default class ShopEdit extends Component{
             })
             return
         }
-        if(item.SHOP_TYPE === null || (item.SHOP_TYPE !== 0 && item.SHOP_TYPE !== 1 && item.SHOP_TYPE !== 99)){
+        if(item.SHOP_TYPE === null || this.state.shoptype.find(element=>element.SHOP_TYPE === item.SHOP_TYPE) !== undefined){
             setMainContext({
                 errorMessage:'必须选择一个种类'
             })

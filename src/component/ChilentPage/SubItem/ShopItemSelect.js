@@ -1,6 +1,6 @@
 import React,{Component} from "react"
 import {Icon, Table, Button, Label, Input, Modal, ButtonGroup, Grid} from 'semantic-ui-react'
-import PropTypes from 'prop-types';
+import PropTypes, {element} from 'prop-types';
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from '../../../common/common'
 // 仓库物品选择
@@ -57,20 +57,29 @@ export default class ShopItemSelect extends Component{
 
     constructor(props, context){
         super(props)
+        console.log("ShopItemSelect")
 
-        this.state = {
-            items : [],
-            searchtext:''
-        }
 
         if(!this.props.isselect){
+            this.state = {
+                items : [],
+                searchtext:'',
+                showset:false,
+                setinfo:[],
+                setname:"",
+            }
             this.getCangKuXiaShouItems(context)
         }
         else{
             const {cangkuInfo} = context
             this.state = {
-                items : cangkuInfo.shopItems
+                items : cangkuInfo.shopItems,
+                searchtext:'',
+                showset:false,
+                setinfo:[],
+                setname:"",
             }
+
         }
     }
     // static getDerivedStateFromProps(nexProps, prevState){
@@ -113,7 +122,7 @@ export default class ShopItemSelect extends Component{
     }
     static propTypes = {
         onref:PropTypes.func,
-        isselect:PropTypes.bool // 是不是带有选择功能的商铺物品清单
+        isselect:PropTypes.bool,// 是不是带有选择功能的商铺物品清单
     }
     static defaultProps = {
         isselect:true, 
@@ -142,6 +151,23 @@ export default class ShopItemSelect extends Component{
         }
     }
     showSetInfo(element){
+
+        Common.sendMessage(Common.baseUrl + "/xiaoshou/getsetinfo"
+            , "POST"
+            , null
+            , {itemid:element.ITEM_ID,comtypeid:element.COM_TYPE_ID}
+            , null
+            , (e)=>{
+                this.setState({showset:true,setinfo:e.data, setname:element.ITEM_NAME})
+            }
+            ,(e)=>{
+                const {setMainContext} = this.context
+                setMainContext({
+                    errorMessage:e
+                })
+            },
+            this.context)
+
 
     }
 
@@ -197,7 +223,6 @@ export default class ShopItemSelect extends Component{
             }
         }
         )
-        
         return(
             <div>
                 <Input icon='search' size='small' placeholder='Search...' fluid onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
@@ -217,10 +242,52 @@ export default class ShopItemSelect extends Component{
                             {rows}
                         </Table.Body>
                     </Table>
-
-                    
-
                 </div>
+                 <Modal open={this.state.showset}>
+                    <Modal.Header> {'套餐【' + this.state.setname + '】的内容'  }
+                        <ButtonGroup style={{position:'absolute',right:60}}>
+                            <Button onClick={()=>this.setState({showset:false})} >
+                                关闭
+                            </Button>
+                        </ButtonGroup>
+                    </Modal.Header>
+
+                    <Modal.Content>
+                        <Grid columns='equal'>
+                            <Grid.Column>
+                                <div  style={{overflowY:'scroll' }}>
+                                    <Table celled selectable>
+                                        <Table.Header  >
+                                            <Table.Row >
+                                                <Table.HeaderCell>商品ID</Table.HeaderCell>
+                                                <Table.HeaderCell>商品类别</Table.HeaderCell>
+                                                <Table.HeaderCell>商品名</Table.HeaderCell>
+                                                <Table.HeaderCell>数量</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body >
+                                            {this.state.setinfo.map(element=> {
+                                                return (
+                                                    <Table.Row
+                                                        key={element.SUB_ITEM_ID + "_" + element.SUB_COM_TYPE_ID.toString()}>
+                                                        <Table.Cell>{element.SUB_ITEM_ID}</Table.Cell>
+                                                        <Table.Cell>{element.SUB_COM_TYPE_ID}</Table.Cell>
+                                                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                                                        <Table.Cell>{element.ITEM_NUMBER}</Table.Cell>
+                                                    </Table.Row>
+                                                )
+                                            })
+                                            }
+                                        </Table.Body>
+                                        <Table.Footer fullWidth>
+                                        </Table.Footer>
+                                    </Table></div>
+                            </Grid.Column>
+                        </Grid>
+                    </Modal.Content>
+
+                </Modal>
+
             </div>
         )
     }

@@ -401,8 +401,8 @@ export default class MemberEdit extends Component{
                             <Button secondary onClick={(e) => this.onWHClick(item, 0)}>存货</Button>
                             <Button.Or/>
                             <Button secondary onClick={(e) => this.onWHClick(item, 1)}>提货</Button>
-                            <Button.Or/>
-                            <Button color='orange' onClick={(e) => this.onAddMoneyClick(item)}>存款</Button>
+                            {/*<Button.Or/>*/}
+                            {/*<Button color='orange' onClick={(e) => this.onAddMoneyClick(item)}>存款</Button>*/}
                             <Button onClick={(e) => this.onDelClick(e, item.MEM_ID)}>删除</Button>
                         </ButtonGroup>
                     )
@@ -415,7 +415,6 @@ export default class MemberEdit extends Component{
                 }
             } else if (item.DISP_FLG === 1) {  // 编辑
                 return (
-
                     <ButtonGroup>
                         <Button primary onClick={(e) => this.onSubmitEditClick(item, 1)}>提交</Button>
                         <Button secondary onClick={(e) => this.onCancelClick(e, item.MEM_ID)}>取消</Button>

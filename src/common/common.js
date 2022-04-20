@@ -1,3 +1,41 @@
+async function  download(fetchResult) {
+    var filename = decodeURI(fetchResult.headers.get('x-filename'));
+    var data = await fetchResult.blob();
+    // It is necessary to create a new blob object with mime-type explicitly set
+    // otherwise only Chrome works like it should
+    const blob = new Blob([data], { type: data.type || 'application/octet-stream' });
+    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+        // IE doesn't allow using a blob object directly as link href.
+        // Workaround for "HTML7007: One or more blob URLs were
+        // revoked by closing the blob for which they were created.
+        // These URLs will no longer resolve as the data backing
+        // the URL has been freed."
+        window.navigator.msSaveBlob(blob, filename);
+        return;
+    }
+    // Other browsers
+    // Create a link pointing to the ObjectURL containing the blob
+    const blobURL = window.URL.createObjectURL(blob);
+    const tempLink = document.createElement('a');
+    tempLink.style.display = 'none';
+    tempLink.href = blobURL;
+    tempLink.setAttribute('download', filename);
+    // Safari thinks _blank anchor are pop ups. We only want to set _blank
+    // target if the browser does not support the HTML5 download attribute.
+    // This allows you to download files in desktop safari if pop up blocking
+    // is enabled.
+    if (typeof tempLink.download === 'undefined') {
+        tempLink.setAttribute('target', '_blank');
+    }
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+    setTimeout(() => {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(blobURL);
+    }, 100);
+}
+
 export default class Common{
     static get baseUrl(){
         //   return  "http://47.108.133.145:5000/v1";
@@ -30,6 +68,7 @@ export default class Common{
         var authdata = window.btoa(str);
         return 'Basic ' + authdata
     }
+
     static sendMessage(url, sendType, urlPram, bodyObj, newHeader, callbackobj=null, callbackErr=null, cot=null){
         console.log(url)
         const auth = Common._getSendToken()
@@ -111,6 +150,54 @@ export default class Common{
             }
             
         })
+    }
+
+    static downloadFile(url, sendType, urlPram, bodyObj, newHeader, callbackobj=null, callbackErr=null, cot=null){
+        console.log(url)
+        const auth = Common._getSendToken()
+        var headers = {
+            'content-type': 'application/json','charset':'utf-8' , ...newHeader
+        }
+        if(auth.length !== 0){
+            headers = {...headers, 'AUTHORIZATION': auth}
+        }
+        var body = null;
+        if(sendType === "POST")
+        {
+            body = JSON.stringify(bodyObj)
+        }
+        var pram=""
+        for (var key in urlPram) {
+            if (urlPram.hasOwnProperty(key)) {
+                pram+= key + "=" + urlPram[key]+"&"
+            }
+        }
+        if(pram?.length>0)
+        {
+            // 存在参数
+            pram=("?"+pram);
+            pram=pram.substr(0, pram.length-1)
+        }
+        fetch(url + pram,{
+            method: sendType,
+            body: body,
+            headers: headers,
+            mode:'cors',
+            redirect: 'follow', // 是否重定向 manual, *follow, error
+            referrer: 'no-referrer', // *client, no-referrer
+        })
+            .then( res => download(res) )
+
+            .catch((err)=>{
+                //出错了
+                console.log("网络通信发生错误");
+                console.log(err);
+                if(callbackErr!=null)
+                {
+                    callbackErr(err);
+                }
+
+            })
     }
 
     static createPassword(min,max) {

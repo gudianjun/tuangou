@@ -3,6 +3,7 @@ import { Table, Grid, Label, Button, Modal, ButtonGroup, Input} from 'semantic-u
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
 import _ from 'lodash'
+import  "../../App.css"
 // 定制一个添加按钮
 
 // 会员存款总览
@@ -101,8 +102,8 @@ export default class MemCunKuanZongLan extends Component{
                     nkey++
                     rows.push(
                     <Table.Row key = {element.COM_TYPE_ID + '_' + element.ITEM_ID + nkey.toString()}>
-                        <Table.Cell key={ (nkey++).toString()}>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
-                        <Table.Cell key={ (nkey++).toString()}>{element.ITEM_NAME}</Table.Cell>
+                        <Table.Cell key={ (nkey++).toString()}><span title={"aaaaaaaasdfasdfasdf"}>{element.COM_TYPE_ID + element.ITEM_ID}</span> </Table.Cell>
+                        <Table.Cell key={ (nkey++).toString()}><span title={"aaaaaaaasdfasdfasdf"}>{element.ITEM_NAME}</span> </Table.Cell>
                         {this.state.data.shopname.forEach(shop => {
                                 colms.push(<Table.Cell key={ (nkey++).toString()}  textAlign='right'>{this.getNumber(element, shop)}</Table.Cell>)
                         })}
@@ -133,12 +134,12 @@ export default class MemCunKuanZongLan extends Component{
         return(
             <div >
             <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
-            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'hidden' }}> 
+            <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'hidden' }} >
                 <Grid columns='equal'>
                     <Grid.Row  key={ (nkey++).toString()}>
                     <Grid.Column>
                         <Table celled selectable>
-                            <Table.Header  >
+                            <Table.Header >
                                 <Table.Row key={ (nkey++).toString()}>
                                     <Table.HeaderCell key={ (nkey++).toString()}>商品编号</Table.HeaderCell>
                                     <Table.HeaderCell key={ (nkey++).toString()}>商品名称</Table.HeaderCell>
@@ -147,7 +148,7 @@ export default class MemCunKuanZongLan extends Component{
                                 </Table.Row>
                             </Table.Header>
 
-                            <Table.Body >
+                            <Table.Body style={{ height:  '85vh' , overflowY:'scroll', overflowX:'hidden' }}>
                                {rows}
                             </Table.Body>
                             <Table.Footer fullWidth>

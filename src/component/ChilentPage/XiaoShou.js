@@ -88,35 +88,35 @@ export default class XiaoShou extends Component{
             menuItem: { key: 'normal', icon: 'yen sign', content: '普通销售' },
             render: () => <Tab.Pane><ItemOrder opetype={0}  ismemorder={false}></ItemOrder></Tab.Pane>
         },
-        {
-            menuItem: { key: 'member', icon: 'users', content: '会员销售' },
-            render: () => <Tab.Pane>
-                    <Grid>
-                        <Grid.Row>
-
-                            <Grid.Column  width={8}>
-                                    <Dropdown selection options={this.state.xsMemoptions}  placeholder='请选择一个会员'
-                                              value={this.state.selectMemID}
-                                              value={this.state.selectMemID}
-                                              selection search onChange={this.onMemberChange.bind(this)}/>
-                            </Grid.Column>
-
-                            <Grid.Column  width={8} textAlign='right'>
-                                <Radio textAlign='right'
-                                    label='存入到会员账号'
-                                    name='radioGroup'
-                                    toggle
-                                    checked={this.state.inMemWH}
-                                    onChange={this.onInMemWH.bind(this)}
-                                />
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-
-                    <ItemOrder opetype={0} ismemorder={true} selectMemID={this.state.selectMemID}
-                               memoptions={this.state.xsMemoptions} updateItems={this.getMemItems.bind(this)}></ItemOrder>
-                </Tab.Pane>
-        }
+        // {
+        //     menuItem: { key: 'member', icon: 'users', content: '会员销售' },
+        //     render: () => <Tab.Pane>
+        //             <Grid>
+        //                 <Grid.Row>
+        //
+        //                     <Grid.Column  width={8}>
+        //                             <Dropdown selection options={this.state.xsMemoptions}  placeholder='请选择一个会员'
+        //                                       value={this.state.selectMemID}
+        //                                       value={this.state.selectMemID}
+        //                                       selection search onChange={this.onMemberChange.bind(this)}/>
+        //                     </Grid.Column>
+        //
+        //                     <Grid.Column  width={8} textAlign='right'>
+        //                         <Radio textAlign='right'
+        //                             label='存入到会员账号'
+        //                             name='radioGroup'
+        //                             toggle
+        //                             checked={this.state.inMemWH}
+        //                             onChange={this.onInMemWH.bind(this)}
+        //                         />
+        //                     </Grid.Column>
+        //                 </Grid.Row>
+        //             </Grid>
+        //
+        //             <ItemOrder opetype={0} ismemorder={true} selectMemID={this.state.selectMemID}
+        //                        memoptions={this.state.xsMemoptions} updateItems={this.getMemItems.bind(this)}></ItemOrder>
+        //         </Tab.Pane>
+        // }
       ]
     render(){
         

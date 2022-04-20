@@ -1,9 +1,23 @@
 import React,{Component} from "react"
-import { Icon, Label, Table,Button, Radio, ButtonGroup, Modal, Grid,Input, Dropdown } from 'semantic-ui-react'
+import {
+    Icon,
+    Label,
+    Table,
+    Button,
+    Radio,
+    ButtonGroup,
+    Modal,
+    Grid,
+    Input,
+    Dropdown,
+    GridRow,
+    GridColumn, Checkbox, Divider, Header
+} from 'semantic-ui-react'
 import {ShoppingItem, MainContext} from '../ObjContext'
 import Common from "../../../common/common"
 import ItemOrder from './ItemOrder'
 import ItemSelect from './ItemSelect'
+import ItemChangeType from "../../../pages/ItemChangeType";
 export default class ItemsEdit extends Component{
     static contextType = MainContext;
 
@@ -17,14 +31,22 @@ export default class ItemsEdit extends Component{
             showset:false,   // 是否显示套装编辑画面
             editobject:{},   //进行编辑的对象
             comtypes:[], // 商品类别列表
-            searchtext:''
+            searchtext:'',
+            showsetdlg:false,
+            setinfo:[],
+            setname:"",
+            filterItemType:7, // 0，什么都不选，全部，7，单品，1，套装，2，散装，4
+            showItemChangeType:false,
+            setShowItemChangeType:this.setShowItemChangeType,
         }
         this.getItems() // 获得编辑列表
     }
     // static getDerivedStateFromProps(nexProps, prevState){
         
     // } 
-
+    setShowItemChangeType(show){
+        this.setState({showItemChangeType:show})
+    }
     getItems()
     {
         var arrayObj = []
@@ -392,10 +414,26 @@ export default class ItemsEdit extends Component{
     }
     getTypeName(element){
         if(element.ITEM_TYPE === 0){return '单品'}
-        else if(element.ITEM_TYPE === 1){return '套装'}
+        else if(element.ITEM_TYPE === 1){
+            return (
+                <Label as='a' onClick={()=>this.showSetInfo(element)}
+                       color={'blue'}>
+                    {'套装'}
+                </Label>
+            ) // '套装'
+        }
         else if(element.ITEM_TYPE === 2){return '散装'}
     }
     addNormolRow(element){
+        if((this.state.filterItemType & 1) === 0 && element.ITEM_TYPE == 0){
+            return
+        }
+        if((this.state.filterItemType & 2) === 0 && element.ITEM_TYPE == 1){
+            return
+        }
+        if((this.state.filterItemType & 4) === 0 && element.ITEM_TYPE == 2){
+            return
+        }
         return (
             <Table.Row key={element.COM_TYPE_ID + "_" + element.ITEM_ID.toString()}>
                             <Table.Cell collapsing>{this.getDelFlg(element)} {this.getSetFlg(element)} {element.ITEM_ID}</Table.Cell>
@@ -560,6 +598,28 @@ export default class ItemsEdit extends Component{
                         </Table.Row>
         )
     }
+
+    showSetInfo(element){
+
+        Common.sendMessage(Common.baseUrl + "/xiaoshou/getsetinfo"
+            , "POST"
+            , null
+            , {itemid:element.ITEM_ID,comtypeid:element.COM_TYPE_ID}
+            , null
+            , (e)=>{
+                this.setState({showsetdlg:true,setinfo:e.data, setname:element.ITEM_NAME})
+            }
+            ,(e)=>{
+                const {setMainContext} = this.context
+                setMainContext({
+                    errorMessage:e
+                })
+            },
+            this.context)
+
+
+    }
+
     render(){
         var rows = [];
         if ( this.state.items.length > 0 ) {
@@ -615,57 +675,143 @@ export default class ItemsEdit extends Component{
                         </Table.Row>)
         }
         return(
-            
-            <div >
-            <Input icon='search' size='small' placeholder='Search...'  onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
-            <div style={{ height:  '85vh' , overflowY:'scroll' }}> 
-                <Table celled selectable>
-                    <Table.Header  >
-                    <Table.Row>
-                        <Table.HeaderCell >序号</Table.HeaderCell>
-                        <Table.HeaderCell >分类</Table.HeaderCell>
-                        <Table.HeaderCell >商品名</Table.HeaderCell>
-                        <Table.HeaderCell >成本</Table.HeaderCell>
-                        <Table.HeaderCell >单价</Table.HeaderCell>
-                        <Table.HeaderCell >会员价</Table.HeaderCell>
-                        <Table.HeaderCell >团购价</Table.HeaderCell>
-                        <Table.HeaderCell >处理价</Table.HeaderCell>
-                        <Table.HeaderCell >类型</Table.HeaderCell>
-                        <Table.HeaderCell width={5} ><Radio toggle label='显示全部' checked={this.state.showall} onChange={()=>this.onShowChange()}></Radio></Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
+        <div >
+            <Grid columns='equal'>
+                <GridRow >
+                    <GridColumn>
+                        <Input icon='search' size='small' placeholder='Search...'
+                               onChange={(e,f)=>{this.setState({searchtext:f.value})}} />
+                    </GridColumn>
+                    <GridColumn>
+                        <Checkbox checked={(this.state.filterItemType & 7) === 7?true:false} label="全部"
+                                  onChange={(e,f)=>{f.checked?this.setState({filterItemType:7}):this.setState({filterItemType:0})}} ></Checkbox>
+                        <Checkbox checked={(this.state.filterItemType & 1) === 1?true:false} label="单品"
+                                  onChange={(e,f)=>{
+                                      let value = f.checked?(this.state.filterItemType | 1):(this.state.filterItemType & 6)
+                                      this.setState({filterItemType:value})
+                                  }
+                        }></Checkbox>
+                        <Checkbox checked={(this.state.filterItemType & 2) === 2?true:false} label="套装"
+                                  onChange={(e, f) => {
+                                      let value = f.checked ? (this.state.filterItemType | 2) : (this.state.filterItemType & 5)
+                                      this.setState({filterItemType: value})
+                                  }
+                                  }></Checkbox>
+                        <Checkbox checked={(this.state.filterItemType & 4) === 4?true:false} label="散装"
+                                      onChange={(e, f) => {
+                                          let value = f.checked ? (this.state.filterItemType | 4) : (this.state.filterItemType & 3)
+                                          this.setState({filterItemType: value})
+                                      }
+                                      }></Checkbox>
+                    </GridColumn>
+                    <GridColumn>
+                        <Button positive onClick={()=>{this.setState({showItemChangeType:true})}}>商品类别更换</Button>
+                    </GridColumn>
+                </GridRow>
+            </Grid>
 
-                    <Table.Body >
-                        {rows}
-                    </Table.Body>
-                </Table>
-                <Modal open={this.state.showset}>   
-                    <Modal.Header>编辑套装包含商品【{this.state.editobject.key}】
-                      <ButtonGroup style={{position:'absolute',right:60}}>
-                        <Button  onClick={()=>this.onSetSave()} primary >
-                             保存
-                        </Button>
-                        <Button.Or />
-                        <Button onClick={()=>this.setState({showset:false})} >
-                            取消
-                        </Button>
-                        </ButtonGroup>
-                    </Modal.Header>
-                    <Modal.Content>
-                        <Grid columns='equal'>
-                            <Grid.Column width={"6"}> 
-                                <ItemSelect seltype={1}></ItemSelect>
-                            </Grid.Column>
-                            <Grid.Column>
-                                <ItemOrder opetype={7}></ItemOrder>
-                            </Grid.Column>
-                        </Grid>
-                    </Modal.Content>
-                    <Modal.Actions>
-                        
-                    </Modal.Actions>
-                </Modal>
-            </div></div>
+                <Divider horizontal >
+                    <Header as='h4'>
+                        <Icon name='envira gallery' />
+                        商品一览
+                    </Header>
+                </Divider>
+                    <div style={{ height:  '85vh' , overflowY:'scroll' }}>
+                    <Table celled selectable>
+                        <Table.Header  >
+                        <Table.Row>
+                            <Table.HeaderCell >序号</Table.HeaderCell>
+                            <Table.HeaderCell >分类</Table.HeaderCell>
+                            <Table.HeaderCell >商品名</Table.HeaderCell>
+                            <Table.HeaderCell >成本</Table.HeaderCell>
+                            <Table.HeaderCell >单价</Table.HeaderCell>
+                            <Table.HeaderCell >会员价</Table.HeaderCell>
+                            <Table.HeaderCell >团购价</Table.HeaderCell>
+                            <Table.HeaderCell >处理价</Table.HeaderCell>
+                            <Table.HeaderCell >类型</Table.HeaderCell>
+                            <Table.HeaderCell width={5} ><Radio toggle label='显示全部' checked={this.state.showall} onChange={()=>this.onShowChange()}></Radio></Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body >
+                            {rows}
+                        </Table.Body>
+                    </Table>
+                    <Modal open={this.state.showset}>
+                        <Modal.Header>编辑套装包含商品【{this.state.editobject.key}】
+                          <ButtonGroup style={{position:'absolute',right:60}}>
+                            <Button  onClick={()=>this.onSetSave()} primary >
+                                 保存
+                            </Button>
+                            <Button.Or />
+                            <Button onClick={()=>this.setState({showset:false})} >
+                                取消
+                            </Button>
+                            </ButtonGroup>
+                        </Modal.Header>
+                        <Modal.Content>
+                            <Grid columns='equal'>
+                                <Grid.Column width={"6"}>
+                                    <ItemSelect seltype={1}></ItemSelect>
+                                </Grid.Column>
+                                <Grid.Column>
+                                    <ItemOrder opetype={7}></ItemOrder>
+                                </Grid.Column>
+                            </Grid>
+                        </Modal.Content>
+                        <Modal.Actions>
+
+                        </Modal.Actions>
+                    </Modal>
+
+                    <Modal open={this.state.showsetdlg}>
+                        <Modal.Header> {'套餐【' + this.state.setname + '】的内容'  }
+                            <ButtonGroup style={{position:'absolute',right:60}}>
+                                <Button onClick={()=>this.setState({showsetdlg:false})} >
+                                    关闭
+                                </Button>
+                            </ButtonGroup>
+                        </Modal.Header>
+                        <Modal.Content>
+                            <Grid columns='equal'>
+                                <Grid.Column>
+                                    <div  style={{overflowY:'scroll' }}>
+                                        <Table celled selectable>
+                                            <Table.Header  >
+                                                <Table.Row >
+                                                    <Table.HeaderCell>商品ID</Table.HeaderCell>
+                                                    <Table.HeaderCell>商品类别</Table.HeaderCell>
+                                                    <Table.HeaderCell>商品名</Table.HeaderCell>
+                                                    <Table.HeaderCell>数量</Table.HeaderCell>
+                                                </Table.Row>
+                                            </Table.Header>
+                                            <Table.Body >
+                                                {this.state.setinfo.map(element=> {
+                                                    return (
+                                                        <Table.Row
+                                                            key={element.SUB_ITEM_ID + "_" + element.SUB_COM_TYPE_ID.toString()}>
+                                                            <Table.Cell>{element.SUB_ITEM_ID}</Table.Cell>
+                                                            <Table.Cell>{element.SUB_COM_TYPE_ID}</Table.Cell>
+                                                            <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                                                            <Table.Cell>{element.ITEM_NUMBER}</Table.Cell>
+                                                        </Table.Row>
+                                                    )
+                                                })
+                                                }
+                                            </Table.Body>
+                                            <Table.Footer fullWidth>
+                                            </Table.Footer>
+                                        </Table></div>
+                                </Grid.Column>
+                            </Grid>
+                        </Modal.Content>
+
+                    </Modal>
+                    <ItemChangeType setShowItemChangeType={this.setShowItemChangeType.bind(this)} showItemChangeType={this.state.showItemChangeType}></ItemChangeType>
+                </div>
+
+
+        </div>
         )
     }
 }
