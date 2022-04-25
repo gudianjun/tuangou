@@ -1,5 +1,16 @@
 import React,{Component} from "react"
-import {Table,Button , Grid,  Pagination, Modal, SegmentGroup, Segment, Dropdown, Label} from 'semantic-ui-react'
+import {
+    Table,
+    Button,
+    Grid,
+    Pagination,
+    Modal,
+    SegmentGroup,
+    Segment,
+    Dropdown,
+    Label,
+    GridColumn, Icon
+} from 'semantic-ui-react'
 import PropTypes from 'prop-types';
 import { MainContext} from '../ObjContext'
 import Common from "../../../common/common"
@@ -8,7 +19,9 @@ import DatePicker from "react-datepicker";
 // 重装详细清单
 export default class ZYXiangXi extends Component{
     static contextType = MainContext;
-    
+
+
+
     constructor(props, context){
         super(props)
         var ctypes = []
@@ -35,7 +48,7 @@ export default class ZYXiangXi extends Component{
         var shopsel = -1
         var shoptype = Common._loadStorage('shoptype')
         var shopname = Common._loadStorage('shopname')
-        if(shoptype === '99'){
+        if(shoptype !== '0'){
             shoparr.push({
                 key:-1,
                 text:'全部',
@@ -83,14 +96,41 @@ export default class ZYXiangXi extends Component{
             ctypes:ctypes,    // 类型
             ctypesel:-1,    // 订单类型选择
             shopsel:shopsel,  // 店铺选择
-            page_size:10
+            page_size:15,
+            itemoption:[{
+                key:-1,
+                text: '全部商品',
+                value:'-1',
+                icon:'th'
+            }, ...props.itemoption], // 商品列表
+            itemoptionsel:'-1', // 选择的商品
         }      
+    }
+
+    addDownloadButton(){
+        const {menumstate} = this.context;
+        if(menumstate.download){
+            return (
+                <Label as='a' size={'huge'} onClick={() => {
+                    Common.downloadFile(Common.baseUrl + "/item/downloadfile", "POST", null
+                        , {filetype: 'liuzhuanxinxi'}, null
+                        , (e) => {
+                        }
+                    );
+                }
+                }>
+                    下载
+                    <Icon name='download'/>
+                </Label>
+            )
+        }
     }
 
     handlePaginationChange = (e, { activePage }) => {
         console.log(activePage)
         this.setState({page_index:activePage},()=>this.refData())
     }
+
     selectTable(){
         
     }
@@ -121,7 +161,20 @@ export default class ZYXiangXi extends Component{
             ctypesel:f.value
        })
     }
+    itemSelectChange(e, f){
+        this.setState({
+            itemoptionsel:f.value
+        })
+    }
     refData(){
+        let index = this.context.items.findIndex(element=>{ return (element.COM_TYPE_ID + element.ITEM_ID.toString()) === this.state.itemoptionsel})
+        let itemid = -1
+        let comtypeid = ''
+        if(index >= 0){
+            itemid = this.context.items[index].ITEM_ID
+            comtypeid = this.context.items[index].COM_TYPE_ID
+        }
+
         Common.sendMessage(Common.baseUrl + "/confirm/confirms"
             , "POST"
             , null
@@ -130,7 +183,9 @@ export default class ZYXiangXi extends Component{
                 SHOP_ID:this.state.shopsel,
                 FROM_ORDER_TIME: this.state.fromdate,
                 TO_ORDER_TIME: this.state.todate,
-                CONFIRM_TYPE: this.state.ctypesel
+                CONFIRM_TYPE: this.state.ctypesel,
+                ITEM_ID:itemid,
+                COM_TYPE_ID:comtypeid,
                 }
             , null
             , (e)=>{
@@ -172,12 +227,15 @@ export default class ZYXiangXi extends Component{
             <div>
                 <Grid columns='equal'>
                 <Grid.Row>
-                    <SegmentGroup>
-                        <Label>查询条件：</Label>
+
+                        <Segment.Group horizontal>
+                        <Label color={'blue'}>查询条件：</Label>
                         <Label>起始时间</Label>
                         <DatePicker dateFormat="yyyy-MM-dd"
                                         value={new Date(this.state.fromdate)}
                                         selected={new Date(this.state.fromdate)}
+
+
                                         onChange={(e)=>{this.dateChangeFrom(e)}}
                                         placeholder='Enter date'   showYearDropdown
                                 /> 
@@ -192,12 +250,20 @@ export default class ZYXiangXi extends Component{
                         <Dropdown placeholder='选择一个店铺' value={this.state.shopsel} search
                                     selection  onChange={(e, f)=>this.shopSelectChange(e, f)} 
                                     options={this.state.shoparr}></Dropdown>
+                        <Label>商品选择</Label>
+                        <Dropdown style={{ minWidth: '250px'}} placeholder='选择一个商品' value={this.state.itemoptionsel} search
+                                  selection  onChange={(e, f)=>this.itemSelectChange(e, f)}
+                                  options={this.state.itemoption}></Dropdown>
                         <Label>类型</Label>
                         <Dropdown placeholder='类型' value={this.state.ctypesel}
                                     selection  onChange={(e, f)=>this.CTypeSelectChange(e, f)} 
                                     options={this.state.ctypes}></Dropdown>
                         <Button primary onClick={()=>this.onCLick()} >查询</Button>
-                    </SegmentGroup>
+                            {this.addDownloadButton()}
+                    </Segment.Group>
+
+
+
                 </Grid.Row>
                     <Grid.Row>
                     <Grid.Column>

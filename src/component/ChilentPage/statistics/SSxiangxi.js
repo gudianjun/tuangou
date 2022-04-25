@@ -32,6 +32,7 @@ export default class SSxiangxi extends Component{
                     <Table.Cell textAlign='right'>{Common.formatCurrency(element.XS_ITEM_PRICE)}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.TH_ITEM_NUMBER}</Table.Cell>
                     <Table.Cell textAlign='right'>{Common.formatCurrency(element.TH_ITEM_PRICE)}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.XH_ITEM_NUMBER}</Table.Cell>
                     <Table.Cell textAlign='right'>{Common.formatCurrency(element.XS_TOTLE)}</Table.Cell>
                 </Table.Row>
                     )
@@ -53,6 +54,7 @@ export default class SSxiangxi extends Component{
                                     <Table.HeaderCell >销售金额</Table.HeaderCell>
                                     <Table.HeaderCell >退货数量</Table.HeaderCell>
                                     <Table.HeaderCell >退货金额</Table.HeaderCell>
+                                    <Table.HeaderCell >销毁数量</Table.HeaderCell>
                                     <Table.HeaderCell >收入小计</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
@@ -62,9 +64,8 @@ export default class SSxiangxi extends Component{
                             </Table.Body>
                             <Table.Footer fullWidth>
                                 <Table.Row>
-                                   
-                                    <Table.HeaderCell colSpan='7' textAlign='right'>
-        <Label size='huge' color='violet'>销售合计:{Common.formatCurrency(heji)}</Label>
+                                    <Table.HeaderCell colSpan='8' textAlign='right'>
+                                        <Label size='huge' color='violet'>销售合计:{Common.formatCurrency(heji)}</Label>
                                     </Table.HeaderCell>
                                 </Table.Row>
                             </Table.Footer>

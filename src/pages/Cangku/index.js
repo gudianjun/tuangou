@@ -71,7 +71,6 @@ const CangkuXiangXi = ({showCK,setShowCK, itemid, comtypeid, shopid, itemname, s
             else{
                 return '会员提货'
             }
-
         }
         else if(item.OPE_TYPE===6){
             return '采购'

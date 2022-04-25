@@ -1,5 +1,17 @@
 import React,{Component} from "react"
-import {Table, Grid, Label, Button, Modal, ButtonGroup, Input, GridColumn, Dropdown, GridRow} from 'semantic-ui-react'
+import {
+    Table,
+    Grid,
+    Label,
+    Button,
+    Modal,
+    ButtonGroup,
+    Input,
+    GridColumn,
+    Dropdown,
+    GridRow,
+    Icon
+} from 'semantic-ui-react'
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
 import _ from 'lodash'
@@ -85,6 +97,26 @@ export default class MemKuCunZongLan extends Component{
     onShopChange(value){
         this.setState({dropselect:value})
     }
+    addDownloadButton(){
+        const {menumstate} = this.context;
+        if(menumstate.download){
+            return (
+                <Label as='a' size={'huge'} onClick={() => {
+                    Common.downloadFile(Common.baseUrl + "/item/downloadfile", "POST", null
+                        , {filetype: 'cangkumemzonglan'}, null
+                        , (e) => {
+
+                        }
+                    );
+                }
+
+                }>
+                    下载
+                    <Icon name='download'/>
+                </Label>
+            )
+        }
+    }
     render(){
         var nkey = 1
         var rows=[]
@@ -158,7 +190,6 @@ export default class MemKuCunZongLan extends Component{
                 <GridColumn>
                     <Dropdown
                         placeholder='选择一个仓库'
-
                         search
                         selection
                         options={dropshops}
@@ -166,6 +197,10 @@ export default class MemKuCunZongLan extends Component{
                         onChange={(e,f)=>this.onShopChange(f.value)}
                     />
                 </GridColumn>
+                    <GridColumn>
+                        {this.addDownloadButton()}
+
+                    </GridColumn>
                 </GridRow>
                 </Grid>
                 <div style={{ height:  '85vh' , overflowY:'scroll', overflowX:'scroll' }}>

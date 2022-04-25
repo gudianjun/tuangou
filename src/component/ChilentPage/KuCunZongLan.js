@@ -12,9 +12,6 @@ export default class KuCunZongLan extends Component{
 
     constructor(props, context){
         super(props)
-
-
-
         this.state = {
             data:[],
             searchtext:'',
@@ -58,6 +55,25 @@ export default class KuCunZongLan extends Component{
     }
     onShopChange(value){
         this.setState({dropselect:value})
+    }
+    addDownloadButton(){
+        const {menumstate} = this.context;
+        if(menumstate.download){
+            return (
+                <Label as='a' size={'huge'} onClick={() => {
+                    Common.downloadFile(Common.baseUrl + "/item/downloadfile", "POST", null
+                        , {filetype: 'cangkuzonglan'}, null
+                        , (e) => {
+
+                        }
+                    );
+                }
+                }>
+                    下载
+                    <Icon name='download'/>
+                </Label>
+            )
+        }
     }
     render(){
         // const [showCK, setShowCK] = useState(false);
@@ -135,19 +151,8 @@ export default class KuCunZongLan extends Component{
                             />
                         </GridColumn>
                         <GridColumn>
-                            <Label as='a' size={'huge'} onClick={()=>{
-                                Common.downloadFile(Common.baseUrl + "/item/downloadfile", "POST", null
-                                    , {filetype:'cangkuzonglan'}, null
-                                    , (e)=>{
+                            {this.addDownloadButton()}
 
-                                    }
-                                        );
-                                    }
-
-                            }>
-                                下载
-                                <Icon name='download' />
-                            </Label>
                         </GridColumn>
 
                     </Grid.Row>

@@ -13,3 +13,4 @@
  export const meirishenpi = "meirishenpi"
  export const tongjibaobiao = "tongjibaobiao"
  export const quanxianguanli = "quanxianguanli"
+ export const download = "download"

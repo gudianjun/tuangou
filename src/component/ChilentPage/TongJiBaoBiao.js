@@ -550,14 +550,14 @@ class Groupedcolumn extends React.Component {
           <Chart height={200} data={dv} forceFit>
             <Axis name="月份" />
             <Axis name="销售额" />
-            <Legend />
+            <Legend position="right"/>
             <Tooltip
               crosshairs={{
                 type: "y"
               }}
             />
             <Geom
-              type="interval"
+              type="intervalStack"
               position="月份*销售额"
               color={"name"}
               adjust={[
@@ -681,6 +681,7 @@ export default class TongJiBaoBiao extends Component{
         }, ()=>this.getdata())
     }
     getTubiao1(){
+        console.log('getTubiao1')
         if (this.state.datas.month12s.length>0){
             return (<Groupedcolumn datas={this.state.datas.month12s}></Groupedcolumn>)
         }

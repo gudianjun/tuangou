@@ -1,5 +1,5 @@
 import React,{useState, useEffect, useRef } from "react"
-import {Table, Grid, Input, TextArea, Label, Radio, ButtonGroup, Button, Checkbox} from 'semantic-ui-react'
+import {Table, Grid, Input, TextArea, Label, Radio, ButtonGroup, Button, Checkbox, Icon} from 'semantic-ui-react'
 import Common from "../../../common/common";
 import {element} from "prop-types";
 
@@ -23,11 +23,11 @@ const RolManage = ({roles,getAllRoles}) =>{
     function getModelTypeNmae(modelType){
         switch (modelType){
             case 0:
-                return "导航"
+                return (<Icon name='linkify'>{"导航"}</Icon> )
             case 1:
-                return "按钮"
+                return (<Icon name='block layout'>{"按钮"}</Icon> )
             case 2:
-                return "表格列"
+                return (<Icon name='table'>{"表格列"}</Icon> )
         }
     }
 

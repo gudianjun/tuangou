@@ -6,7 +6,7 @@ import ZYXiangXi from '../../ChilentPage/statistics/ZYXiangXi'
 import { setDefaultLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 setDefaultLocale('zhCN');
-// 店铺管理
+// 商品流转
 export default class ConfirmEdit extends Component{
     static contextType = MainContext;
 
@@ -25,7 +25,7 @@ export default class ConfirmEdit extends Component{
                 })
             }
        })
-       var shoparr = []
+        var shoparr = []
         context.allshops.forEach(element=>{
             if(element.SHOP_NAME !== Common._loadStorage('shopname') && element.SHOP_TYPE !== 99) // 单品
             {
@@ -703,9 +703,11 @@ export default class ConfirmEdit extends Component{
                     <SegmentGroup>
                         {this.getShanZhuang(element)}
                         <Label>将商品【</Label>
-                        <Dropdown color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
+                        <Dropdown style={{ minWidth: '250px'}} color='blue' placeholder='选择一个商品'
+                                  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()}
+                                  options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
                         <Label>】</Label>
-                        <Input label='数量' placeholder='选择一个商品'  icon={element.ITEM_TYPE === 2?'balance scale':''} value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
+                        <Input label='数量' placeholder='商品数量'  icon={element.ITEM_TYPE === 2?'balance scale':''} value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
                         <Label>从</Label>
                         {element.CONFIRM_TYPE === 0 ? ( <Label color='blue'>采购</Label> ):( <Label color='blue'>{Common._loadStorage('shopname')}</Label> ) }
                         <Label>转移到【</Label>
@@ -728,7 +730,7 @@ export default class ConfirmEdit extends Component{
                 <SegmentGroup>
                     {this.getShanZhuang(element)}
                     <Label>将商品【</Label>
-                    <Dropdown color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
+                    <Dropdown style={{ minWidth: '250px'}} color='blue' placeholder='选择一个商品'  search selection value={element.COM_TYPE_ID + element.ITEM_ID.toString()} options={this.state.itemoption} onChange={(e, f)=>this.itemSelectChange(e, f)}/>
                     <Label>】</Label>
                     <Input label='数量' placeholder='商品数量' icon={element.ITEM_TYPE === 2?'balance scale':''} value={element.ITEM_NUMBER}  onChange={(e, f)=>this.onEditItem(element, f.value)} />
                     <Label>从</Label>
@@ -803,7 +805,7 @@ export default class ConfirmEdit extends Component{
         { menuItem: '清单', render: () => {
             return(
                 <Tab.Pane>
-                    <ZYXiangXi></ZYXiangXi>
+                    <ZYXiangXi itemoption={this.state.itemoption}></ZYXiangXi>
 
 
 

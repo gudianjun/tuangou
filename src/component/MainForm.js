@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Confirm, Message, Segment, Menu, Icon, Grid } from 'semantic-ui-react'
+import {Button, Confirm, Message, Segment, Menu, Icon, Grid, ButtonGroup} from 'semantic-ui-react'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import Common from "../common/common"
 import MySidebar from "./MySidebar"
@@ -23,6 +23,9 @@ import Role from "../pages/Role";
 
 import { MainContext} from './ChilentPage/ObjContext'
 import CaiGouGuanLi from './ChilentPage/CaiGouGuanLi';
+import ShenPiXiangXi from "../pages/ShenPiXiangXi";
+
+
 class MainForm extends Component{
   constructor(props, context){
       super(props)
@@ -30,7 +33,11 @@ class MainForm extends Component{
         activeItem: 'bio',
         ConfirmTitle:context.confirmInfo.content,
         open:context.confirmInfo.open,
-        showMsg:true
+        showMsg:true,
+          showXX:false,
+          setShowXX:this.setShowXX,
+          shopID:-1,
+          spInfos:{}
     }
         // 请求登录检查，如果失败了，则跳转到login画面
         Common.sendMessage(Common.baseUrl + "/login/checklogin"
@@ -123,7 +130,9 @@ class MainForm extends Component{
     this.props.history.push("/main/" + name)
     // 显示标题
   }
-
+    setShowXX(show){
+        this.setState({showXX:show})
+    }
   getTitle(){
     const {errorMessage} = this.context
     if(errorMessage.length > 0){
@@ -184,6 +193,34 @@ class MainForm extends Component{
          )
      }
   }
+  addYingYeGaiKuang(){
+      console.log('addYingYeGaiKuang')
+      if(this.context.shoptype !== -1 && this.context.shoptype === 0) {
+          return (
+              <Button primary size='mini' as='a'  onClick={()=>
+                  Common.sendMessage(Common.baseUrl + "/statistics/getshenpixiangxi"
+                      , "POST"
+                      , null
+                      , {
+
+                      }
+                      , null
+                      , (e)=>{
+                          console.log('/statistics/getshenpixiangxi')
+                          this.setState({
+                              showXX:true,
+                              shopID:e.data['SHOP_ID'],
+                              spInfos:e.data,
+                          })
+                      },null,
+                      this.context)
+              }>
+                  营业概况
+              </Button>
+          )
+      }
+
+  }
   getMessageCount(){
       if(this.context.messagecount > 0){
           return( <Button onClick={()=>{this.props.history.push("/main/caigouguanli")}}
@@ -224,9 +261,12 @@ class MainForm extends Component{
                         <Menu.Item position='right'>
                        
                             {this.getMessageCount()}
-                            <Button size='mini' as='a' onClick={()=>{this.onLogout()}} >
-                                退出
-                            </Button>
+                            <ButtonGroup>
+                                {this.addYingYeGaiKuang()}
+                                <Button size='mini' as='a' onClick={()=>{this.onLogout()}} >
+                                    退出
+                                </Button>
+                            </ButtonGroup>
                         </Menu.Item>
                     
                     </Menu>
@@ -251,6 +291,9 @@ class MainForm extends Component{
                             {this.getRoute()}
                         </div>
                     </Grid.Row>
+
+            <ShenPiXiangXi showXX={this.state.showXX} setShowXX={this.setShowXX.bind(this)} shopID={this.state.shopID}
+                           selDateTime={new Date()} spInfos={this.state.spInfos}></ShenPiXiangXi>
                 </div>
         )}
          </MainContext.Consumer>

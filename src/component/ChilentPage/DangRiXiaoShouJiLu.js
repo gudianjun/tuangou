@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Menu, Grid, Header, Tab, Icon, Divider, Dropdown } from "semantic-ui-react"
+import {Menu, Grid, Header, Tab, Icon, Divider, Dropdown, Label} from "semantic-ui-react"
 import SSxiangxi from './statistics/SSxiangxi'
 import { MainContext} from './ObjContext'
 import DatePicker from "react-datepicker";
@@ -178,6 +178,7 @@ export default class DangRiXiaoShouJiLu extends Component{
         this.getitemsDDHuiZong(this.state.selectType)
     }
     shopSelectChange(e, f){
+        console.log('shopSelectChange')
         this.SHOP_ID = f.value
         this.setState({
              page_index:1
@@ -185,6 +186,29 @@ export default class DangRiXiaoShouJiLu extends Component{
             this.selectTable()
         })
         
+    }
+    addDownloadButton(){
+        const {menumstate} = this.context;
+        if(menumstate.download){
+            return (
+                <Label as='a' size={'huge'} onClick={() => {
+                    if(this.SHOP_ID === -1){return}
+                    Common.downloadFile(Common.baseUrl + "/item/downloadfile", "POST", null
+                        , {
+                            filetype: 'dangrixiaoshou',
+                            SHOP_ID:this.SHOP_ID,
+                            ORDER_TIME: this.state.selectdate,
+                        }, null
+                        , (e) => {
+                        }
+                    );
+                }
+                }>
+                    下载
+                    <Icon name='download'/>
+                </Label>
+            )
+        }
     }
     render(){
         return(
@@ -202,8 +226,14 @@ export default class DangRiXiaoShouJiLu extends Component{
                                         onChange={(e)=>{this.dateChange(e)}}
                                         placeholder='Enter date'   showYearDropdown
                                 /> 
-                                </Menu.Item><Menu.Item>
-                            <Dropdown options={this.state.Shops} search  onChange={(e, f)=>this.shopSelectChange(e, f)}    placeholder='请选择一个店铺'></Dropdown> 
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Dropdown options={this.state.Shops} search value={this.SHOP_ID === -1? null:this.SHOP_ID}
+                                          onChange={(e, f)=>this.shopSelectChange(e, f)}
+                                          placeholder='请选择一个店铺'></Dropdown>
+                            </Menu.Item>
+                            <Menu.Item>
+                                {this.addDownloadButton()}
                             </Menu.Item>
                         </Menu>
                         </Grid.Column>

@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import {MainContext} from './ObjContext'
 import Common from "../../common/common"
-
+import  ShenPiXiangXi from  "../../pages/ShenPiXiangXi";
 export default class MeiRiShenPi extends Component{
     static contextType = MainContext;
     constructor(props, context){
@@ -15,14 +15,23 @@ export default class MeiRiShenPi extends Component{
             searchtext:'',  // 搜索文本
             showset:false,
             modelinfo:{}, // 模型要显示的数据
-            selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10)
+            selectdate:(new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10),
+            selDateTime: (new Date()),
+            showXX:false,
+            setShowXX:this.setShowXX,
+            shopID:-1,
+            spInfos:{}
         }
         this.getInitData()
      
     }
+    setShowXX(show){
+        this.setState({showXX:show})
+    }
     dateChange(date){
         this.setState({
-            selectdate:date.toISOString().substring(0, 10)
+            selectdate:date.toISOString().substring(0, 10),
+            selDateTime:date,
         }, ()=>{
             this.getInitData()
         });
@@ -155,6 +164,14 @@ export default class MeiRiShenPi extends Component{
             }
         }
     }
+    onDownload(shopid){
+        Common.downloadFile(Common.baseUrl + "/item/downshenpifile", "POST", null
+            , {SHOP_ID: shopid, ORDER_TIME:this.state.selectdate,}, null
+            , (e) => {
+
+            }
+        );
+    }
     // 编辑项目
     onEditItem(item, value){
         var isBuling = false
@@ -268,6 +285,34 @@ export default class MeiRiShenPi extends Component{
             return '销毁'
         }
     }
+    addDownloadButton(){
+        const {menumstate} = this.context;
+        if(menumstate.download){
+            return (
+                <Label as='a' size={'huge'} onClick={() => {
+                    this.onDownload(-1)
+                }
+
+                }>
+                    下载全部
+                    <Icon name='download'/>
+                </Label>
+            )
+        }
+    }
+    addDownloadButton2(element){
+        const {menumstate} = this.context;
+        if(menumstate.download){
+            return (
+                <Label onClick={()=>{
+                    this.onDownload(element.SHOP_ID)
+
+                }}>
+                    <Icon name='download'></Icon>
+                </Label>
+            )
+        }
+    }
     render(){
         var rows=[]
         if (this.state!=null && this.state.selectobject !== null){
@@ -286,7 +331,32 @@ export default class MeiRiShenPi extends Component{
                         <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_TH_COST) : '-'}</Table.Cell>
                         <Table.Cell textAlign='right'>{this.getNumber(element, 2)}</Table.Cell>
                         <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.EMP_PRICE) : '-'}</Table.Cell>
-                        <Table.Cell textAlign='right'><Label color={'red'}>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS - element.TOTAL_TH): '请刷新'}</Label></Table.Cell>
+                        <Table.Cell textAlign='right'>
+                            <Label color={'red'} onClick={() => {
+
+
+                                Common.sendMessage(Common.baseUrl + "/statistics/getshenpixiangxi"
+                                    , "POST"
+                                    , null
+                                    , {
+                                        ORDER_TIME:this.state.selectdate,
+                                        SHOP_ID:element.SHOP_ID
+                                    }
+                                    , null
+                                    , (e)=>{
+                                        console.log('/statistics/getshenpixiangxi')
+                                        this.setState({
+                                            showXX:true,
+                                            shopID:element.SHOP_ID,
+                                            spInfos:e.data,
+                                        })
+                                    },null,
+                                    this.context)
+                            }}>
+                                {element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS - element.TOTAL_TH): '请刷新'}
+                            </Label>
+                            {this.addDownloadButton2(element)}
+                        </Table.Cell>
                         <Table.Cell textAlign='right'>{this.getShijiRuZhang(element)}</Table.Cell>
                         <Table.Cell>{element.DISP_STATE !== 1 ? '未审批':'已审批'}</Table.Cell>
                         <Table.Cell>
@@ -334,94 +404,105 @@ export default class MeiRiShenPi extends Component{
 
         return(
             <div style={{ minHeight:800}}>             
-            <Grid columns='equal' >
-                <Grid.Row>
-                    <Grid.Column width={8}><Header as='h3'>每日审批</Header></Grid.Column>
-                    <Grid.Column width={8} textAlign='right' >
-                    <Menu>
-                        <Menu.Item>
-                        <DatePicker dateFormat="yyyy-MM-dd"
-                                        value={new Date(this.state === null ? (new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10) : this.state.selectdate)}
-                                        selected={new Date(this.state === null ? (new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10) : this.state.selectdate)}
-                                        onChange={(e)=>{this.dateChange(e)}}
-                                        placeholder='Enter date'   showYearDropdown
-                                /> 
-                            </Menu.Item>
-                            <Input icon='search' size='small' placeholder='Search...'  onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
+                <Grid columns='equal' >
+                    <Grid.Row>
+                        <Grid.Column width={8}><Header as='h3'>每日审批</Header></Grid.Column>
+                        <Grid.Column width={8} textAlign='right' >
+                        <Menu>
                             <Menu.Item>
-                        </Menu.Item>
-                    </Menu>
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
-            <Divider horizontal>
-                <Header as='h4'>
-                    <Icon name='bar chart' />
-                    选择日期的店铺数据汇总
-                </Header>
-            </Divider>
-            <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
-                    <Table.Header  >
-                    <Table.Row>
-                        <Table.HeaderCell >店铺名称</Table.HeaderCell>
-                        <Table.HeaderCell >销售金额</Table.HeaderCell>
-                        <Table.HeaderCell >销售成本</Table.HeaderCell>
-                        <Table.HeaderCell >退货金额</Table.HeaderCell>
-                        <Table.HeaderCell >退货成本</Table.HeaderCell>
-                        <Table.HeaderCell >销毁成本</Table.HeaderCell>
-                        <Table.HeaderCell >提成金额</Table.HeaderCell>
-                        <Table.HeaderCell >应收账款</Table.HeaderCell>
-                        <Table.HeaderCell >实收账款</Table.HeaderCell>
-                        <Table.HeaderCell >审批状态</Table.HeaderCell>
-                        <Table.HeaderCell >操作</Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
-                        
-                    <Table.Body >
-                    {rows}
-                    </Table.Body>
-                </Table>
+                            <DatePicker dateFormat="yyyy-MM-dd"
+                                            value={new Date(this.state === null ?
+                                                (new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10) :
+                                                this.state.selectdate)}
+                                            selected={new Date(this.state === null ?
+                                                (new Date(+new Date() + 8 * 3600 * 1000)).toISOString().substring(0, 10) :
+                                                this.state.selectdate)}
+                                            onChange={(e)=>{this.dateChange(e)}}
+                                            placeholder='Enter date'   showYearDropdown
+                                    />
+                            </Menu.Item>
 
-                <Modal open={this.state.showset}>   
-                    <Modal.Header>{'【' + this.state.modelinfo.date + ' 】店铺【' + this.state.modelinfo.shopname + '】当日的【' + this.getSelName(this.state.modelinfo.seltype) + '】'}
-                        <ButtonGroup style={{position:'absolute',right:60}}>
-                            <Button onClick={()=>this.setState({showset:false})} >
-                                关闭
-                            </Button>
-                        </ButtonGroup>
-                    </Modal.Header>
-                    <Modal.Content>
-                        <Grid columns='equal'>
-                            <Grid.Column>
-                            <div  style={{height:  '75vh' , overflowY:'scroll' }}>
-                                <Table celled selectable>
-                                    <Table.Header  >
-                                        <Table.Row  >
-                                            <Table.HeaderCell>序号</Table.HeaderCell>
-                                            <Table.HeaderCell>商品ID</Table.HeaderCell>
-                                            <Table.HeaderCell>商品名称</Table.HeaderCell>
-                                            <Table.HeaderCell>价格类型</Table.HeaderCell>
-                                            <Table.HeaderCell>{this.state.modelinfo.seltype === 2? '成本' : '单价'}</Table.HeaderCell>
-                                            <Table.HeaderCell>销售数量</Table.HeaderCell>
-                                            <Table.HeaderCell>小计</Table.HeaderCell>
-                                        </Table.Row>
-                                    </Table.Header>
-                                    <Table.Body >
-                                            {itemrows}
-                                    </Table.Body>
-                                    <Table.Footer fullWidth  >
-                                            
-                                    </Table.Footer>
-                                </Table>
-                                </div>
-                            </Grid.Column>
-                        </Grid>
-                    </Modal.Content>
-                    <Modal.Actions>
-                        {'合计' + (this.state.modelinfo.seltype === 2 ? '成本：' : '价格：') + Common.formatCurrency(total)}
-                    </Modal.Actions>
-                </Modal>
-        </div>
+                            <Menu.Item>
+                                <Input icon='search' size='small' placeholder='Search...'
+                                               onChange={(eX,f)=>{this.setState({searchtext:f.value})}} />
+                            </Menu.Item>
+                            <Menu.Item>
+                                {this.addDownloadButton()}
+
+                            </Menu.Item>
+                        </Menu>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Divider horizontal>
+                    <Header as='h4'>
+                        <Icon name='bar chart' />
+                        选择日期的店铺数据汇总
+                    </Header>
+                </Divider>
+                <Table celled selectable style={{minHeight:'100%', height:'100%'}}>
+                        <Table.Header  >
+                        <Table.Row>
+                            <Table.HeaderCell >店铺名称</Table.HeaderCell>
+                            <Table.HeaderCell >销售金额</Table.HeaderCell>
+                            <Table.HeaderCell >销售成本</Table.HeaderCell>
+                            <Table.HeaderCell >退货金额</Table.HeaderCell>
+                            <Table.HeaderCell >退货成本</Table.HeaderCell>
+                            <Table.HeaderCell >销毁成本</Table.HeaderCell>
+                            <Table.HeaderCell >提成金额</Table.HeaderCell>
+                            <Table.HeaderCell >应收账款</Table.HeaderCell>
+                            <Table.HeaderCell >实收账款</Table.HeaderCell>
+                            <Table.HeaderCell >审批状态</Table.HeaderCell>
+                            <Table.HeaderCell >操作</Table.HeaderCell>
+                        </Table.Row>
+                        </Table.Header>
+
+                        <Table.Body >
+                        {rows}
+                        </Table.Body>
+                    </Table>
+                <Modal open={this.state.showset}>
+                        <Modal.Header>{'【' + this.state.modelinfo.date + ' 】店铺【' + this.state.modelinfo.shopname + '】当日的【' + this.getSelName(this.state.modelinfo.seltype) + '】'}
+                            <ButtonGroup style={{position:'absolute',right:60}}>
+                                <Button onClick={()=>this.setState({showset:false})} >
+                                    关闭
+                                </Button>
+                            </ButtonGroup>
+                        </Modal.Header>
+                        <Modal.Content>
+                            <Grid columns='equal'>
+                                <Grid.Column>
+                                <div  style={{height:  '75vh' , overflowY:'scroll' }}>
+                                    <Table celled selectable>
+                                        <Table.Header  >
+                                            <Table.Row  >
+                                                <Table.HeaderCell>序号</Table.HeaderCell>
+                                                <Table.HeaderCell>商品ID</Table.HeaderCell>
+                                                <Table.HeaderCell>商品名称</Table.HeaderCell>
+                                                <Table.HeaderCell>价格类型</Table.HeaderCell>
+                                                <Table.HeaderCell>{this.state.modelinfo.seltype === 2? '成本' : '单价'}</Table.HeaderCell>
+                                                <Table.HeaderCell>销售数量</Table.HeaderCell>
+                                                <Table.HeaderCell>小计</Table.HeaderCell>
+                                            </Table.Row>
+                                        </Table.Header>
+                                        <Table.Body >
+                                                {itemrows}
+                                        </Table.Body>
+                                        <Table.Footer fullWidth  >
+
+                                        </Table.Footer>
+                                    </Table>
+                                    </div>
+                                </Grid.Column>
+                            </Grid>
+                        </Modal.Content>
+                        <Modal.Actions>
+                            {'合计' + (this.state.modelinfo.seltype === 2 ? '成本：' : '价格：') + Common.formatCurrency(total)}
+                        </Modal.Actions>
+                    </Modal>
+                <ShenPiXiangXi showXX={this.state.showXX} setShowXX={this.setShowXX.bind(this)} shopID={this.state.shopID}
+                               selDateTime={this.state.selDateTime} spInfos={this.state.spInfos}></ShenPiXiangXi>
+            </div>
         )
     }
 }

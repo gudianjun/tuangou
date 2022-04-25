@@ -35,6 +35,8 @@ export default class KCHuiZong extends Component{
                     <Table.Cell textAlign='right'>{element.CK_ITEM_NUMBER}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.HC_ITEM_NUMBER}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.HT_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.ZR_ITEM_NUMBER}</Table.Cell>
+                    <Table.Cell textAlign='right'>{element.ZC_ITEM_NUMBER}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.CG_ITEM_NUMBER}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.IN_TOTLE}</Table.Cell>
                     <Table.Cell textAlign='right'>{element.OUT_TOTLE}</Table.Cell>
@@ -62,6 +64,8 @@ export default class KCHuiZong extends Component{
                                     <Table.HeaderCell >出库数量</Table.HeaderCell>
                                     <Table.HeaderCell >会员存货</Table.HeaderCell>
                                     <Table.HeaderCell >会员提货</Table.HeaderCell>
+                                    <Table.HeaderCell >流转入库</Table.HeaderCell>
+                                    <Table.HeaderCell >流转出库</Table.HeaderCell>
                                     <Table.HeaderCell >采购入库</Table.HeaderCell>
                                     <Table.HeaderCell >合计入库</Table.HeaderCell>
                                     <Table.HeaderCell >合计出库</Table.HeaderCell>
@@ -74,7 +78,7 @@ export default class KCHuiZong extends Component{
                             <Table.Footer fullWidth>
                                 <Table.Row>
                                    
-                                    <Table.HeaderCell colSpan='12' textAlign='right'>
+                                    <Table.HeaderCell colSpan='14' textAlign='right'>
                                         <Label size='huge' color='violet'>合计入库:{hejiin}</Label>
                                         <Label size='huge' color='olive'>合计出库:{hejiout}</Label>
                                     </Table.HeaderCell>
