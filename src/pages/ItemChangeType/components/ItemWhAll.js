@@ -59,7 +59,7 @@ const ItemWhAll = () => {
                 e.data.forEach(element => {
                     options.push({
                         key: element.COM_TYPE_ID + element.ITEM_ID ,
-                        text: element.ITEM_NAME,
+                        text: element.COM_TYPE_ID + element.ITEM_ID + element.ITEM_NAME,
                         value: element.ITEM_ID
                     })
                 });

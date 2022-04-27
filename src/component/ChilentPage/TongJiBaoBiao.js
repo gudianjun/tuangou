@@ -1,5 +1,5 @@
 import React,{Component} from "react"
-import { Grid, Header, Button, Segment, Table, Icon, Divider} from "semantic-ui-react"
+import {Grid, Header, Button, Segment, Table, Icon, Divider, Label, Input, GridRow} from "semantic-ui-react"
 import {MainContext} from './ObjContext'
 import PropTypes from 'prop-types';
 import "react-datepicker/dist/react-datepicker.css";
@@ -14,6 +14,10 @@ import {
     Interval,
     Interaction } from 'bizcharts';
 import DataSet from "@antv/data-set";
+import XiaoShouPaiHang from "../../pages/XiaoShouPaiHang";
+import YingYee from "../../pages/BaoBiao/YingYeE";
+import JingShouYi from "../../pages/BaoBiao/JingShouYi";
+import XiaoSHouTicheng from "../../pages/BaoBiao/XiaoShouTicheng";
 
 // 销售类别占比
 class ComTypePie extends React.Component {
@@ -479,100 +483,101 @@ class Groupedcolumn2 extends React.Component {
   }
 
 // 销售情况汇总
-class Groupedcolumn extends React.Component {
+// class Groupedcolumn extends React.Component {
+//
+//     constructor(props, context){
+//         super(props)
+//         this.state={}
+//     }
+//     static propTypes = {
+//         datas:PropTypes.array
+//     }
+//
+//     jianMonth(year, month, count){
+//         var m = month - count
+//         var y = year
+//         if(m <= 0){
+//             m = 12 + m
+//             y = y - 1
+//         }
+//
+//         return {year: y, month:m}
+//     }
+//
+//     render() {
+//         var dv = {}
+//         if(this.props.datas !== undefined){
+//             var data = []
+//
+//
+//             var fields = [
+//             ]
+//
+//             var xiaoshou = {
+//                 name:'实际销售额'
+//             }
+//             this.props.datas.forEach(element => {
+//                 xiaoshou[element.TEDAY] = (element.TOTAL_XS - element.TOTAL_TH)
+//                 fields.push(element.TEDAY)
+//             });
+//             data.push(xiaoshou)
+//
+//             var chengben = {
+//                 name:'销售成本'
+//             }
+//             this.props.datas.forEach(element => {
+//                 chengben[element.TEDAY] = (element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST)
+//             });
+//             data.push(chengben)
+//
+//             var jingyingli = {
+//                 name:'净盈利'
+//             }
+//             this.props.datas.forEach(element => {
+//                 jingyingli[element.TEDAY] = ((element.TOTAL_XS - element.TOTAL_TH) - (element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST))
+//             });
+//             data.push(jingyingli)
+//
+//             const ds = new DataSet();
+//             dv = ds.createView().source(data);
+//             dv.transform({
+//                 type: "fold",
+//                 fields: fields,
+//                 // 展开字段集
+//                 key: "月份",
+//                 // key字段
+//                 value: "销售额" // value字段
+//             });
+//         }
+//       return (
+//         <div>
+//           <Chart height={200} data={dv} forceFit>
+//             <Axis name="月份" />
+//             <Axis name="销售额" />
+//             <Legend position="right"/>
+//             <Tooltip
+//               crosshairs={{
+//                 type: "y"
+//               }}
+//             />
+//             <Geom
+//               type="intervalStack"
+//               position="月份*销售额"
+//               color={"name"}
+//               adjust={[
+//                 {
+//                   type: "dodge",
+//                   marginRatio: 1 / 32
+//                 }
+//               ]}
+//             />
+//           </Chart>
+//         </div>
+//       );
+//
+//     }
+//   }
 
-    constructor(props, context){
-        super(props)
-        this.state={}
-    }
-    static propTypes = {
-        datas:PropTypes.array
-    }
-
-    jianMonth(year, month, count){
-        var m = month - count
-        var y = year
-        if(m <= 0){
-            m = 12 + m
-            y = y - 1
-        }
-
-        return {year: y, month:m}
-    }
-
-    render() {
-        var dv = {}
-        if(this.props.datas !== undefined){
-            var data = []
-
-            
-            var fields = [
-            ]
-
-            var xiaoshou = {
-                name:'实际销售额'
-            }
-            this.props.datas.forEach(element => {
-                xiaoshou[element.TEDAY] = (element.TOTAL_XS - element.TOTAL_TH)
-                fields.push(element.TEDAY)
-            });
-            data.push(xiaoshou)
-
-            var chengben = {
-                name:'销售成本'
-            }
-            this.props.datas.forEach(element => {
-                chengben[element.TEDAY] = (element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST)
-            });
-            data.push(chengben)
-
-            var jingyingli = {
-                name:'净盈利'
-            }
-            this.props.datas.forEach(element => {
-                jingyingli[element.TEDAY] = ((element.TOTAL_XS - element.TOTAL_TH) - (element.TOTAL_XS_COST - element.TOTAL_TH_COST + element.TOTAL_XH_COST))
-            });
-            data.push(jingyingli)
-
-            const ds = new DataSet();
-            dv = ds.createView().source(data);
-            dv.transform({
-                type: "fold",
-                fields: fields,
-                // 展开字段集
-                key: "月份",
-                // key字段
-                value: "销售额" // value字段
-            });
-        }
-      return (
-        <div>
-          <Chart height={200} data={dv} forceFit>
-            <Axis name="月份" />
-            <Axis name="销售额" />
-            <Legend position="right"/>
-            <Tooltip
-              crosshairs={{
-                type: "y"
-              }}
-            />
-            <Geom
-              type="intervalStack"
-              position="月份*销售额"
-              color={"name"}
-              adjust={[
-                {
-                  type: "dodge",
-                  marginRatio: 1 / 32
-                }
-              ]}
-            />
-          </Chart>
-        </div>
-      );
-    
-    }
-  }
 
 export default class TongJiBaoBiao extends Component{
     static contextType = MainContext;
@@ -602,6 +607,12 @@ export default class TongJiBaoBiao extends Component{
                 'shopcoms': [],
                 'coms': []
             },
+            showCK:false,
+            setShowCK:this.setShowCK.bind(this),
+            selitemid:-1,
+            selcomtypeid:'',
+            orderSearchText:"", //　会员详细订单搜索文本
+            selitemname:'',
             SEL_YEAR:(new Date(+new Date() + 8 * 3600 * 1000)).getFullYear(),
             SEL_MONTH:(new Date(+new Date() + 8 * 3600 * 1000)).getMonth() + 1,
             selmonth:0, // 默认选择当前月
@@ -615,6 +626,9 @@ export default class TongJiBaoBiao extends Component{
             ]
         }
         this.getdata()
+    }
+    setShowCK(show){
+        this.setState({showCK: show})
     }
     getdata(){
         // 获取查询数据， 默认为当天
@@ -683,17 +697,17 @@ export default class TongJiBaoBiao extends Component{
     getTubiao1(){
         console.log('getTubiao1')
         if (this.state.datas.month12s.length>0){
-            return (<Groupedcolumn datas={this.state.datas.month12s}></Groupedcolumn>)
+            return (<YingYee datas={this.state.datas.month12s}></YingYee>)
         }
     }
     getTubiaoLeiji(){
         if (this.state.datas.month12s.length>0){
-            return (<Groupedcolumn2 datas={this.state.datas.month12s}></Groupedcolumn2>)
+            return (<JingShouYi datas={this.state.datas.month12s}></JingShouYi>)
         }
     }
     getKeDanJia(){
         if (this.state.datas.month12s.length>0){
-            return (<KeDanJia datas={this.state.datas.month12s}></KeDanJia>)
+            return (<XiaoSHouTicheng datas={this.state.datas.month12s}/>)
         }
     }
     getCangKuInxi(){
@@ -778,6 +792,8 @@ export default class TongJiBaoBiao extends Component{
   }
     // 获取商品汇总
     getItemRows(){
+        console.log('获取商品汇总')
+
       if (this.state.datas.items.length>0){
         var items = []
         var index = 0
@@ -788,16 +804,34 @@ export default class TongJiBaoBiao extends Component{
         })
 
         this.state.datas.items.forEach(element => {
+            let index = 0
+            if(this.state.orderSearchText.length>0){
+                index = (element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + element.ITEM_NAME).indexOf(this.state.orderSearchText.toUpperCase())
+            }
+           if(index<0){
+               return
+           }
           var shangsheng = '上升'
           var panduan = (element.ITEM_XS_PRICE - element.ITEM_TH_PRICE) - (element.BF_ITEM_XS_PRICE - element.BF_ITEM_TH_PRICE)
           if (panduan > 0){shangsheng = '↗'}
           else if (panduan === 0){shangsheng = '='}
           else if (panduan < 0){shangsheng = '↓'}
           items.push(
-            <Table.Row key={index++}>
+            <Table.Row key={element.COM_TYPE_ID + element.ITEM_ID}>
               <Table.Cell>{index}</Table.Cell>
-              <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-              <Table.Cell>{element.COM_TYPE_ID}</Table.Cell>
+              <Table.Cell>
+                  <Label onClick={()=>{
+                    this.setState({
+                        showCK:true,
+                        selitemid:element.ITEM_ID,
+                        selcomtypeid:element.COM_TYPE_ID,
+                        selitemname:element.ITEM_NAME,
+                    })
+                  }} color='blue'>
+                      {element.ITEM_NAME}
+                  </Label>
+                  </Table.Cell>
+              <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID}</Table.Cell>
               <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_PRICE - element.ITEM_TH_PRICE)}</Table.Cell>
               <Table.Cell textAlign='right'>{element.ITEM_XS_NUMBER - element.ITEM_TH_NUMBER}</Table.Cell>
               <Table.Cell textAlign='right'>{Common.formatCurrency(element.ITEM_XS_COST - element.ITEM_TH_COST)}</Table.Cell>
@@ -847,10 +881,29 @@ export default class TongJiBaoBiao extends Component{
                 <Grid>
                     <Grid.Row  >
                         <Grid.Column width={5}>
+                            <GridRow>
                             {this.getTubiao1()}
-                            </Grid.Column>
-                        <Grid.Column width={6}>{this.getTubiaoLeiji()}</Grid.Column>
-                        <Grid.Column width={5}>{this.getKeDanJia()}</Grid.Column>
+                            </GridRow>
+                            <GridRow>
+                            月销售额
+                            </GridRow>
+                        </Grid.Column>
+                        <Grid.Column width={6}>
+                            <GridRow>
+                            {this.getTubiaoLeiji()}
+                            </GridRow>
+                            <GridRow>
+                                月净收益
+                            </GridRow>
+                        </Grid.Column>
+                        <Grid.Column width={5}>
+                            <GridRow>
+                            {this.getKeDanJia()}
+                            </GridRow>
+                            <GridRow>
+                                月净收益
+                            </GridRow>
+                        </Grid.Column>
                     </Grid.Row>
                        
                         {this.getCangKuInxi()}
@@ -884,6 +937,7 @@ export default class TongJiBaoBiao extends Component{
                     Specifications
                 </Header>
                 </Divider>
+
                 <Table  celled structured>
                     {this.getcomHeadle()}
                     {this.getCOMRows()}
@@ -894,12 +948,13 @@ export default class TongJiBaoBiao extends Component{
                     Specifications
                 </Header>
                 </Divider>
+                <Input icon='search' size='small' placeholder='Search...'  onChange={(e,f)=>{this.setState({orderSearchText:f.value})}} />
                 <Table  celled structured>
                     <Table.Header>
                         <Table.Row>
-                        <Table.HeaderCell>销售排行</Table.HeaderCell>
+                        <Table.HeaderCell>序号</Table.HeaderCell>
                             <Table.HeaderCell>商品名称</Table.HeaderCell>
-                            <Table.HeaderCell>商品分类</Table.HeaderCell>
+                            <Table.HeaderCell>商品编号</Table.HeaderCell>
                             <Table.HeaderCell>销售金额</Table.HeaderCell>
                             <Table.HeaderCell>销售数量</Table.HeaderCell>
                             <Table.HeaderCell>销售成本</Table.HeaderCell>
@@ -912,6 +967,7 @@ export default class TongJiBaoBiao extends Component{
                     </Table.Header>
                     {this.getItemRows()}
                 </Table>
+                <XiaoShouPaiHang showCK={this.state.showCK}  setShowCK={this.state.setShowCK}  itemid={this.state.selitemid}   comtypeid={this.state.selcomtypeid}  itemname={this.state.selitemname}></XiaoShouPaiHang>
             </div>
         )
     }

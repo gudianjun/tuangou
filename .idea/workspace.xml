@@ -2,27 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4d781d7d-e0fd-4ad4-88a2-0276aec58b93" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/src/pages/ShenPiXiangXi/components/ComTypeTabs.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/ShenPiXiangXi/components/SPXiangXiSub.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pages/ShenPiXiangXi/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/BaoBiao/JingShouYi.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/BaoBiao/XiaoShouTicheng.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/BaoBiao/YingYeE.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/XiaoShouPaiHang/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/common.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/common.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/commonConst.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/commonConst.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/CaiGouGuanLi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/CaiGouGuanLi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/DangRiXiaoShouJiLu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/DangRiXiaoShouJiLu.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/KuCunZongLan.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/KuCunZongLan.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/MemKuCunZongLan.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/MemKuCunZongLan.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ConfirmEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ConfirmEdit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/MemberEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/MemberEdit.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/TongJiBaoBiao.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/TongJiBaoBiao.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/statistics/KCHuiZong.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/statistics/KCHuiZong.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/statistics/SSxiangxi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/statistics/SSxiangxi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/statistics/ZYXiangXi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/statistics/ZYXiangXi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/MainForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/MainForm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/Cangku/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Cangku/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/Role/components/RoleManage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/Role/components/RoleManage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/ItemChangeType/components/ItemDropDown.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/ItemChangeType/components/ItemDropDown.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/ItemChangeType/components/ItemWhAll.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/ItemChangeType/components/ItemWhAll.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/ShenPiXiangXi/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/ShenPiXiangXi/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +61,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/pages/ShenPiXiangXi/components" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/pages/BaoBiao" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
@@ -74,11 +69,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/BaoBiao" />
+      <recent name="$PROJECT_DIR$/src/pages/XiaoShouPaiHang" />
       <recent name="$PROJECT_DIR$/src/pages/ShenPiXiangXi/components" />
       <recent name="$PROJECT_DIR$/src/pages/ShenPiXiangXi" />
       <recent name="$PROJECT_DIR$/src/pages/ItemChangeType" />
-      <recent name="$PROJECT_DIR$/src/pages/Role/components" />
-      <recent name="$PROJECT_DIR$/src/pages/Cangku" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -86,7 +81,7 @@
       <command value="添加" />
     </option>
   </component>
-  <component name="RunManager" selected="npm.NPM BUILD">
+  <component name="RunManager" selected="npm.NPM START">
     <configuration name="未命名" type="JavascriptDebugType" nameIsGenerated="true" uri="http://localhost:3000" useFirstLineBreakpoints="true">
       <method v="2">
         <option name="RunConfigurationTask" enabled="true" run_configuration_name="NPM START" run_configuration_type="js.build_tools.npm" />
@@ -137,7 +132,8 @@
       <workItem from="1649837942646" duration="55733000" />
       <workItem from="1650192253060" duration="1247000" />
       <workItem from="1650262785712" duration="45823000" />
-      <workItem from="1650419169358" duration="72099000" />
+      <workItem from="1650419169358" duration="82136000" />
+      <workItem from="1651020334065" duration="18491000" />
     </task>
     <servers />
   </component>
@@ -160,12 +156,12 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/SubItem/MemberEdit.js</url>
-          <line>715</line>
+          <line>716</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/SubItem/MemberEdit.js</url>
-          <line>84</line>
+          <line>85</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -185,12 +181,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/SubItem/MemberEdit.js</url>
-          <line>595</line>
+          <line>596</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/App.js</url>
-          <line>99</line>
+          <line>104</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -220,8 +216,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js</url>
-          <line>463</line>
-          <properties lambdaOrdinal="-1" />
+          <line>467</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>

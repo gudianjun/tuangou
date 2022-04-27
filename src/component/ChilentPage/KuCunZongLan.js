@@ -75,6 +75,28 @@ export default class KuCunZongLan extends Component{
             )
         }
     }
+
+    getWHLable(key, shop, element){
+         const {menumstate} = this.context;
+        if(menumstate.whordershow === true){
+            return (<Table.Cell key={(key).toString()} textAlign='right'>
+                <Label as='a' onClick={() => this.showSetInfo(shop, element)}
+                       color={'blue'}>
+                                            <span title={shop.SHOP_NAME + ":" + element.ITEM_NAME}>
+                                            {element['SHOP_NAME_' + shop.SHOP_ID]}</span>
+                </Label>
+            </Table.Cell>)
+        }
+        else{
+            return (<Table.Cell key={(key).toString()} textAlign='right'>
+
+                                            <span title={shop.SHOP_NAME + ":" + element.ITEM_NAME}>
+                                            {element['SHOP_NAME_' + shop.SHOP_ID]}</span>
+            </Table.Cell>)
+        }
+
+    }
+
     render(){
         // const [showCK, setShowCK] = useState(false);
         // const [itemid, setItemid] = useState(-1);
@@ -112,16 +134,18 @@ export default class KuCunZongLan extends Component{
                             this.state.data.shopname.forEach(shop => {
                                 if(this.state.dropselect === -1 || shop.SHOP_ID === this.state.dropselect) {
                                     colms.push(
-                                        <Table.Cell key={(nkey++).toString()} textAlign='right'>
-                                            <Label as='a' onClick={() => this.showSetInfo(shop, element)}
-                                                   color={'blue'}>
-                                            <span title={shop.SHOP_NAME + ":" + element.ITEM_NAME}>
-                                            {element['SHOP_NAME_' + shop.SHOP_ID]}</span>
-                                            </Label>
-                                        </Table.Cell>
+                                        // <Table.Cell key={(nkey++).toString()} textAlign='right'>
+                                        //     <Label as='a' onClick={() => this.showSetInfo(shop, element)}
+                                        //            color={'blue'}>
+                                        //     <span title={shop.SHOP_NAME + ":" + element.ITEM_NAME}>
+                                        //     {element['SHOP_NAME_' + shop.SHOP_ID]}</span>
+                                        //     </Label>
+                                        // </Table.Cell>
+                                        this.getWHLable(nkey++, shop, element)
                                     )
                                 }
-                        })}
+                        })
+                        }
                         {colms}
                         <Table.Cell key={ (nkey++).toString()} textAlign='right'>{element.TOTLE_NUMBER}</Table.Cell>
                     </Table.Row>

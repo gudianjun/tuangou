@@ -14,3 +14,8 @@
  export const tongjibaobiao = "tongjibaobiao"
  export const quanxianguanli = "quanxianguanli"
  export const download = "download"
+ export const whinoutorder = "whinoutorder"
+ export const xiaoshouchengben = "xiaoshouchengben"
+ export const tuihuochengben = "tuihuochengben"
+ export const xiaohuichengben = "xiaohuichengben"
+ export const whordershow = "whordershow"

@@ -37,6 +37,7 @@ export default class MemberEdit extends Component{
             modelinfo:[],    // 选择用户的存取货履历
             showmemWH:false, // 显示用户存取货对话框
             memWHName:"",   // 会员名称
+            orderSearchText:"", //　会员详细订单搜索文本
         }
         this.SHOP_ID = -1;
         this.getItems() // 获得编辑列表
@@ -199,7 +200,7 @@ export default class MemberEdit extends Component{
                 this.setState(
                     {
                         showmemWH:true,
-                        memWHName:this.state.baseitems[memindex].MEM_LASTNAME+ this.state.baseitems[memindex].MEM_FIRSTNAME ,
+                        memWHName:'('+this.state.baseitems[memindex].MEM_CODE+')' + this.state.baseitems[memindex].MEM_LASTNAME+ this.state.baseitems[memindex].MEM_FIRSTNAME ,
                         modelinfo: e.data
                     }
                 )
@@ -440,7 +441,7 @@ export default class MemberEdit extends Component{
     }
     // 显示存取款履历
     showAddMoneyHistory(element){
-        Common.sendMessage(Common.baseUrl + "/member/memmoneyhistory"
+        Common.sendMessage(Common.baseUrl + "/member/getmemitems"
             , "POST"
             , null
             , {
@@ -462,7 +463,7 @@ export default class MemberEdit extends Component{
                             <Table.Cell collapsing textAlign='right'>
                             <Label as='a' onClick={()=>this.showAddMoneyHistory(element)}  
                             color={element.MEM_MONEY>0?'blue' :'green'}>
-                                {Common.formatCurrency(element.MEM_MONEY)}
+                                查看
                             </Label>
                                 </Table.Cell>
                             <Table.Cell collapsing>{element.MEM_LASTNAME}</Table.Cell>
@@ -483,7 +484,7 @@ export default class MemberEdit extends Component{
     onEditItem(itemname, item, value){
         if(itemname === 'MEM_LASTNAME'){
             // 控制长度
-            if (value.length <= 4){
+            if (value.length <= 10){
                 item[itemname] = value
                 console.log('控制长度', value.length)
                 this.setState({
@@ -492,7 +493,7 @@ export default class MemberEdit extends Component{
             }
         }
         else if(itemname === 'MEM_FIRSTNAME'){
-            if (value.length <= 8){
+            if (value.length <= 10){
                 item[itemname] = value
                 console.log('控制长度', value.length)
                 this.setState({
@@ -774,25 +775,11 @@ export default class MemberEdit extends Component{
         if(this.state.showmem){
             var key=0
             this.state.moneyhistory.items.forEach(element => {
-                var typename = '未知'
-                if(element.ORDER_TYPE === 1){
-                    typename = '存款'
-                }
-                else if(element.ORDER_TYPE === 2){
-                    typename = '销售'
-                }
-                else if(element.ORDER_TYPE === 3){
-                    typename = '退货'
-                }
-                else if(element.ORDER_TYPE === 4){
-                    typename = '调整'
-                }
                 mhrows.push(<Table.Row key={key++}>
                     <Table.Cell>{key}</Table.Cell>
-                    <Table.Cell>{element.ORDER_ID}</Table.Cell>
-                    <Table.Cell>{typename}</Table.Cell>
-                    <Table.Cell>{element.MEM_MONEY}</Table.Cell>
-                    <Table.Cell>{element.ORDER_TIME}</Table.Cell>
+                    <Table.Cell>{element.ITEM_ID.toString() + element.COM_TYPE_ID}</Table.Cell>
+                    <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                    <Table.Cell>{element.ITEM_COUNT}</Table.Cell>
                     </Table.Row>)
             });
         }
@@ -807,16 +794,22 @@ export default class MemberEdit extends Component{
                 else if(element.ORDER_TYPE === 1){
                     totel-=element.ITEM_NUMBER
                 }
-                memrows.push(
-                    <Table.Row key = {element.ORDER_ID + element.COM_TYPE_ID + element.ITEM_ID.toString()}>
-                        <Table.Cell>{element.ORDER_ID}</Table.Cell>
-                        <Table.Cell>{element.ORDER_TIME}</Table.Cell>
-                        <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
-                        <Table.Cell>{element.ITEM_NAME}</Table.Cell>
-                        <Table.Cell>{element.ORDER_TYPE === 0 ? '存入': '提出'}</Table.Cell>
-                        <Table.Cell>{element.ITEM_NUMBER}</Table.Cell>
-                    </Table.Row>
-                )
+                let index = -1
+                if(this.state.searchtext !== undefined){
+                    index = (element.COM_TYPE_ID.toUpperCase() + element.ITEM_ID.toString() + element.ITEM_NAME).indexOf(this.state.orderSearchText.toUpperCase())
+                }
+                if(index>=0) {
+                    memrows.push(
+                        <Table.Row key={element.ORDER_ID + element.COM_TYPE_ID + element.ITEM_ID.toString()}>
+                            <Table.Cell>{element.ORDER_ID}</Table.Cell>
+                            <Table.Cell>{element.ORDER_TIME}</Table.Cell>
+                            <Table.Cell>{element.COM_TYPE_ID + element.ITEM_ID.toString()}</Table.Cell>
+                            <Table.Cell>{element.ITEM_NAME}</Table.Cell>
+                            <Table.Cell>{element.ORDER_TYPE === 0 ? '存入' : '提出'}</Table.Cell>
+                            <Table.Cell>{element.ITEM_NUMBER}</Table.Cell>
+                        </Table.Row>
+                    )
+                }
             })
 
 
@@ -835,7 +828,7 @@ export default class MemberEdit extends Component{
                     <Table.Header  >
                     <Table.Row>
                         <Table.HeaderCell >会员号</Table.HeaderCell>
-                        <Table.HeaderCell >余额</Table.HeaderCell>
+                        <Table.HeaderCell >存货量</Table.HeaderCell>
                         <Table.HeaderCell >姓氏</Table.HeaderCell>
                         <Table.HeaderCell >名字</Table.HeaderCell>
                         <Table.HeaderCell >生日</Table.HeaderCell>
@@ -880,7 +873,7 @@ export default class MemberEdit extends Component{
                 </Modal>
 
                 <Modal open={this.state.showmem}>   
-                    <Modal.Header>{'会员【' + this.state.moneyhistory.MEM_NAME + '】当前余额【' + Common.formatCurrency(this.state.moneyhistory.MEM_MONEY) + '】'}
+                    <Modal.Header>{'会员【' + this.state.moneyhistory.MEM_NAME + '】'}
                         <ButtonGroup style={{position:'absolute',right:60}}>
                             <Button onClick={()=>this.setState({showmem:false})} >
                                 关闭
@@ -894,10 +887,9 @@ export default class MemberEdit extends Component{
                                     <Table.Header  >
                                         <Table.Row key={ 1}>
                                             <Table.HeaderCell >序号</Table.HeaderCell>
-                                            <Table.HeaderCell >订单ID</Table.HeaderCell>
-                                            <Table.HeaderCell >订单类型</Table.HeaderCell>
-                                            <Table.HeaderCell >订单金额</Table.HeaderCell>
-                                            <Table.HeaderCell >订单时间</Table.HeaderCell>
+                                            <Table.HeaderCell >商品编号</Table.HeaderCell>
+                                            <Table.HeaderCell >商品名称</Table.HeaderCell>
+                                            <Table.HeaderCell >会员持有数量</Table.HeaderCell>
                                         </Table.Row>
                                     </Table.Header>
                                     <Table.Body >
@@ -910,7 +902,7 @@ export default class MemberEdit extends Component{
                         </Grid>
                     </Modal.Content>
                     <Modal.Actions>
-                        记录最多只显示最近的100条记录
+                        用户商品存货数量
                     </Modal.Actions>
                 </Modal>  
 
@@ -980,7 +972,11 @@ export default class MemberEdit extends Component{
                          </Modal.Header>
                          <Modal.Content>
                              <Grid columns='equal'>
-                                 <Grid.Column>
+                                 <Grid.Row>
+                                     <Input icon='search' size='small' placeholder='Search...'  onChange={(e,f)=>{this.setState({orderSearchText:f.value})}} />
+                                 </Grid.Row>
+                                 <Grid.Row>
+                                    <Grid.Column>
                                      <div  style={{height:  '75vh' , overflowY:'scroll' }}>
                                          <Table celled selectable>
                                              <Table.Header  >
@@ -1000,6 +996,7 @@ export default class MemberEdit extends Component{
                                              </Table.Footer>
                                          </Table></div>
                                  </Grid.Column>
+                                 </Grid.Row>
                              </Grid>
                          </Modal.Content>
                          <Modal.Actions>

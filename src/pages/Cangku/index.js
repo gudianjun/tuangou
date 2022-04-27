@@ -14,8 +14,10 @@ import {
 import Common from "../../common/common";
 import {element, object} from "prop-types";
 import DatePicker from "react-datepicker";
+import {MainContext} from "../../component/ChilentPage/ObjContext";
 const CangkuXiangXi = ({showCK,setShowCK, itemid, comtypeid, shopid, itemname, shopname}) =>{
-
+    const {_currentValue} = MainContext;
+    const {menumstate} = _currentValue;
     const [datefrom, setDatefrom] = useState(new Date())
     const [dateto, setDateto] = useState(new Date())
     const [orderinfos, setOrderinfos] = useState([])
@@ -45,7 +47,7 @@ const CangkuXiangXi = ({showCK,setShowCK, itemid, comtypeid, shopid, itemname, s
     }
     function getOpeType(item){
         if(item.OPE_TYPE===0){
-            return '销售订单'
+            return '销售'
         }
         else if(item.OPE_TYPE===1){
             return '退货'
@@ -54,18 +56,23 @@ const CangkuXiangXi = ({showCK,setShowCK, itemid, comtypeid, shopid, itemname, s
             return '销毁'
         }
         else if(item.OPE_TYPE===3){
-            if(item.RELATED_ORDER_ID[1] === 'I'){
-                return '入库'
+            if(item.ORDER_TYPE===0){
+                return '直接入库'
             }
             else{
-                return '出库'
+                return '直接出库'
             }
         }
         else if(item.OPE_TYPE===4){
-            return '转库'
+            if(item.ORDER_TYPE===0){
+                return '直接转入'
+            }
+            else{
+                return '直接转出'
+            }
         }
         else if(item.OPE_TYPE===5){
-            if(item.RELATED_ORDER_ID[1] === 'I'){
+            if(item.ORDER_TYPE===0){
                 return '会员存货'
             }
             else{
@@ -76,7 +83,12 @@ const CangkuXiangXi = ({showCK,setShowCK, itemid, comtypeid, shopid, itemname, s
             return '采购'
         }
         else if(item.OPE_TYPE===7){
-            return '确认转库'
+            if(item.ORDER_TYPE===0){
+                return '流转入库'
+            }
+            else{
+                return '流转出库'
+            }
         }
     }
     if(showCK){
@@ -193,24 +205,30 @@ const CangkuXiangXi = ({showCK,setShowCK, itemid, comtypeid, shopid, itemname, s
                                         <Table.HeaderCell >订单时间</Table.HeaderCell>
                                         <Table.HeaderCell >订单类型</Table.HeaderCell>
                                         <Table.HeaderCell >操作类型</Table.HeaderCell>
-
                                         <Table.HeaderCell >数量</Table.HeaderCell>
                                         <Table.HeaderCell >操作前数量</Table.HeaderCell>
-                                        <Table.HeaderCell >关联订单</Table.HeaderCell>
+                                        <Table.HeaderCell >结余</Table.HeaderCell>
+                                        {menumstate.whinoutorder?(<Table.HeaderCell >关联订单</Table.HeaderCell>):null}
+
                                     </Table.Row>
                                 </Table.Header>
                                 <Table.Body >
                                     {orderinfos.map(element=>{
+                                        console.log('orderinfos')
                                         return (
                                             <Table.Row key={element.ORDER_ID+element.ITEM_ID+element.COM_TYPE_ID}>
                                                 <Table.Cell>{element.ORDER_ID}</Table.Cell>
                                                 <Table.Cell>{element.ORDER_TIME}</Table.Cell>
-                                                <Table.Cell>{element.ORDER_TYPE===0?"入库":"出库"}</Table.Cell>
+                                                <Table.Cell>{((element.ORDER_TYPE===0)?"入库":"出库")}</Table.Cell>
                                                 <Table.Cell>{getOpeType(element)}</Table.Cell>
                                                 <Table.Cell>{element.ITEM_NUMBER}</Table.Cell>
                                                 <Table.Cell>{element.BEFORE_ITEM_NUMBER}</Table.Cell>
-                                                <Table.Cell><Label as='a' onClick={()=>showSetInfo(element)}
-                                                                   color={'blue'}>{element.ORDER_ID}</Label> </Table.Cell>
+                                                <Table.Cell >{element.ORDER_TYPE===0?element.BEFORE_ITEM_NUMBER+element.ITEM_NUMBER:element.BEFORE_ITEM_NUMBER-element.ITEM_NUMBER}</Table.Cell>
+                                                {menumstate.whinoutorder?(
+                                                    <Table.Cell><Label as='a' onClick={()=>showSetInfo(element)}
+                                                                       color={'blue'}>{element.ORDER_ID}</Label> </Table.Cell>
+                                                ):null}
+
                                             </Table.Row>
                                         )
 

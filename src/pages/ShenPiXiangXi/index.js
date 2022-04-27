@@ -92,8 +92,8 @@ const ShenPiXiangXi = ( {showXX, setShowXX, shopID, selDateTime, spInfos}) =>{
         <div >
             <Modal open={showXX}>
                 <Modal.Header>{(shopName.current + '店'
-                    + selDateTime.getFullYear().toString() + '年'
-                    + selDateTime.getMonth().toString() + '月'
+                    + selDateTime.getFullYear() + '年'
+                    + (selDateTime.getMonth() + 1).toString() + '月'
                     + selDateTime.getDate().toString() + '日 '+ '报表')}
                     <ButtonGroup style={{position:'absolute',right:60}}>
                         <Button onClick={()=>{
@@ -174,7 +174,7 @@ const ShenPiXiangXi = ( {showXX, setShowXX, shopID, selDateTime, spInfos}) =>{
                             </GridRow>
                             <GridRow>
                                 <Label as='a'>
-                                    <Icon name='mail' /> 取领货
+                                    <Icon name='mail' /> 存取货
                                 </Label>
                             </GridRow>
                             <GridRow>

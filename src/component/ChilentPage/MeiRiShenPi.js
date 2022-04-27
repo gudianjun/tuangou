@@ -314,6 +314,7 @@ export default class MeiRiShenPi extends Component{
         }
     }
     render(){
+        const {menumstate} = this.context;
         var rows=[]
         if (this.state!=null && this.state.selectobject !== null){
             this.state.selectobject.forEach(element => {
@@ -326,11 +327,13 @@ export default class MeiRiShenPi extends Component{
                     <Table.Row key={element.SHOP_ID}>
                         <Table.Cell>{this.getRefFlg(element)}{element.SHOP_NAME}</Table.Cell>
                         <Table.Cell textAlign='right'>{this.getNumber(element, 0)}</Table.Cell>
-                        <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS_COST) : '-'}</Table.Cell>
+                        {menumstate.xiaoshouchengben?( <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XS_COST) : '-'}</Table.Cell> ):null}
                         <Table.Cell textAlign='right'>{this.getNumber(element, 1)}</Table.Cell>
-                        <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_TH_COST) : '-'}</Table.Cell>
-                        <Table.Cell textAlign='right'>{this.getNumber(element, 2)}</Table.Cell>
-                        <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.EMP_PRICE) : '-'}</Table.Cell>
+
+                        {menumstate.tuihuochengben?( <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_TH_COST) : '-'}</Table.Cell>):null}
+                        {menumstate.tuihuochengben?(  <Table.Cell textAlign='right'>{this.getNumber(element, 2)}</Table.Cell>):null}
+                        {menumstate.xiaohuichengben?( <Table.Cell textAlign='right'>{element.DISP_STATE !== 0 ? Common.formatCurrency(element.TOTAL_XH_COST) : '-'}</Table.Cell>):null}
+
                         <Table.Cell textAlign='right'>
                             <Label color={'red'} onClick={() => {
 
@@ -445,11 +448,12 @@ export default class MeiRiShenPi extends Component{
                         <Table.Row>
                             <Table.HeaderCell >店铺名称</Table.HeaderCell>
                             <Table.HeaderCell >销售金额</Table.HeaderCell>
-                            <Table.HeaderCell >销售成本</Table.HeaderCell>
+                            {menumstate.xiaoshouchengben?( <Table.HeaderCell >销售成本</Table.HeaderCell>):null}
                             <Table.HeaderCell >退货金额</Table.HeaderCell>
-                            <Table.HeaderCell >退货成本</Table.HeaderCell>
-                            <Table.HeaderCell >销毁成本</Table.HeaderCell>
-                            <Table.HeaderCell >提成金额</Table.HeaderCell>
+                            {menumstate.tuihuochengben?( <Table.HeaderCell >退货成本</Table.HeaderCell>):null}
+                            {menumstate.xiaohuichengben?( <Table.HeaderCell >销毁成本</Table.HeaderCell>):null}
+                            {menumstate.xiaohuichengben?( <Table.HeaderCell >提成金额</Table.HeaderCell>):null}
+
                             <Table.HeaderCell >应收账款</Table.HeaderCell>
                             <Table.HeaderCell >实收账款</Table.HeaderCell>
                             <Table.HeaderCell >审批状态</Table.HeaderCell>
