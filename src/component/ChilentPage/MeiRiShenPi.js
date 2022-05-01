@@ -23,7 +23,8 @@ export default class MeiRiShenPi extends Component{
             spInfos:{}
         }
         this.getInitData()
-     
+        console.log("meirishenpi- selectdate" + (new Date(+new Date() + 8 * 3600 * 1000)).toISOString())
+        console.log("meirishenpi- selDateTime" + this.state.selDateTime)
     }
     setShowXX(show){
         this.setState({showXX:show})
@@ -35,6 +36,8 @@ export default class MeiRiShenPi extends Component{
         }, ()=>{
             this.getInitData()
         });
+        console.log("dateChange meirishenpi- selectdate" + (new Date(+new Date() + 8 * 3600 * 1000)).toISOString())
+        console.log("dateChange meirishenpi- selDateTime" + this.state.selDateTime)
       };
     getInitData(){
         Common.sendMessage(Common.baseUrl + "/statistics/meirishenpi"

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Confirm, Message, Segment, Menu, Icon, Grid, ButtonGroup} from 'semantic-ui-react'
+import {Button, Confirm, Message, Segment, Menu, Icon, Grid, ButtonGroup, Dropdown} from 'semantic-ui-react'
 import {Switch, Route, withRouter} from 'react-router-dom'
 import Common from "../common/common"
 import MySidebar from "./MySidebar"
@@ -33,6 +33,7 @@ class MainForm extends Component{
         activeItem: 'bio',
         ConfirmTitle:context.confirmInfo.content,
         open:context.confirmInfo.open,
+          xiangxiData:new Date(),
         showMsg:true,
           showXX:false,
           setShowXX:this.setShowXX,
@@ -193,30 +194,48 @@ class MainForm extends Component{
          )
      }
   }
+    getShenPiXiangXi(days){
+      let tempDateTime =new Date((new Date()).setDate((new Date()).getDate() - days))
+        console.log("getShenPiXiangXi" + tempDateTime)
+      Common.sendMessage(Common.baseUrl + "/statistics/getshenpixiangxi"
+          , "POST"
+          , null
+          , {
+          // (new Date(+new Date() + 8 * 3600 * 1000))
+                ORDER_TIME:new Date(+tempDateTime+ 8 * 3600 * 1000).toISOString().substring(0, 10),
+          }
+          , null
+          , (e)=>{
+              console.log('/statistics/getshenpixiangxi')
+              this.setState({
+                  showXX:true,
+                  shopID:e.data['SHOP_ID'],
+                  spInfos:e.data,
+                  xiangxiData:tempDateTime,
+              })
+          },null,
+          this.context)
+  }
   addYingYeGaiKuang(){
       console.log('addYingYeGaiKuang')
       if(this.context.shoptype !== -1 && this.context.shoptype === 0) {
-          return (
-              <Button primary size='mini' as='a'  onClick={()=>
-                  Common.sendMessage(Common.baseUrl + "/statistics/getshenpixiangxi"
-                      , "POST"
-                      , null
-                      , {
 
-                      }
-                      , null
-                      , (e)=>{
-                          console.log('/statistics/getshenpixiangxi')
-                          this.setState({
-                              showXX:true,
-                              shopID:e.data['SHOP_ID'],
-                              spInfos:e.data,
-                          })
-                      },null,
-                      this.context)
-              }>
-                  营业概况
-              </Button>
+          return (
+              <Menu>
+              <Dropdown item text='营业概况'>
+                  <Dropdown.Menu>
+                      <Dropdown.Item  onClick={
+                          ()=>this.getShenPiXiangXi(0)
+                      }>当天</Dropdown.Item>
+                      <Dropdown.Item onClick={
+                          ()=>this.getShenPiXiangXi(1)
+                      }>昨天</Dropdown.Item>
+                      <Dropdown.Item onClick={
+                          ()=>this.getShenPiXiangXi(2)
+                      }>前天</Dropdown.Item>
+                  </Dropdown.Menu>
+              </Dropdown>
+              </Menu>
           )
       }
 
@@ -293,7 +312,7 @@ class MainForm extends Component{
                     </Grid.Row>
 
             <ShenPiXiangXi showXX={this.state.showXX} setShowXX={this.setShowXX.bind(this)} shopID={this.state.shopID}
-                           selDateTime={new Date()} spInfos={this.state.spInfos}></ShenPiXiangXi>
+                           selDateTime={this.state.xiangxiData} spInfos={this.state.spInfos}></ShenPiXiangXi>
                 </div>
         )}
          </MainContext.Consumer>

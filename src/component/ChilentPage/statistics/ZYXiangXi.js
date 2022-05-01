@@ -104,7 +104,8 @@ export default class ZYXiangXi extends Component{
                 icon:'th'
             }, ...props.itemoption], // 商品列表
             itemoptionsel:'-1', // 选择的商品
-        }      
+        }
+
     }
 
     addDownloadButton(){

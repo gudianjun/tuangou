@@ -117,6 +117,28 @@ export default class MemKuCunZongLan extends Component{
             )
         }
     }
+    onDownloadHuiYuan(shopid) {
+        Common.downloadFile(Common.baseUrl + "/item/downloadfile", "POST", null
+            , {
+                filetype: 'huiyuankucun',
+                SHOP_ID: shopid,
+            }, null
+            , (e) => {
+            }
+        )
+    }
+    addDownloadButton2(shop) {
+        const {menumstate} = this.context;
+        if(menumstate.download) {
+            return (
+                <Label onClick={() => {
+                    this.onDownloadHuiYuan(shop.SHOP_ID)
+                }}>
+                    <Icon name='download'></Icon>
+                </Label>
+            )
+        }
+    }
     render(){
         var nkey = 1
         var rows=[]
@@ -125,10 +147,16 @@ export default class MemKuCunZongLan extends Component{
         var dropshops=[]
         dropshops.push({key:-1,value:-1,text:"全部"})
 
+
         if (this.state.data.shopname !== undefined){
             this.state.data.shopname.forEach(shop => {
                 if(this.state.dropselect === -1 || shop.SHOP_ID === this.state.dropselect) {
-                    shopclms.push(<Table.HeaderCell key={(nkey++).toString()}>{shop.SHOP_NAME}</Table.HeaderCell>)
+                    shopclms.push(<Table.HeaderCell key={(nkey++).toString()}>
+
+
+                        {shop.SHOP_NAME}
+                        {this.addDownloadButton2(shop)}
+                    </Table.HeaderCell>)
                 }
                 dropshops.push({key: shop.SHOP_ID, value: shop.SHOP_ID, text: shop.SHOP_NAME})
             })
