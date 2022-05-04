@@ -39,8 +39,7 @@ async function  download(fetchResult) {
 export default class Common{
     static get baseUrl(){
         return  "http://47.108.133.145:5000/v1";
-        //return  "http://47.108.134.232:5000/v1";
-        //return  "http://127.0.0.1:5000/v1";
+        //return  "https://127.0.0.1:5000/v1";
     }
 
     static _setStorage(key, value){

@@ -4,10 +4,8 @@
     <list default="true" id="4d781d7d-e0fd-4ad4-88a2-0276aec58b93" name="Changes" comment="Changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/common.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/common.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/MemKuCunZongLan.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/MemKuCunZongLan.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/statistics/ZYXiangXi.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/statistics/ZYXiangXi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/MainForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/MainForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ItemsEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ItemsEdit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ShopItemSelect.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ShopItemSelect.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,6 +125,7 @@
       <workItem from="1651153084995" duration="657000" />
       <workItem from="1651210923992" duration="187000" />
       <workItem from="1651297357151" duration="13020000" />
+      <workItem from="1651653523497" duration="2693000" />
     </task>
     <servers />
   </component>
@@ -201,11 +200,6 @@
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/SubItem/ShopItemSelect.js</url>
           <line>193</line>
           <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/component/ChilentPage/SubItem/ShopItemSelect.js</url>
-          <line>154</line>
-          <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js</url>

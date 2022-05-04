@@ -158,7 +158,7 @@ export default class ShopItemSelect extends Component{
             , {itemid:element.ITEM_ID,comtypeid:element.COM_TYPE_ID}
             , null
             , (e)=>{
-                this.setState({showset:true,setinfo:e.data, setname:element.ITEM_NAME})
+                this.setState({showset:true,setinfo:e.data.items, setname:element.ITEM_NAME + '：' + e.data.prices})
             }
             ,(e)=>{
                 const {setMainContext} = this.context

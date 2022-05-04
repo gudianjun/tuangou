@@ -607,7 +607,7 @@ export default class ItemsEdit extends Component{
             , {itemid:element.ITEM_ID,comtypeid:element.COM_TYPE_ID}
             , null
             , (e)=>{
-                this.setState({showsetdlg:true,setinfo:e.data, setname:element.ITEM_NAME})
+                this.setState({showsetdlg:true,setinfo:e.data.items, setname:element.ITEM_NAME + '：' + e.data.prices})
             }
             ,(e)=>{
                 const {setMainContext} = this.context
