@@ -145,6 +145,12 @@ export default class MenuExampleInvertedVertical extends Component {
                           active={activeItem === 'quanxianguanli'}
                           onClick={this.handleItemClick}
                       ><Icon name='key'/>权限管理</Menu.Item>) : null}
+
+                      {(menumstate.xiaohui || this.context.shoptype === 99) ? (<Menu.Item
+                          name='xiaohui'
+                          active={activeItem === 'xiaohui'}
+                          onClick={this.handleItemClick}
+                      ><Icon name='bullhorn'/>销毁查询</Menu.Item>) : null}
                   </Menu>
               )
 

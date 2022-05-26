@@ -24,6 +24,7 @@ import Role from "../pages/Role";
 import { MainContext} from './ChilentPage/ObjContext'
 import CaiGouGuanLi from './ChilentPage/CaiGouGuanLi';
 import ShenPiXiangXi from "../pages/ShenPiXiangXi";
+import XiaoHui from "../pages/XiaoHui";
 
 
 class MainForm extends Component{
@@ -190,6 +191,7 @@ class MainForm extends Component{
                  {menumstate.meirishenpi ? (<Route path='/main/meirishenpi' component={MeiRiShenPi}></Route>) : null}
                  {menumstate.tongjibaobiao ? (<Route path='/main/tongjibaobiao' component={TongJiBaoBiao}></Route>) : null}
                  {(menumstate.quanxianguanli || this.context.shoptype === 99) ? (<Route path='/main/quanxianguanli' component={Role}></Route>) : null}
+                 {(menumstate.xiaohui || this.context.shoptype === 99) ? (<Route path='/main/xiaohui' component={XiaoHui}></Route>) : null}
              </Switch>
          )
      }

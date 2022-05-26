@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4d781d7d-e0fd-4ad4-88a2-0276aec58b93" name="Changes" comment="Changes">
+      <change afterPath="$PROJECT_DIR$/src/pages/XiaoHui/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/common.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/common.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ItemsEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ItemsEdit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ShopItemSelect.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ShopItemSelect.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/commonConst.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/commonConst.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/MainForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/MainForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/MyMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/MyMenu.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +51,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/pages/BaoBiao" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/pages/XiaoHui" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
@@ -57,11 +59,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/pages/XiaoHui" />
       <recent name="$PROJECT_DIR$/src/pages/BaoBiao" />
       <recent name="$PROJECT_DIR$/src/pages/XiaoShouPaiHang" />
       <recent name="$PROJECT_DIR$/src/pages/ShenPiXiangXi/components" />
       <recent name="$PROJECT_DIR$/src/pages/ShenPiXiangXi" />
-      <recent name="$PROJECT_DIR$/src/pages/ItemChangeType" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -125,7 +127,8 @@
       <workItem from="1651153084995" duration="657000" />
       <workItem from="1651210923992" duration="187000" />
       <workItem from="1651297357151" duration="13020000" />
-      <workItem from="1651653523497" duration="2693000" />
+      <workItem from="1651653523497" duration="4006000" />
+      <workItem from="1652583276260" duration="13910000" />
     </task>
     <servers />
   </component>
@@ -178,17 +181,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/App.js</url>
-          <line>104</line>
+          <line>105</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/MainForm.js</url>
-          <line>149</line>
+          <line>150</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/component/MainForm.js</url>
-          <line>147</line>
+          <line>148</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -205,6 +208,12 @@
           <url>file://$PROJECT_DIR$/src/component/ChilentPage/MeiRiShenPi.js</url>
           <line>470</line>
           <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/pages/XiaoHui/index.js</url>
+          <line>153</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

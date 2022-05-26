@@ -71,6 +71,7 @@ class App extends React.Component{
       tuihuochengben : false,
       xiaohuichengben : false,
       whordershow : false,
+      xiaohui : false,
     },
     shoppingItems:[],
     setMainContext:(obj)=>{this.setMainContext(obj)},
