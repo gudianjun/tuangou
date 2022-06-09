@@ -459,6 +459,9 @@ export default class ConfirmEdit extends Component{
             })
             return
         }
+        this.setState({
+            showset:false
+        })
         // 提交编辑
         Common.sendMessage(Common.baseUrl + "/confirm/in"
         , "POST"
@@ -839,7 +842,7 @@ export default class ConfirmEdit extends Component{
                 <Modal open={this.state.showset}>   
                         <Modal.Header>请输入本次{this.state.inwhorder.CONFIRM_TYPE === 0?'【采购】':'【转库】'}订单【{this.state.inwhorder.ORDER_ID}】的实际入库数量
                             <ButtonGroup style={{position:'absolute',right:60}}>
-                            <Button  onClick={()=>this.onNumberSave(this.state.inwhorder)} primary >
+                            <Button onClick={()=>this.onNumberSave(this.state.inwhorder)} primary >
                                  保存
                             </Button>
                             <Button.Or />

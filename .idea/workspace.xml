@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4d781d7d-e0fd-4ad4-88a2-0276aec58b93" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/src/pages/XiaoHui/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/commonConst.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/commonConst.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/MainForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/MainForm.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/MyMenu.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/MyMenu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/common.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/common.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ConfirmEdit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/ChilentPage/SubItem/ConfirmEdit.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,6 +126,7 @@
       <workItem from="1651297357151" duration="13020000" />
       <workItem from="1651653523497" duration="4006000" />
       <workItem from="1652583276260" duration="13910000" />
+      <workItem from="1654771752872" duration="3834000" />
     </task>
     <servers />
   </component>
@@ -212,7 +210,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/pages/XiaoHui/index.js</url>
           <line>153</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
