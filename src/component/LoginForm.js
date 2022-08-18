@@ -10,7 +10,7 @@ class LoginForm extends Component{
     console.log("LoginForm初始化")
     super(props);
     this.state={
-      shopList:[], pwd:"", selectShop:null, pwdShowInfo:"密码", shopShowInfo:"选择你的店铺"
+      shopList:[], pwd:"", selectShop:null, pwdShowInfo:"密码", shopShowInfo:"请输入店铺ID", shop_id:""
     };
 
     // 请求登录列表
@@ -45,12 +45,19 @@ class LoginForm extends Component{
 
   // 登录操作
   onLogin(){
-    if(!isNaN(this.state.selectShop)){
-      this.setState({
-        shopShowInfo:"请选择一个店铺进行登录"
-      })
-      return;
-    }
+    // if(!isNaN(this.state.selectShop)){
+    //   this.setState({
+    //     shopShowInfo:"请选择一个店铺进行登录"
+    //   })
+    //   return;
+    // }
+      if(this.state.shop_id.length === 0)
+      {
+          this.setState({
+              shopShowInfo:"请输入店铺ID"
+          })
+          return;
+      }
     if(this.state.pwd.length === 0)
     {
       this.setState({
@@ -62,7 +69,7 @@ class LoginForm extends Component{
     console.log("发送login请求")
     Common.sendMessage(Common.baseUrl + "/login/accountlogin", "POST", null
     , {
-      shopid:this.state.selectShop.value, 
+      shopid:this.state.shop_id,
       pwd:this.state.pwd
     }, null
     , (e)=>{
@@ -96,8 +103,17 @@ class LoginForm extends Component{
                 </Header>
                 <Form size='large'>
                     <Segment stacked>
-                    <Form.Dropdown placeholder={this.state.shopShowInfo} search  fluid  selection  options={this.state.shopList} 
-                    onChange={(e, f)=>{this.setState({selectShop:this.state.shopList.find(element=>element.value === f.value)})}}/>
+                    {/*<Form.Dropdown placeholder={this.state.shopShowInfo} search  fluid  selection  options={this.state.shopList} */}
+                    {/*onChange={(e, f)=>{this.setState({selectShop:this.state.shopList.find(element=>element.value === f.value)})}}/>*/}
+                        <Form.Input
+                            maxLength='20'
+                            fluid
+                            icon='shop'
+                            error={false}
+                            iconPosition='left'
+                            placeholder={this.state.shopShowInfo}
+                            onChange={(e)=>{console.log(e); this.setState({shop_id:e.target.value})}}
+                        ></Form.Input>
                     <Form.Input
                         maxLength='20'
                         fluid
