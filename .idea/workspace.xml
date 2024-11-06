@@ -4,7 +4,6 @@
     <list default="true" id="4d781d7d-e0fd-4ad4-88a2-0276aec58b93" name="Changes" comment="Changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/common/common.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/common.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/component/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/component/LoginForm.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -127,7 +126,14 @@
       <workItem from="1651653523497" duration="4006000" />
       <workItem from="1652583276260" duration="13910000" />
       <workItem from="1654771752872" duration="4518000" />
-      <workItem from="1660702976032" duration="2392000" />
+      <workItem from="1660702976032" duration="2550000" />
+      <workItem from="1672732037170" duration="214000" />
+      <workItem from="1672745460532" duration="1127000" />
+      <workItem from="1672792735554" duration="29037000" />
+      <workItem from="1674785991763" duration="4412000" />
+      <workItem from="1676959427088" duration="675000" />
+      <workItem from="1684249020374" duration="2340000" />
+      <workItem from="1684291380330" duration="657000" />
     </task>
     <servers />
   </component>
