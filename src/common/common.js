@@ -38,7 +38,7 @@ async function  download(fetchResult) {
 
 export default class Common{
     static get baseUrl(){
-        return  "http://47.108.133.145:5000/v1";
+        return  "/v1";
         //return  "http://127.0.0.1:8000/v1";
     }
 
@@ -104,28 +104,28 @@ export default class Common{
             referrer: 'no-referrer', // *client, no-referrer
         })
         .then((res)=>{
-            console.log("请求�?�功?��获请求�??数据"); 
+            console.log("请求�?�功?��获请求�??数据"); 
             this.res = res;
-            return res.json(); //请求�?�功?��获请求�??数据
+            return res.json(); //请求�?�功?��获请求�??数据
         })
         .then((result)=>{
            
-            if(this.res.status < 300) // 成功�?请�?
-            { console.log("拿到数据进行页面渲�?"); 
+            if(this.res.status < 300) // 成功�?请�?
+            { console.log("拿到数据进行页面渲�?"); 
                 if(callbackobj!=null)
                 {
                     callbackobj(result, cot);
                 }
             }
             else{
-                // 抛�?�错误
-                console.log("拿到�?错误�?数据"); // 拿到数据进行页面渲�?
+                // 抛�?�错误
+                console.log("拿到�?错误�?数据"); // 拿到数据进行页面渲�?
                 
                
                 if (result.error_code === 4011){
                     if (cot!==null){
                         const {logout} = cot
-                        console.log(logout); // 拿到数据进行页面渲�?
+                        console.log(logout); // 拿到数据进行页面渲�?
                         logout()
                     }
                     callbackErr(result.msg);
@@ -141,7 +141,7 @@ export default class Common{
             }
         })
         .catch((err)=>{
-            //出错�?
+            //出错�?
             console.log("网络通信发生错误");
             console.log(err);
             if(callbackErr!=null)
@@ -189,7 +189,7 @@ export default class Common{
             .then( res => download(res) )
 
             .catch((err)=>{
-                //出错�?
+                //出错�?
                 console.log("网络通信发生错误");
                 console.log(err);
                 if(callbackErr!=null)
@@ -201,14 +201,14 @@ export default class Common{
     }
 
     static createPassword(min,max) {
-        //可以生�?�随机�?码的相关数�?
+        //可以生�?�随机�?码的相关数�?
         var num = ["0","1","2","3","4","5","6","7","8","9"];
         var english = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
         var ENGLISH = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
         //var special = ["-","_","#"];
         var config = num.concat(english).concat(ENGLISH)//.concat(special);
 
-        //先放入一个�?须存在�?
+        //先放入一个�?须存在�?
         var arr = [];
         arr.push(getOne(num));
         arr.push(getOne(english));
@@ -219,17 +219,17 @@ export default class Common{
         var len = min + Math.floor(Math.random()*(max-min+1));
 
         for(var i=4; i<len; i++){
-            //从数�?里面抽出一个
+            //从数�?里面抽出一个
             arr.push(config[Math.floor(Math.random()*config.length)]);
         }
 
-        //乱�?
+        //乱�?
         var newArr = [];
         for(var j=0; j<len; j++){
             newArr.push(arr.splice(Math.random()*arr.length,1)[0]);
         }
 
-        //随机从数�?中抽出一个数值
+        //随机从数�?中抽出一个数值
         function getOne(arr) {
             return arr[Math.floor(Math.random()*arr.length)];
         }
@@ -249,6 +249,6 @@ export default class Common{
         for (var i = 0; i < Math.floor((num.length-(1+i))/3); i++)
         num = num.substring(0,num.length-(4*i+3))+','+
         num.substring(num.length-(4*i+3));
-        return ( '?��' + ((sign)?'':'-') + num + '.' + cents);
+        return ( '￥' + ((sign)?'':'-') + num + '.' + cents);
     }
 }
